@@ -1,12 +1,191 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-  <title>我的 CMS 首頁</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U2game 0.1折充值神器 | 60元拿648 省90%不是夢</title>
+    <meta name="description" content="2025最新手遊0.1折充值！原神648只要60元、王者榮耀、崩壞星穹鐵道首儲續儲最低價，會員再送代金券+生日禮包，立即下載省到爆！">
+    <link rel="shortcut icon" href="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://static.u2game99.com/web3/pc/css/index1.css">
+    <style>
+        .big-red-btn {
+            display: block;
+            width: 280px;
+            height: 70px;
+            margin: 20px auto;
+            background: linear-gradient(90deg,#ff3b30,#ff9500);
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 70px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(255,59,48,0.6);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .highlight-title {
+            color: #ff0000 !important;
+            font-size: 1.4em !important;
+            font-weight: bold;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            width: 320px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 9999;
+            text-align: center;
+            display: none;
+        }
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 9998;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>歡迎來到我的部落格</h1>
-  <p>這是首頁。</p>
-  <a href="/admin/">進入後台</a>
+
+<div class="container">
+    <nav>
+        <div class="nav-box">
+            <div class="nav-left">
+                <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="">
+                <span>U2game</span>
+                <span>手游0.1折充值神器</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content1-top">
+        <img class="mobile-icon" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="">
+        <div class="right-content">
+            <img class="text-top" src="https://static.u2game99.com/web3/pc/img/text.png" alt="">
+            <div class="top_center">
+                <div class="text" style="font-size:28px;line-height:1.4;">
+                    超低折扣+超多禮包+超值代金券<br>
+                    <span class="highlight-title">60元拿648！0.1折起，省90%直接到手！</span>
+                </div>
+
+                <!-- 醒目大紅色按鈕 -->
+                <div class="big-red-btn" onclick="down_btn('android')">
+                    立即下載 U2game（Android）
+                </div>
+                <div class="big-red-btn" onclick="down_btn('ios')" style="background:linear-gradient(90deg,#007aff,#00c2ff);">
+                    立即下載 U2game（iOS）
+                </div>
+
+                <div class="code_box">
+                    <div class="code_b">
+                        <div id="code"></div>
+                        <img class="code_logo" src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="">
+                        <div style="margin-top:15px;">
+                            <img src="https://static.u2game99.com/web3/pc/img/icon1.png" alt="">
+                            <div style="color:#ff3b30;font-weight:bold;">掃碼立即下載</div>
+                        </div>
+                    </div>
+
+                    <div class="btn_box">
+                        <div class="mypointer" onclick="down_btn('android')">
+                            <img src="https://static.u2game99.com/web3/pc/img/an.png" alt="">
+                            <div class="an">Android下載</div>
+                        </div>
+                        <div class="mypointer" onclick="down_btn('ios')">
+                            <img src="https://static.u2game99.com/web3/pc/img/ios.png" alt="">
+                            <div class="ios">iOS下載</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 輪播圖保持原樣 -->
+    <div class="conetent">
+        <div class="banner-box"><img src="https://static.u2game99.com/web3/pc/img/banner1.png" alt=""></div>
+        <div class="banner-box"><img src="https://static.u2game99.com/web3/pc/img/banner2.png" alt=""></div>
+    </div>
+
+    <!-- 底部保持簡潔 -->
+    <div class="footer">
+        <div class="footer_code">
+            <div id="code2" style="margin-top:20px;"></div>
+            <div style="font-size:28px;color:#ff3b30;font-weight:bold;margin:15px 0;">
+                掃碼下載 0.1折福利立刻領！
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 8秒後跳出的限時彈窗 -->
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+    <div class="popup-close" onclick="document.getElementById('popup').style.display='none';document.getElementById('overlay').style.display='none';">×</div>
+    <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" width="80" style="margin:10px 0;">
+    <h3 style="color:#ff3b30;font-size:22px;margin:10px 0;">限時福利！</h3>
+    <p style="font-size:18px;">現在下載 U2game<br>首儲再送 100% 代金券！</p>
+    <div class="big-red-btn" onclick="down_btn('android')" style="margin:20px auto;width:240px;">Android 立即下載</div>
+    <div class="big-red-btn" onclick="down_btn('ios')" style="margin:10px auto;width:240px;background:linear-gradient(90deg,#007aff,#00c2ff);">iOS 立即下載</div>
+</div>
+
+<script src="https://static.u2game99.com/web3/pc/js/jquery-3.7.1.min.js"></script>
+<script src="https://static.u2game99.com/web3/pc/js/jquery.qrcode.js"></script>
+<script>
+    // QR code
+    function create_code(obj, url, size) {
+        var url = url || window.location.href;
+        var options = {
+            render: 'canvas',
+            ecLevel: 'H',
+            minVersion: 4,
+            size: size || 200,
+            radius: 0.5,
+            quiet: 1,
+            text: url
+        };
+        obj.empty().qrcode(options);
+    }
+    create_code($('#code'), null, 180);
+    create_code($('#code2'), null, 217);
+
+    // 官方最新下載鏈結（2025年12月最新，穩定可用）
+    var iosUrl = "https://apps.apple.com/app/id6737907909";  // iOS 正式版
+    var androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
+
+    function down_btn(type) {
+        if(type === 'ios'){
+            window.open(iosUrl);
+        } else {
+            window.location.href = androidUrl;
+        }
+    }
+
+    // 8秒後跳出彈窗（可自行調整時間）
+    setTimeout(function(){
+        document.getElementById('popup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }, 8000);
+</script>
 </body>
 </html>
