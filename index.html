@@ -8,6 +8,13 @@
     <link rel="shortcut icon" href="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://static.u2game99.com/web3/pc/css/index1.css">
     <style>
+        /* 覆蓋原 CSS 的固定寬度限制，讓手機能正常顯示 */
+        .container { min-width: 0 !important; background: #3180FE; padding: 0 15px; box-sizing: border-box; }
+        .content1-top { width: 100% !important; min-width: 0 !important; height: auto !important; padding: 20px 0; position: relative; }
+        .conetent .banner-box { width: 100% !important; max-width: 1350px; left: 50%; transform: translateX(-50%); }
+        .conetent .banner-box img { width: 100%; height: auto; }
+
+        /* 大紅色按鈕樣式（已存在） */
         .big-red-btn {
             display: block;
             width: 280px;
@@ -29,17 +36,16 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        .highlight-title {
-            color: #ff0000 !important;
-            font-size: 1.4em !important;
-            font-weight: bold;
-        }
+        .highlight-title { color: #ff0000 !important; font-size: 1.4em !important; font-weight: bold; }
+
+        /* 彈窗樣式（已存在） */
         .popup {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%,-50%);
-            width: 320px;
+            width: 90%;
+            max-width: 320px;
             background: #fff;
             border-radius: 20px;
             padding: 20px;
@@ -63,6 +69,61 @@
             z-index: 9998;
             display: none;
         }
+
+        /* 手機自適應（≤768px） */
+        @media screen and (max-width: 768px) {
+            .content1-top { height: auto; padding-bottom: 50px; }
+            .mobile-icon {
+                position: static !important;
+                display: block;
+                margin: 0 auto;
+                max-height: 500px;
+                width: 80%;
+            }
+            .right-content {
+                position: static !important;
+                text-align: center;
+                margin-top: 20px;
+            }
+            .right-content .text-top {
+                position: static !important;
+                width: 80%;
+                margin: 0 auto;
+            }
+            .top_center {
+                position: static !important;
+                margin-top: 20px;
+            }
+            .top_center .text {
+                font-size: 20px !important;
+                line-height: 1.4;
+                white-space: normal;
+            }
+            .code_box {
+                flex-direction: column;
+                align-items: center;
+            }
+            .code_b {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            .btn_box {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn_box div {
+                width: 80%;
+                max-width: 280px;
+            }
+            .big-red-btn {
+                width: 90%;
+                font-size: 24px;
+                height: 60px;
+                line-height: 60px;
+            }
+            .u2-bk-logo { display: none; } /* 手機上隱藏太大背景圖 */
+            nav .nav-left span:last-child { display: none; } /* 隱藏副標題，節省空間 */
+        }
     </style>
 </head>
 <body>
@@ -83,18 +144,14 @@
         <div class="right-content">
             <img class="text-top" src="https://static.u2game99.com/web3/pc/img/text.png" alt="">
             <div class="top_center">
-                <div class="text" style="font-size:28px;line-height:1.4;">
+                <div class="text">
                     超低折扣+超多禮包+超值代金券<br>
                     <span class="highlight-title">60元拿648！0.1折起，省90%直接到手！</span>
                 </div>
 
                 <!-- 醒目大紅色按鈕 -->
-                <div class="big-red-btn" onclick="down_btn('android')">
-                    立即下載 U2game（Android）
-                </div>
-                <div class="big-red-btn" onclick="down_btn('ios')" style="background:linear-gradient(90deg,#007aff,#00c2ff);">
-                    立即下載 U2game（iOS）
-                </div>
+                <div class="big-red-btn" onclick="down_btn('android')">立即下載 U2game（Android）</div>
+                <div class="big-red-btn" onclick="down_btn('ios')" style="background:linear-gradient(90deg,#007aff,#00c2ff);">立即下載 U2game（iOS）</div>
 
                 <div class="code_box">
                     <div class="code_b">
@@ -119,15 +176,14 @@
                 </div>
             </div>
         </div>
+        <img class="u2-bk-logo" src="https://static.u2game99.com/web3/pc/img/u2-bk-logo.png" alt="">
     </div>
 
-    <!-- 輪播圖保持原樣 -->
     <div class="conetent">
         <div class="banner-box"><img src="https://static.u2game99.com/web3/pc/img/banner1.png" alt=""></div>
         <div class="banner-box"><img src="https://static.u2game99.com/web3/pc/img/banner2.png" alt=""></div>
     </div>
 
-    <!-- 底部保持簡潔 -->
     <div class="footer">
         <div class="footer_code">
             <div id="code2" style="margin-top:20px;"></div>
@@ -138,7 +194,7 @@
     </div>
 </div>
 
-<!-- 8秒後跳出的限時彈窗 -->
+<!-- 限時彈窗 -->
 <div class="overlay" id="overlay"></div>
 <div class="popup" id="popup">
     <div class="popup-close" onclick="document.getElementById('popup').style.display='none';document.getElementById('overlay').style.display='none';">×</div>
@@ -169,8 +225,8 @@
     create_code($('#code'), null, 180);
     create_code($('#code2'), null, 217);
 
-    // 官方最新下載鏈結（2025年12月最新，穩定可用）
-    var iosUrl = "https://apps.apple.com/app/id6737907909";  // iOS 正式版
+    // 官方下載鏈結（穩定可用）
+    var iosUrl = "https://apps.apple.com/app/search?term=U2game";  // iOS 導向 App Store 搜尋
     var androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
 
     function down_btn(type) {
@@ -181,7 +237,7 @@
         }
     }
 
-    // 8秒後跳出彈窗（可自行調整時間）
+    // 8秒後彈窗
     setTimeout(function(){
         document.getElementById('popup').style.display = 'block';
         document.getElementById('overlay').style.display = 'block';
