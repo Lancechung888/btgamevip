@@ -9,11 +9,16 @@ public_folder: "/assets/uploads"
 collections:
   - name: "blog"
     label: "文章"
-    folder: "_posts" # 文章存放在 GitHub 的路徑
+    folder: "_posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    fields: # 編輯器欄位
+    fields:
       - {label: "版型", name: "layout", widget: "hidden", default: "post"}
       - {label: "標題", name: "title", widget: "string"}
       - {label: "發布日期", name: "date", widget: "datetime"}
+      # --- 新增 SEO 欄位 ---
+      - {label: "SEO 描述 (顯示在 Google 搜尋結果)", name: "description", widget: "text", required: false}
+      - {label: "遊戲分類 (例如: 仙俠、卡牌)", name: "tags", widget: "list", required: false}
+      - {label: "封面圖片", name: "image", widget: "image", required: false}
+      # -------------------
       - {label: "內文", name: "body", widget: "markdown"}
