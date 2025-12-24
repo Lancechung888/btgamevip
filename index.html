@@ -1,13 +1,17 @@
+---
+layout: null
+---
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>U2game 0.1折充值神器 | 60元拿648 省90%不是夢</title>
-    <meta name="description" content="2025最新手遊0.1折充值！原神648只要60元、崩鐵、王者首儲續儲最低價，會員再送代金券+生日禮包，立即下載省到爆！">
+    <title>U2game 0.1折充值神器 | 2025手遊折扣、BT版、公益服下載首選</title>
+    <meta name="description" content="U2game提供全網最低手遊折扣，0.1折起省90%！涵蓋原神、傳說對決、崩鐵等熱門遊戲首儲續儲優惠，註冊即送100%代金券，安全穩定，福利秒到帳。">
+    <meta name="keywords" content="0.1折手遊, 手遊折扣平台, BT版手遊, 公益服, U2game, 手遊代充, 變態版手遊">
+    
     <link rel="shortcut icon" href="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png">
     
-    <!-- 原PC樣式（電腦用） -->
     <link rel="stylesheet" href="https://static.u2game99.com/web3/pc/css/index1.css" media="screen and (min-width: 769px)">
 
     <style>
@@ -48,6 +52,22 @@
             margin: 10px 0;
         }
 
+        /* SEO 文章列表樣式 */
+        .seo-section {
+            background: #fff;
+            color: #333;
+            text-align: left;
+            border-radius: 20px;
+            margin: 25px auto;
+            width: 90%;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .seo-section h2 { font-size: 20px; color: #3180FE; margin-bottom: 15px; border-left: 5px solid #3180FE; padding-left: 10px; }
+        .post-item { margin-bottom: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .post-item a { text-decoration: none; color: #333; font-weight: bold; font-size: 16px; display: block; }
+        .post-item p { font-size: 13px; color: #666; margin-top: 5px; line-height: 1.4; }
+
         /* 超大按鈕 */
         .big-btn {
             display: block;
@@ -63,14 +83,9 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
             animation: pulse 2s infinite;
         }
-        .android-btn {
-            background: linear-gradient(135deg,#ff3b30,#ff9500);
-            color: #fff;
-        }
-        .ios-btn {
-            background: linear-gradient(135deg,#007aff,#00c2ff);
-            color: #fff;
-        }
+        .android-btn { background: linear-gradient(135deg,#ff3b30,#ff9500); color: #fff; }
+        .ios-btn { background: linear-gradient(135deg,#007aff,#00c2ff); color: #fff; }
+        
         @keyframes pulse {
             0%,100% { transform: scale(1); }
             50% { transform: scale(1.04); }
@@ -86,13 +101,9 @@
         }
         #mobile-qrcode { width: 220px; height: 220px; margin: 0 auto; }
 
-        .footer-qr {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(255,255,255,0.15);
-        }
+        .footer-qr { margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.15); }
 
-        /* ==== PC版保持原樣（>768px）==== */
+        /* ==== PC版保持原樣 ==== */
         .pc-only { display: none; }
         @media screen and (min-width: 769px) {
             .mobile-container { display: none; }
@@ -107,15 +118,14 @@
 </head>
 <body>
 
-<!-- ====================== 手機專用版 ====================== -->
 <div class="mobile-container">
     <div class="mobile-header">
-        <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="U2game">
+        <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="U2game手遊折扣平台">
         <h1>U2game</h1>
         <p>手遊0.1折充值神器</p>
     </div>
 
-    <img class="hero-img" src="https://static.u2game99.com/web3/pc/img/bk1.webp" alt="U2game手機圖">
+    <img class="hero-img" src="https://static.u2game99.com/web3/pc/img/bk1.webp" alt="U2game 0.1折儲值優惠">
 
     <div style="padding:0 20px;">
         <div class="highlight">60元拿648<br>0.1折起 省90%直接到手！</div>
@@ -123,6 +133,20 @@
 
         <a class="big-btn android-btn" href="javascript:down_btn('android')">Android 立即下載</a>
         <a class="big-btn ios-btn" href="javascript:down_btn('ios')">iOS 立即下載</a>
+
+        <section style="text-align: left; font-size: 14px; line-height: 1.6; margin: 20px 0; opacity: 0.9;">
+            <p><strong>U2game 平台優勢：</strong>專為手遊玩家打造的福利中心。提供熱門手遊<strong>BT版、變態版、公益服</strong>下載。所有遊戲內儲值均享 0.1 折優惠，讓您不再受官服高昂儲值困擾。</p>
+        </section>
+
+        <div class="seo-section">
+            <h2>最新福利攻略</h2>
+            {% for post in site.posts limit:5 %}
+            <div class="post-item">
+                <a href="{{ post.url }}">{{ post.title }}</a>
+                <p>{{ post.description | default: "點擊查看最新手遊 0.1 折優惠與禮包領取攻略..." | truncate: 50 }}</p>
+            </div>
+            {% endfor %}
+        </div>
 
         <div class="qrcode-box">
             <div id="mobile-qrcode"></div>
@@ -136,41 +160,37 @@
     </div>
 </div>
 
-<!-- ====================== 原PC版（只在電腦顯示） ====================== -->
 <div class="pc-only">
-    <!-- 這裡放你之前那支完整的PC版程式碼（從 <div class="container"> 開始到 </div> 結束） -->
-    <!-- 我幫你直接貼進來，省去你剪貼 -->
     <div class="container">
-        <nav><div class="nav-box"><div class="nav-left"><img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt=""><span>U2game</span><span>手游0.1折充值神器</span></div></div></nav>
+        <nav><div class="nav-box"><div class="nav-left"><img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="U2game"><span>U2game</span><span>手游0.1折充值神器</span></div></div></nav>
         <div class="content1-top">
-            <img class="mobile-icon" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="">
+            <img class="mobile-icon" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="U2game手遊下載">
             <div class="right-content">
-                <img class="text-top" src="https://static.u2game99.com/web3/pc/img/text.png" alt="">
+                <img class="text-top" src="https://static.u2game99.com/web3/pc/img/text.png" alt="60元拿648">
                 <div class="top_center">
                     <div class="text" style="font-size:28px;line-height:1.4;">
                         超低折扣+超多禮包+超值代金券<br>
                         <span style="color:#ff0000;font-size:1.4em;font-weight:bold;">60元拿648！0.1折起，省90%直接到手！</span>
                     </div>
-                    <div style="width:280px;height:70px;margin:20px auto;background:linear-gradient(90deg,#ff3b30,#ff9500);color:#fff;font-size:28px;font-weight:bold;line-height:70px;border-radius:15px;box-shadow:0 8px 20px rgba(255,59,48,0.6);animation:pulse 2s infinite;cursor:pointer;" onclick="down_btn('android')">
-                        立即下載（Android）
+                    <div class="big-btn android-btn" style="width:280px; text-align:center; cursor:pointer;" onclick="down_btn('android')">立即下載（Android）</div>
+                    <div class="big-btn ios-btn" style="width:280px; text-align:center; cursor:pointer;" onclick="down_btn('ios')">立即下載（iOS）</div>
+                    
+                    <div style="background:#f9f9f9; padding:15px; border-radius:10px; margin-top:20px; text-align:left; max-width:400px;">
+                        <h3 style="color:#333; font-size:18px; margin-bottom:10px;">手遊福利專欄</h3>
+                        {% for post in site.posts limit:3 %}
+                        <a href="{{ post.url }}" style="color:#3180FE; text-decoration:none; display:block; margin-bottom:5px; font-size:14px;">· {{ post.title }}</a>
+                        {% endfor %}
                     </div>
-                    <div style="width:280px;height:70px;margin:20px auto;background:linear-gradient(90deg,#007aff,#00c2ff);color:#fff;font-size:28px;font-weight:bold;line-height:70px;border-radius:15px;box-shadow:0 8px 20px rgba(0,123,255,0.6);animation:pulse 2s infinite;cursor:pointer;" onclick="down_btn('ios')">
-                        立即下載（iOS）
-                    </div>
-                    <div class="code_box">......（後面全部保留你上次那支PC版的內容，直到 </div></div></div>
-                    <!-- 為了節省篇幅這裡省略中間一大段，你直接把上次我給你的PC版完整貼進來即可 -->
                 </div>
             </div>
         </div>
-        <!-- 其餘PC內容省略，實際使用時整段貼上 -->
     </div>
 </div>
 
-<!-- 彈窗（手機+電腦共用） -->
 <div class="overlay" id="overlay"></div>
 <div class="popup" id="popup">
     <div class="popup-close" onclick="document.getElementById('popup').style.display='none';document.getElementById('overlay').style.display='none';">×</div>
-    <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" width="80">
+    <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" width="80" alt="禮包">
     <h3 style="color:#ff3b30;margin:15px 0;font-size:24px;">限時福利！</h3>
     <p style="font-size:18px;line-height:1.5;">現在下載立即送<br><b>100% 首儲代金券</b></p>
     <div class="big-btn android-btn" onclick="down_btn('android')">Android 立即領</div>
@@ -180,7 +200,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-qrcode@1.0/jquery.qrcode.min.js"></script>
 <script>
-    // QR Code
+    // QR Code 邏輯保持不變
     function createQR(id, size=220) {
         $(id).qrcode({
             width: size,
@@ -191,7 +211,6 @@
     createQR('#mobile-qrcode', 220);
     createQR('#mobile-qrcode2', 200);
 
-    // 下載鏈結（隨時可換成你自己的短鏈）
     const iosUrl = "https://apps.apple.com/app/id6737907909";
     const androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
 
