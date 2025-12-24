@@ -9,3 +9,4 @@ gem "minima"
 # 這是 GitHub Pages 常用的插件
 gem "jekyll-feed"
 gem "jekyll-seo-tag"
+gem "jekyll-sitemap"
