@@ -212,6 +212,7 @@ layout: null
 
         <div class="qrcode-box">
             <div id="mobile-qrcode"></div>
+            <img id="mobile-qrcode-fallback" alt="下載QR Code" style="display:none;width:220px;height:220px;margin:0 auto;" />
             <p style="color:#333;font-size:18px;margin-top:12px;font-weight:bold;">掃碼下載，福利秒到帳！</p>
         </div>
 
@@ -233,6 +234,7 @@ layout: null
 
         <div class="footer-qr">
             <div id="mobile-qrcode2" style="width:200px;height:200px;margin:0 auto;"></div>
+            <img id="mobile-qrcode2-fallback" alt="下載QR Code" style="display:none;width:200px;height:200px;margin:0 auto;" />
             <p style="margin-top:12px;font-size:20px;">再掃一次，0.1折直接領！</p>
         </div>
     </div>
@@ -291,16 +293,26 @@ layout: null
     }
 
     // QR Code（加防呆：若CDN被擋，不影響主流程）
-    function createQR(id, size=220) {
-        if (!window.jQuery || !jQuery.fn || !jQuery.fn.qrcode) return;
-        jQuery(id).qrcode({
-            width: size,
-            height: size,
-            text: window.location.href
-        });
+    function createQR(id, size=220, fallbackId=null) {
+        const targetUrl = window.location.href;
+
+        // 優先用本地qrcode插件
+        if (window.jQuery && jQuery.fn && jQuery.fn.qrcode) {
+            jQuery(id).qrcode({ width: size, height: size, text: targetUrl });
+            return;
+        }
+
+        // 插件失敗時，改用外部API圖片降級
+        if (fallbackId) {
+            const img = document.getElementById(fallbackId);
+            if (img) {
+                img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(targetUrl)}`;
+                img.style.display = 'block';
+            }
+        }
     }
-    createQR('#mobile-qrcode', 220);
-    createQR('#mobile-qrcode2', 200);
+    createQR('#mobile-qrcode', 220, 'mobile-qrcode-fallback');
+    createQR('#mobile-qrcode2', 200, 'mobile-qrcode2-fallback');
 
     // 8秒彈窗
     setTimeout(() => {
