@@ -187,7 +187,7 @@ layout: null
         <p>手遊0.1折充值神器</p>
     </div>
 
-    <img class="hero-img" src="https://static.u2game99.com/web3/pc/img/bk1.webp" alt="U2game 0.1折儲值優惠" loading="eager" decoding="async">
+    <img class="hero-img" src="https://static.u2game99.com/web3/pc/img/bk1.webp" alt="U2game 0.1折儲值優惠" loading="eager" decoding="async" onerror="this.onerror=null;this.src='https://static.u2game99.com/web3/pc/img/bk1.png';">
 
     <div style="padding:0 20px;">
         <div class="highlight">60元拿648<br>0.1折起 省90%直接到手！</div>
@@ -278,9 +278,22 @@ layout: null
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-qrcode@1.0/jquery.qrcode.min.js"></script>
 <script>
-    // QR Code 邏輯保持不變
+    const iosUrl = "https://apps.apple.com/app/id6737907909";
+    const androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
+
+    // 先定義下載函式，避免第三方腳本失敗時按鈕失效
+    function down_btn(type) {
+        if (type === 'ios') {
+            window.open(iosUrl, '_blank');
+        } else {
+            window.location.href = androidUrl;
+        }
+    }
+
+    // QR Code（加防呆：若CDN被擋，不影響主流程）
     function createQR(id, size=220) {
-        $(id).qrcode({
+        if (!window.jQuery || !jQuery.fn || !jQuery.fn.qrcode) return;
+        jQuery(id).qrcode({
             width: size,
             height: size,
             text: window.location.href
@@ -289,21 +302,14 @@ layout: null
     createQR('#mobile-qrcode', 220);
     createQR('#mobile-qrcode2', 200);
 
-    const iosUrl = "https://apps.apple.com/app/id6737907909";
-    const androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
-
-    function down_btn(type) {
-        if(type==='ios') {
-            window.open(iosUrl);
-        } else {
-            location.href = androidUrl;
-        }
-    }
-
     // 8秒彈窗
     setTimeout(() => {
-        document.getElementById('popup').style.display='block';
-        document.getElementById('overlay').style.display='block';
+        const popup = document.getElementById('popup');
+        const overlay = document.getElementById('overlay');
+        if (popup && overlay) {
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
     }, 8000);
 </script>
 </body>
