@@ -11,6 +11,8 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 結果不是沒省到，而是把預算花在錯的時間。  
 這篇給你一個可以直接照做的 3 步流程，先把浪費降到最低。
 
+![0.1折手遊首儲避坑封面](/assets/posts/recharge_cover.png)
+
 ## 常見錯誤：你可能正在這樣虧
 
 - 一開始就大額投入，沒有先測試流程
@@ -44,6 +46,8 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 先看更新節奏，再決定投入。
 
 **先做：** 每天固定看一次活動更新，再下決策。
+
+![充值前30秒檢查清單](/assets/posts/recharge_checklist.png)
 
 ## 快速檢查清單（30秒）
 

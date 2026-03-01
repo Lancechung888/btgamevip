@@ -11,6 +11,8 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 這會浪費時間，也浪費前期資源。  
 這篇用 3 步幫你快速判斷，讓 **熱門手遊下載** 不再踩雷。
 
+![熱門手遊下載三步法封面](/assets/posts/download_cover.png)
+
 ## 常見錯誤：為什麼一直換遊戲？
 
 - 只看排行榜，不看玩法類型
@@ -45,6 +47,8 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 3. 福利與資源規則是否清楚
 
 **先做：** 測過再投入，不滿意就快速換，不拖。
+
+![下載前避坑檢查清單](/assets/posts/download_checklist.png)
 
 ## 快速檢查清單
 
