@@ -4,3 +4,8 @@ https://www.btgamevip.com/* https://btgamevip.com/:splat 301!
 
 # Normalize accidental trailing slash on html pages
 /:year/:month/:day/:slug.html/ /:year/:month/:day/:slug.html 301!
+
+# Legacy/invalid routes found in GSC
+/download/ / 301!
+/wp-json/ /404.html 404
+/wp-json/* /404.html 404
