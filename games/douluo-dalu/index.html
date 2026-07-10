@@ -47,6 +47,29 @@
   <link rel="preconnect" href="https://static.u2game99.com" crossorigin>
   <link rel="preconnect" href="https://qd.u2game99.com" crossorigin>
 
+  <!-- ===================== GA4 (attribution measurement, ALL-3) =====================
+       Set G-VB0GS9LLLB to a real "G-XXXXXXX" to activate measurement.
+       CEO 2026-07-10: a test GA4 property is sanctioned — it measures the
+       click/download funnel; commission itself is attributed in the u2 backend
+       (not GA4), so a test property is fine and payout-safe.
+       GUARDED: with an empty/placeholder token the loader stays fully inert — no
+       broken GTM request ships. Once a real ID is set, the existing
+       `download_click` event (bottom script) reports for real. -->
+  <script>
+  (function () {
+    var GA4_ID = "G-VB0GS9LLLB";
+    window.dataLayer = window.dataLayer || [];
+    if (!/^G-[A-Z0-9]+$/.test(GA4_ID)) return;   // inert until a real Measurement ID lands
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA4_ID;
+    document.head.appendChild(s);
+    window.gtag = function () { dataLayer.push(arguments); };
+    gtag("js", new Date());
+    gtag("config", GA4_ID);
+  })();
+  </script>
+
   <!-- ============================ STRUCTURED DATA ============================ -->
   <!-- 1) The game itself: VideoGame + SoftwareApplication (GameApplication).
        Google reads SoftwareApplication for the app/game rich result; VideoGame
