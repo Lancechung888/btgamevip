@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!--
+  AllWell / U2game — REUSABLE GAME LANDING TEMPLATE (ALL-11)
+  ================================================================
+  Render one HTML file per game/campaign by replacing every double-brace token.
+  Tokens are documented in ../games/*.json (see dragon-tiger.json) and
+  in game-landing-pages.md §"How to add a new game".
+
+  Design notes baked in (from ALL-4 audit fixes):
+    - LCP hero is eager + fetchpriority=high + WebP (no loading="lazy")
+    - explicit width/height on images (CLS = 0)
+    - NO jQuery: QR uses a ~0-dep image endpoint, encodes the DOWNLOAD url (not page url)
+    - CTAs are semantic, keyboard-operable <a>/<button>
+    - Attribution (ALL-3): GA4 `download_click` event + first-party aw_cid on click.
+      The u2 download URL params (ag/gid/ldy) are PASSED THROUGH UNCHANGED —
+      we never mutate payout-bearing params (see game-landing-pages.md §Attribution).
+-->
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Per-game SEO -->
+  <title>斗羅大陸：斗神再臨 0.1折充值下載 | U2game 首儲續儲省90% (2026)</title>
+  <meta name="description" content="透過 U2game 下載斗羅大陸：斗神再臨，享 0.1折起手遊儲值優惠，首儲續儲最高省90%，Android/iOS 一鍵下載，福利秒到帳、安全穩定。">
+  <meta name="keywords" content="斗羅大陸 儲值, 斗羅大陸 0.1折, 斗羅大陸 斗神再臨 下載, U2game, 手遊折扣, Douluo Dalu 儲值">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://btgamevip.com/games/douluo-dalu/">
+
+  <!-- hreflang (add market variants as they come online; x-default per ALL-4 fix) -->
+  <link rel="alternate" hreflang="zh-Hant" href="https://btgamevip.com/games/douluo-dalu/">
+  <link rel="alternate" hreflang="x-default" href="https://btgamevip.com/games/douluo-dalu/">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="U2game">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:title" content="斗羅大陸：斗神再臨 0.1折充值下載 | U2game 首儲續儲省90% (2026)">
+  <meta property="og:description" content="斗羅大陸：斗神再臨 0.1折充值，Android/iOS 一鍵下載，首儲續儲更划算。">
+  <meta property="og:url" content="https://btgamevip.com/games/douluo-dalu/">
+  <meta property="og:image" content="https://static.u2game99.com/web3/pc/img/bk1.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="斗羅大陸：斗神再臨 0.1折充值下載 | U2game">
+  <meta name="twitter:description" content="斗羅大陸：斗神再臨 0.1折儲值，掃碼下載福利秒到帳。">
+  <meta name="twitter:image" content="https://static.u2game99.com/web3/pc/img/bk1.png">
+
+  <link rel="preconnect" href="https://static.u2game99.com" crossorigin>
+  <link rel="preconnect" href="https://qd.u2game99.com" crossorigin>
+
+  <!-- ============================ STRUCTURED DATA ============================ -->
+  <!-- 1) The game itself: VideoGame + SoftwareApplication (GameApplication).
+       Google reads SoftwareApplication for the app/game rich result; VideoGame
+       adds gameplay semantics. aggregateRating/offers are OPTIONAL and MUST come
+       from real data — omit the whole aggregateRating node if you have no genuine
+       ratings (fabricated ratings violate our no-black-hat rule & Google policy). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["VideoGame", "SoftwareApplication"],
+    "name": "斗羅大陸：斗神再臨",
+    "alternateName": "Douluo Dalu / Soul Land",
+    "url": "https://btgamevip.com/games/douluo-dalu/",
+    "inLanguage": "zh-Hant",
+    "description": "斗羅大陸：斗神再臨是以熱門 IP 斗羅大陸改編的角色扮演手遊。透過 U2game 下載並儲值，可享 0.1折起的首儲與續儲優惠。",
+    "image": "https://static.u2game99.com/web3/pc/img/bk1.png",
+    "applicationCategory": "GameApplication",
+    "genre": "角色扮演 RPG",
+    "operatingSystem": "Android, iOS",
+    "gamePlatform": ["Android","iOS"],
+    "publisher": {
+      "@type": "Organization",
+      "name": "U2game",
+      "url": "https://btgamevip.com/"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "TWD",
+      "availability": "https://schema.org/InStock",
+      "description": "U2game 平台 0.1折起手遊儲值優惠（免費下載，儲值時享折扣）"
+    }
+  }
+  </script>
+  <!-- 2) Breadcrumb: Home > 遊戲 > {game} -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首頁", "item": "https://btgamevip.com/" },
+      { "@type": "ListItem", "position": 2, "name": "遊戲", "item": "https://btgamevip.com/games/" },
+      { "@type": "ListItem", "position": 3, "name": "斗羅大陸：斗神再臨", "item": "https://btgamevip.com/games/douluo-dalu/" }
+    ]
+  }
+  </script>
+  <!-- 3) Per-game FAQ (helps game-page relevance; answers must be truthful) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":"在 U2game 下載斗羅大陸：斗神再臨要錢嗎？","acceptedAnswer":{"@type":"Answer","text":"下載完全免費，U2game 的優惠在於遊戲內儲值時提供 0.1折起的折扣。"}},{"@type":"Question","name":"斗羅大陸首儲有什麼優惠？","acceptedAnswer":{"@type":"Answer","text":"透過 U2game 下載後於遊戲內儲值，首儲與續儲皆可享 0.1折起優惠，福利秒到帳。"}},{"@type":"Question","name":"Android 和 iOS 都能下載嗎？","acceptedAnswer":{"@type":"Answer","text":"可以。點擊本頁下載按鈕或掃描 QR Code，U2game 下載頁會自動判斷你的裝置並提供對應的安裝方式。"}}]
+  }
+  </script>
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Microsoft JhengHei","Arial",sans-serif; background:#3180FE; color:#fff; -webkit-tap-highlight-color:transparent; }
+    a { color:inherit; }
+    .wrap { max-width:520px; margin:0 auto; padding:0 16px 40px; }
+    .mobile-header { text-align:center; padding:28px 16px 12px; }
+    .mobile-header h1 { font-size:24px; line-height:1.3; }
+    .mobile-header p { font-size:16px; opacity:.92; margin-top:8px; }
+    .hero { display:block; width:100%; max-width:360px; height:auto; margin:16px auto; border-radius:16px; background:rgba(0,0,0,.15); }
+    .price-hook { text-align:center; font-size:20px; font-weight:bold; background:rgba(0,0,0,.2); border-radius:12px; padding:14px; margin:12px 0; }
+    .price-hook span { color:#ffe14d; font-size:1.3em; }
+    .cta-row { display:flex; flex-direction:column; gap:14px; margin:22px 0; }
+    .big-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:16px; font-size:22px; font-weight:bold; border:none; border-radius:14px; cursor:pointer; text-decoration:none; color:#fff; }
+    .big-btn:focus-visible { outline:3px solid #fff; outline-offset:3px; }
+    .android-btn { background:linear-gradient(135deg,#ff3b30,#ff9500); }
+    .ios-btn { background:linear-gradient(135deg,#007aff,#00c2ff); }
+    .qr-box { text-align:center; background:rgba(255,255,255,.15); border-radius:16px; padding:20px; margin:24px 0; }
+    .qr-box img { width:200px; height:200px; background:#fff; border-radius:8px; }
+    .qr-box p { margin-top:12px; font-size:16px; }
+    .seo-section { background:#fff; color:#333; border-radius:16px; padding:20px; margin:24px 0; }
+    .seo-section h2 { font-size:20px; color:#3180FE; border-left:5px solid #3180FE; padding-left:10px; margin-bottom:14px; }
+    .seo-section p, .seo-section li { font-size:15px; line-height:1.7; }
+    .seo-section ul { margin:10px 0 0 20px; }
+    .faq dt { font-weight:bold; color:#3180FE; margin-top:14px; }
+    .faq dd { margin:6px 0 0; }
+    .crumbs { font-size:13px; opacity:.85; padding:10px 0; }
+    .crumbs a { text-decoration:none; }
+    footer { text-align:center; font-size:12px; opacity:.8; padding:24px 0 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="breadcrumb">
+      <a href="https://btgamevip.com/">首頁</a> ›
+      <a href="https://btgamevip.com/games/">遊戲</a> ›
+      <span>斗羅大陸：斗神再臨</span>
+    </nav>
+
+    <header class="mobile-header">
+      <h1>斗羅大陸：斗神再臨 0.1折充值｜U2game 下載與首儲優惠</h1>
+      <p>Android / iOS 一鍵下載，儲值最高省 90%</p>
+    </header>
+
+    <!-- LCP element: eager, high priority, WebP, explicit dims (ALL-4 fixes) -->
+    <img class="hero" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="斗羅大陸斗神再臨 U2game 0.1折充值下載"
+         width="921" height="750" fetchpriority="high" decoding="async">
+
+    <div class="price-hook">60元拿648！<span>0.1折起，省90%直接到手</span></div>
+
+    <!-- Accessible, keyboard-operable CTAs. Real hrefs = u2 download URLs (params untouched). -->
+    <div class="cta-row">
+      <a id="dl-android" class="big-btn android-btn" href="https://qd.u2game99.com/down.html?ag=da00467&gid=46&ldy=1"
+         data-platform="android" rel="nofollow sponsored"
+         aria-label="Android 立即下載 斗羅大陸：斗神再臨">Android 立即下載</a>
+      <a id="dl-ios" class="big-btn ios-btn" href="https://qd.u2game99.com/down.html?ag=da00467&gid=46&ldy=1"
+         data-platform="ios" rel="nofollow sponsored" target="_blank"
+         aria-label="iOS 立即下載 斗羅大陸：斗神再臨">iOS 立即下載</a>
+    </div>
+
+    <div class="qr-box">
+      <img id="qr" alt="掃碼下載 斗羅大陸：斗神再臨" width="200" height="200">
+      <p>掃碼直接下載，0.1折首儲秒到帳</p>
+    </div>
+
+    <section class="seo-section">
+      <h2>斗羅大陸：斗神再臨 遊戲介紹</h2>
+      <p>斗羅大陸：斗神再臨改編自人氣 IP《斗羅大陸》，玩家可收集魂師、進化魂環，體驗經典劇情與策略戰鬥。透過 U2game 下載並在遊戲內儲值，即可享全網最低 0.1折起的充值優惠，首儲與續儲皆適用，省下高達 90% 的儲值成本。</p>
+    </section>
+
+    <section class="seo-section">
+      <h2>怎麼用 U2game 下載 斗羅大陸：斗神再臨？</h2>
+      <ul>
+        <li>點擊上方 <strong>Android / iOS 立即下載</strong>，或用手機掃描 QR Code。</li>
+        <li>安裝完成後於遊戲內儲值，即享 U2game <strong>0.1折</strong> 首儲／續儲優惠。</li>
+        <li>透過本頁下載並儲值，福利秒到帳、安全穩定。</li>
+      </ul>
+    </section>
+
+    <section class="seo-section faq">
+      <h2>常見問題</h2>
+      <dl><dt>在 U2game 下載斗羅大陸：斗神再臨要錢嗎？</dt><dd>下載完全免費，U2game 的優惠在於遊戲內儲值時提供 0.1折起的折扣。</dd>
+        <dt>斗羅大陸首儲有什麼優惠？</dt><dd>透過 U2game 下載後於遊戲內儲值，首儲與續儲皆可享 0.1折起優惠，福利秒到帳。</dd>
+        <dt>Android 和 iOS 都能下載嗎？</dt><dd>可以。點擊本頁下載按鈕或掃描 QR Code，U2game 下載頁會自動判斷你的裝置並提供對應的安裝方式。</dd></dl>
+    </section>
+
+    <footer>© U2game · btgamevip.com　|　本頁為 斗羅大陸：斗神再臨 下載與優惠導引頁</footer>
+  </div>
+
+  <!-- ======================= ATTRIBUTION + QR (no jQuery) ======================= -->
+  <script>
+  (function () {
+    // ---- Per-page config (rendered from the game JSON) ----
+    var GAME_SLUG = "douluo_dalu";
+    var CAMPAIGN  = "douluo_dalu_evergreen_202607";          // e.g. legend_evergreen_202607
+    var ANDROID_URL = "https://qd.u2game99.com/down.html?ag=da00467&gid=46&ldy=1";          // u2 URL, params UNCHANGED
+    var QR_TARGET   = ANDROID_URL;                // QR encodes the DOWNLOAD url (ALL-4 fix), not page url
+
+    // ---- First-party click id (aw_cid): stable per browser, opaque, no PII (ALL-3) ----
+    function getAwCid() {
+      try {
+        var k = "aw_cid", v = localStorage.getItem(k);
+        if (!v) {
+          var buf = new Uint8Array(16);
+          (self.crypto || {}).getRandomValues && self.crypto.getRandomValues(buf);
+          v = Array.prototype.map.call(buf, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+          localStorage.setItem(k, v);
+        }
+        return v;
+      } catch (e) { return ""; }
+    }
+
+    // ---- read UTM from the URL so social clicks carry channel into the event ----
+    function qp(name) {
+      return new URLSearchParams(location.search).get(name) || "";
+    }
+
+    // ---- fire GA4 event on CTA click (no-op until GA4/gtag lands via ALL-3) ----
+    function trackDownload(platform) {
+      var payload = {
+        game_slug: GAME_SLUG,
+        platform: platform,
+        aw_cid: getAwCid(),
+        utm_source: qp("utm_source"),
+        utm_medium: qp("utm_medium"),
+        utm_campaign: qp("utm_campaign") || CAMPAIGN,
+        utm_content: qp("utm_content"),
+        utm_term: qp("utm_term") || GAME_SLUG
+      };
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({ event: "download_click" }, payload));
+      if (typeof window.gtag === "function") { window.gtag("event", "download_click", payload); }
+      // NOTE: we do NOT append aw_cid to the u2 URL. Closing click->deposit needs a
+      // u2 sub-id passthrough on ag= — OPEN CEO escalation (ALL-3 §6 / ALL-4 §5).
+    }
+
+    ["dl-android", "dl-ios"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("click", function () { trackDownload(el.getAttribute("data-platform")); });
+    });
+
+    // ---- QR: lightweight external image endpoint, encodes the download URL ----
+    var qr = document.getElementById("qr");
+    if (qr) qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(QR_TARGET);
+  })();
+  </script>
+</body>
+</html>
