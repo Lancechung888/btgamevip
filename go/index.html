@@ -1,0 +1,70 @@
+---
+layout: null
+sitemap: false
+---
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>前往下載… | U2game</title>
+<!--
+  AllWell first-party tracking redirect service (ALL-3).
+  Purpose: give every referral link a clean, first-party, trackable URL, e.g.
+    https://btgamevip.com/go/?c=fb_douluo_20260711&gid=46
+  Behaviour:
+    1. Read campaign label `c` (our sub-id) + `gid` + any utm_* params.
+    2. Fire a GA4 `download_redirect` event so we can attribute the CLICK
+       to a channel / post / campaign in GA4.
+    3. 302-style client redirect to the u2 download page.
+  Abuse-resistant: the destination host is HARD-CODED to qd.u2game99.com and
+  `gid` is coerced to digits only, so this can never be used as an open redirect.
+  Attribution note: u2 does NOT support sub-id passthrough (confirmed by CEO
+  2026-07-11), so the deposit itself is attributed at the u2 channel level
+  (ag=da00467). This service closes the CLICK side of the funnel; deposits are
+  correlated with GA4 campaign click volume over time (approximate attribution).
+-->
+<script>
+(function () {
+  var qs = new URLSearchParams(window.location.search);
+  // gid: digits only, default 46 (斗羅大陸). Never trust arbitrary input.
+  var gid = (qs.get('gid') || '46').replace(/[^0-9]/g, '') || '46';
+  var campaign = (qs.get('c') || qs.get('utm_campaign') || 'direct').slice(0, 120);
+  var dest = 'https://qd.u2game99.com/down.html?ag=da00467&gid=' + gid + '&ldy=1';
+
+  function go(){ window.location.replace(dest); }
+
+  // GA4 event, then redirect (with a short safety timeout so a blocked/slow
+  // gtag never traps the user on this page).
+  try {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-VB0GS9LLLB';
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', 'G-VB0GS9LLLB', { anonymize_ip: true });
+    gtag('event', 'download_redirect', {
+      campaign: campaign,
+      gid: gid,
+      channel: qs.get('utm_source') || '',
+      utm_medium: qs.get('utm_medium') || '',
+      event_callback: go,
+      event_timeout: 1200
+    });
+  } catch (e) { /* ignore */ }
+
+  // Fallbacks: fire regardless after 1.2s, and immediately if JS event never returns.
+  setTimeout(go, 1200);
+})();
+</script>
+<noscript><meta http-equiv="refresh" content="0;url=https://qd.u2game99.com/down.html?ag=da00467&gid=46&ldy=1"></noscript>
+<style>body{font-family:"Microsoft JhengHei",Arial,sans-serif;background:#3180FE;color:#fff;text-align:center;padding-top:22vh;margin:0}a{color:#fff}</style>
+</head>
+<body>
+  <p>正在前往 U2game 下載頁…</p>
+  <p><a href="https://qd.u2game99.com/down.html?ag=da00467&gid=46&ldy=1">若未自動跳轉，請點此</a></p>
+</body>
+</html>
