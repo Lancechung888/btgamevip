@@ -1,0 +1,16 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- seo -%}
+  <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
+  {%- feed_meta -%}
+  <!-- AllWell site-wide GA4 (ALL-3 referral attribution). Overrides minima's head.html to inject GA4 on every theme-rendered page (all blog posts). Click->download funnel only; deposits/commission live in the u2 backend (da00467). -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VB0GS9LLLB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VB0GS9LLLB', { anonymize_ip: true });
+  </script>
+</head>
