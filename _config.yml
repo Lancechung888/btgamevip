@@ -8,6 +8,9 @@ url: "https://btgamevip.com"
 # 佈景主題
 theme: minima
 
+# 允許未來時間貼文建置（每日發布：貼文日期可能領先 runner 的 UTC 時鐘）
+future: true
+
 # 外掛清單（新增了 jekyll-sitemap）
 plugins:
   - jekyll-feed
