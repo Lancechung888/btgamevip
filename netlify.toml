@@ -1,0 +1,4 @@
+[[edge_functions]]
+path = "/*"
+function = "go"
+excludedPath = ["/assets/*", "/css/*", "/js/*", "/img/*", "/images/*", "/fonts/*", "/*.css", "/*.js", "/*.png", "/*.jpg", "/*.jpeg", "/*.webp", "/*.svg", "/*.gif", "/*.ico", "/*.woff", "/*.woff2", "/*.xml", "/*.txt", "/*.json"]
