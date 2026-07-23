@@ -23,6 +23,13 @@ const LINKS = {
     // ALL-167 / gid 1401 斗羅大陸（逆转时空·0.1折武魂觉醒）— evergreen X A/B (ag da00467); corrected from dead gid 46 per ALL-166
     "tw-douluodalu-a": { gid: "1401", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "douluodalu_evergreen_202607", utm_content: "tweet_a" } },
     "tw-douluodalu-b": { gid: "1401", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "douluodalu_evergreen_202607", utm_content: "tweet_b" } },
+    // ALL-165 daily 2026-07-23 — 大屠龙 gid 2366 launch (no discount) + 神奇三国 gid 2355 topup (0.1折/每日648, backend-verified)
+    "tw-datulong-a": { gid: "2366", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "datulong_launch_202607", utm_content: "tweet_a" } },
+    "tw-datulong-b": { gid: "2366", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "datulong_launch_202607", utm_content: "tweet_b" } },
+    "fb-datulong-a": { gid: "2366", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "datulong_launch_202607", utm_content: "image_a" } },
+    "fb-datulong-b": { gid: "2366", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "datulong_launch_202607", utm_content: "image_b" } },
+    "tw-shenqisanguo-a": { gid: "2355", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "shenqisanguo_topup_202607", utm_content: "tweet_a" } },
+    "tw-shenqisanguo-b": { gid: "2355", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "shenqisanguo_topup_202607", utm_content: "tweet_b" } },
 };
 export default async (request) => {
     const url = new URL(request.url);
