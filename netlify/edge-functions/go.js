@@ -20,6 +20,13 @@ const LINKS = {
     "fb-wolong_sanguo-b": { gid: "2319", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "wolong_sanguo_launch_202607", utm_content: "image_b" } },
     "tw-wolong_sanguo-a": { gid: "2319", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wolong_sanguo_launch_202607", utm_content: "tweet_a" } },
     "tw-wolong_sanguo-b": { gid: "2319", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wolong_sanguo_launch_202607", utm_content: "tweet_b" } },
+    // ALL-197 / daily 2026-07-24 social — tulongyingxiong gid2323 launch (no discount) / houdousanguo gid2333 topup 0.1折 (ag da00467)
+    "tw-tulongyingxiong-a": { gid: "2323", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "tulongyingxiong_launch_202607", utm_content: "tweet_a" } },
+    "tw-tulongyingxiong-b": { gid: "2323", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "tulongyingxiong_launch_202607", utm_content: "tweet_b" } },
+    "fb-tulongyingxiong-a": { gid: "2323", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "tulongyingxiong_launch_202607", utm_content: "image_a" } },
+    "fb-tulongyingxiong-b": { gid: "2323", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "tulongyingxiong_launch_202607", utm_content: "image_b" } },
+    "tw-houdousanguo-a": { gid: "2333", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "houdousanguo_topup_202607", utm_content: "tweet_a" } },
+    "tw-houdousanguo-b": { gid: "2333", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "houdousanguo_topup_202607", utm_content: "tweet_b" } },
     // ALL-167 / gid 1401 斗羅大陸（逆转时空·0.1折武魂觉醒）— evergreen X A/B (ag da00467); corrected from dead gid 46 per ALL-166
     "tw-douluodalu-a": { gid: "1401", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "douluodalu_evergreen_202607", utm_content: "tweet_a" } },
     "tw-douluodalu-b": { gid: "1401", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "douluodalu_evergreen_202607", utm_content: "tweet_b" } },
