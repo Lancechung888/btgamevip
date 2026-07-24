@@ -48,6 +48,13 @@ const LINKS = {
     "fb-jiujie_wenxian-b": { gid: "2383", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "jiujie_wenxian_launch_202607", utm_content: "image_b" } },
     "tw-jiujie_wenxian-a": { gid: "2383", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "jiujie_wenxian_launch_202607", utm_content: "tweet_a" } },
     "tw-jiujie_wenxian-b": { gid: "2383", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "jiujie_wenxian_launch_202607", utm_content: "tweet_b" } },
+    // ALL-189 / gid 2368 釜底抽薪（切割沉默单职业）— landing + FB/X A/B (ag da00467, 首儲原價/no-discount)
+    "fdcx": { gid: "2368", utm: { utm_source: "landing", utm_medium: "web", utm_campaign: "fudi_chouxin_launch_202607", utm_content: "cta" } },
+    "fudichouxin-chuanqi": { gid: "2368", utm: { utm_source: "landing", utm_medium: "web", utm_campaign: "fudi_chouxin_launch_202607", utm_content: "cta" } },
+    "fb-fudi_chouxin-a": { gid: "2368", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "fudi_chouxin_launch_202607", utm_content: "image_a" } },
+    "fb-fudi_chouxin-b": { gid: "2368", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "fudi_chouxin_launch_202607", utm_content: "image_b" } },
+    "tw-fudi_chouxin-a": { gid: "2368", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "fudi_chouxin_launch_202607", utm_content: "tweet_a" } },
+    "tw-fudi_chouxin-b": { gid: "2368", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "fudi_chouxin_launch_202607", utm_content: "tweet_b" } },
 };
 export default async (request) => {
     const url = new URL(request.url);
