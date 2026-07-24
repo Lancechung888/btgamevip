@@ -37,6 +37,12 @@ const LINKS = {
     "fb-datulong-b": { gid: "2366", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "datulong_launch_202607", utm_content: "image_b" } },
     "tw-shenqisanguo-a": { gid: "2355", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "shenqisanguo_topup_202607", utm_content: "tweet_a" } },
     "tw-shenqisanguo-b": { gid: "2355", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "shenqisanguo_topup_202607", utm_content: "tweet_b" } },
+    // ALL-193 / gid 2378 新盗墓笔记（0.1折天天2000代金）— landing CTA + FB/X A/B (ag da00467, wave-1 2026-07-24)
+    "xdmbj": { gid: "2378", utm: { utm_source: "landing", utm_medium: "web", utm_campaign: "xin_daomu_biji_launch_202607", utm_content: "landing_cta" } },
+    "fb-xin_daomu_biji-a": { gid: "2378", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "xin_daomu_biji_launch_202607", utm_content: "image_a" } },
+    "fb-xin_daomu_biji-b": { gid: "2378", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "xin_daomu_biji_launch_202607", utm_content: "image_b" } },
+    "tw-xin_daomu_biji-a": { gid: "2378", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "xin_daomu_biji_launch_202607", utm_content: "tweet_a" } },
+    "tw-xin_daomu_biji-b": { gid: "2378", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "xin_daomu_biji_launch_202607", utm_content: "tweet_b" } },
 };
 export default async (request) => {
     const url = new URL(request.url);
