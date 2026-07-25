@@ -30,11 +30,51 @@ image: "https://btgamevip.com/assets/posts/genshin-topup-discount-main-og.png"
 
 安全起見，**只透過官方或我方指定連結下載安裝**，不要點來路不明的破解包，保護你的帳號安全。
 
+## 官方直儲 vs 折扣儲值：一張表看懂
+
+| 儲值方式 | 折扣幅度 | 首儲加碼 | 到帳方式 | 安全性 |
+|---|---|---|---|---|
+| 官方直儲（Apple／Google） | 原價，648 就是 648 | 僅首儲雙倍（限首次） | 即時 | 高，但每月固定支出大 |
+| BT Game／U2game 折扣儲值 | **0.1 折起，最高省 90%** | **100% 首儲代金券** | 綁帳號直儲、數分鐘到帳 | 走正規渠道、不外洩密碼與驗證碼 |
+
 ## 常見問題 FAQ
 
 - **Q：折扣儲值安全嗎？會被盜帳號嗎？**　A：透過正規平台與指定連結操作、不外洩密碼與驗證碼即可；避免非官方破解安裝檔。
 - **Q：可以儲原神以外的遊戲嗎？**　A：可以，星穹鐵道、王者、傳說對決等熱門手遊都支援。
 - **Q：首儲有額外加碼嗎？**　A：多數活動首儲會再加碼，實際以當期為準。
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "折扣儲值安全嗎？會被盜帳號嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "透過正規平台與指定連結操作、不外洩密碼與驗證碼即可；避免非官方破解安裝檔。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "可以儲原神以外的遊戲嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "可以，星穹鐵道、王者、傳說對決等熱門手遊都支援。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "首儲有額外加碼嗎？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "多數活動首儲會再加碼，實際以當期為準。"
+      }
+    }
+  ]
+}
+</script>
 
 ### 結尾 CTA
 
@@ -44,4 +84,3 @@ image: "https://btgamevip.com/assets/posts/genshin-topup-discount-main-og.png"
 ---
 
 ![原神儲值折扣](/assets/posts/genshin-topup-discount-square.png)
-
