@@ -15,4 +15,14 @@ layout: null
     <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
   </url>
   {% endfor %}
+  {% for f in site.static_files %}
+  {% if f.path contains '/games/' and f.name == 'index.html' %}
+  <url>
+    <loc>{{ site.url }}{{ f.path | remove: 'index.html' }}</loc>
+    <lastmod>{{ f.modified_time | date_to_xmlschema }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  {% endif %}
+  {% endfor %}
 </urlset>
