@@ -24,3 +24,8 @@ defaults:
       type: "posts"
     values:
       layout: "post"
+
+# 排除 Netlify 專屬檔（ALL-231：主站建置改 GitHub Pages）
+exclude:
+  - netlify
+  - netlify.toml
