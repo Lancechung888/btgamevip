@@ -24,7 +24,8 @@
   <title>斗羅大陸：斗神再臨 0.1折充值下載 | U2game 首儲續儲省90% (2026)</title>
   <meta name="description" content="透過 U2game 下載斗羅大陸：斗神再臨，享 0.1折起手遊儲值優惠，首儲續儲最高省90%，Android/iOS 一鍵下載，福利秒到帳、安全穩定。">
   <meta name="keywords" content="斗羅大陸 儲值, 斗羅大陸 0.1折, 斗羅大陸 斗神再臨 下載, U2game, 手遊折扣, Douluo Dalu 儲值">
-  <meta name="robots" content="index,follow,max-image-preview:large">
+  <!-- ALL-233: 斗羅大陸 retired pending valid u2 gid (1401 dead). noindex so we stop ranking a dead-download page. Reversible: restore index,follow when a valid 23xx gid lands. -->
+  <meta name="robots" content="noindex,follow">
   <link rel="canonical" href="https://btgamevip.com/games/douluo-dalu/">
 
   <!-- hreflang (add market variants as they come online; x-default per ALL-4 fix) -->
@@ -136,6 +137,11 @@
     .hero { display:block; width:100%; max-width:360px; height:auto; margin:16px auto; border-radius:16px; background:rgba(0,0,0,.15); }
     .price-hook { text-align:center; font-size:20px; font-weight:bold; background:rgba(0,0,0,.2); border-radius:12px; padding:14px; margin:12px 0; }
     .price-hook span { color:#ffe14d; font-size:1.3em; }
+    .notice-box { text-align:center; background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.35); border-radius:16px; padding:22px 18px; margin:22px 0; }
+    .notice-title { font-size:22px; font-weight:bold; color:#ffe14d; margin-bottom:10px; }
+    .notice-box p { font-size:16px; line-height:1.6; }
+    .notice-cta { display:inline-block; margin-top:16px; padding:12px 18px; font-size:16px; font-weight:bold; background:rgba(255,255,255,.18); border-radius:12px; text-decoration:none; color:#fff; }
+    .notice-cta:focus-visible { outline:3px solid #fff; outline-offset:3px; }
     .cta-row { display:flex; flex-direction:column; gap:14px; margin:22px 0; }
     .big-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:16px; font-size:22px; font-weight:bold; border:none; border-radius:14px; cursor:pointer; text-decoration:none; color:#fff; }
     .big-btn:focus-visible { outline:3px solid #fff; outline-offset:3px; }
@@ -174,19 +180,13 @@
 
     <div class="price-hook">60元拿648！<span>0.1折起，省90%直接到手</span></div>
 
-    <!-- Accessible, keyboard-operable CTAs. Real hrefs = u2 download URLs (params untouched). -->
-    <div class="cta-row">
-      <a id="dl-android" class="big-btn android-btn" href="https://qd.u2game99.com/down.html?ag=da00467&gid=1401&ldy=1"
-         data-platform="android" rel="nofollow sponsored"
-         aria-label="Android 立即下載 斗羅大陸：斗神再臨">Android 立即下載</a>
-      <a id="dl-ios" class="big-btn ios-btn" href="https://qd.u2game99.com/down.html?ag=da00467&gid=1401&ldy=1"
-         data-platform="ios" rel="nofollow sponsored" target="_blank"
-         aria-label="iOS 立即下載 斗羅大陸：斗神再臨">iOS 立即下載</a>
-    </div>
-
-    <div class="qr-box">
-      <img id="qr" alt="掃碼下載 斗羅大陸：斗神再臨" width="200" height="200">
-      <p>掃碼直接下載，0.1折首儲秒到帳</p>
+    <!-- ALL-233: download CTAs + QR removed. u2 gid=1401 is dead (down.html has no title/button);
+         keeping the buttons would send 100% of clicks to a zero-conversion dead page. Do NOT re-add
+         a gid here until lance confirms a valid 23xx gid from the u2 backend. -->
+    <div class="notice-box" role="status">
+      <p class="notice-title">本檔目前暫停代理</p>
+      <p>「斗羅大陸：斗神再臨」下載連結維護中，暫時無法提供下載。</p>
+      <a class="notice-cta" href="https://btgamevip.com/games/">前往遊戲總表，挑選其他 0.1折充值遊戲 →</a>
     </div>
 
     <section class="seo-section">
@@ -197,9 +197,9 @@
     <section class="seo-section">
       <h2>怎麼用 U2game 下載 斗羅大陸：斗神再臨？</h2>
       <ul>
-        <li>點擊上方 <strong>Android / iOS 立即下載</strong>，或用手機掃描 QR Code。</li>
-        <li>安裝完成後於遊戲內儲值，即享 U2game <strong>0.1折</strong> 首儲／續儲優惠。</li>
-        <li>透過本頁下載並儲值，福利秒到帳、安全穩定。</li>
+        <li>本檔下載連結<strong>維護中</strong>，目前暫停提供，恢復後可於本頁一鍵下載。</li>
+        <li>其他遊戲的 U2game <strong>0.1折</strong> 首儲／續儲優惠照常，請至<a href="https://btgamevip.com/games/">遊戲總表</a>。</li>
+        <li>透過 U2game 下載並儲值，福利秒到帳、安全穩定。</li>
       </ul>
     </section>
 
@@ -219,8 +219,9 @@
     // ---- Per-page config (rendered from the game JSON) ----
     var GAME_SLUG = "douluo_dalu";
     var CAMPAIGN  = "douluo_dalu_evergreen_202607";          // e.g. legend_evergreen_202607
-    var ANDROID_URL = "https://qd.u2game99.com/down.html?ag=da00467&gid=1401&ldy=1";          // u2 URL, params UNCHANGED
-    var QR_TARGET   = ANDROID_URL;                // QR encodes the DOWNLOAD url (ALL-4 fix), not page url
+    // ALL-233: retired. gid=1401 is dead at u2 — do NOT point this at down.html until a valid 23xx gid lands.
+    var ANDROID_URL = "https://btgamevip.com/games/";          // retired: send stray clicks to games index, not dead u2 page
+    var QR_TARGET   = ANDROID_URL;                // (QR box removed above; kept inert for reversibility)
 
     // ---- First-party click id (aw_cid): stable per browser, opaque, no PII (ALL-3) ----
     function getAwCid() {
