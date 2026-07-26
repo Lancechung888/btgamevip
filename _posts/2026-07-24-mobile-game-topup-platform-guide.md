@@ -6,7 +6,7 @@ categories: [儲值教學]
 tags: [手遊代儲, 代儲平台, 0.1折, 8591, 省錢]
 description: "手遊代儲平台哪個好？本文比較8591、個人代儲、官方授權0.1折折扣服三種管道的折扣、鎖號風險與到帳速度，教你挑最便宜又安全的儲值方式，648元套餐最低6.48元入手。"
 permalink: /2026/07/24/mobile-game-topup-platform-guide.html
-image: /assets/posts/mobile-game-topup-platform-guide-main-og.png
+image: /assets/posts/topup-platform-recommend-2026-og.png
 slug: mobile-game-topup-platform-guide
 main_keyword: "手遊代儲平台推薦"
 ---
