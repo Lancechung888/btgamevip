@@ -29,3 +29,4 @@ defaults:
 exclude:
   - netlify
   - netlify.toml
+  - cf-pages
