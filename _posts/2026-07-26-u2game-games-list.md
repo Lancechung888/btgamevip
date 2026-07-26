@@ -66,6 +66,6 @@ A：全場 0.1 折起，開局用折扣價把首儲 CP 值拉滿最划算。詳�
 
 u2game 是「一個平台、數百款遊戲」，重點不是它有多少款，而是你能不能從中挑到一款自己想玩、又能用折扣價省約 90% 的遊戲。先鎖類型、優先選有授權來源的招牌作、再看首儲福利，就是最不踩雷的挑法。
 
-想直接逛 360＋ 款遊戲、用 0.1 折開局 👉 [u2game 官方 0.1 折儲值入口](https://btgamevip.com/u2game/?utm_source=btgamevip&utm_medium=blog&utm_campaign=u2game-games)
+想直接逛 360＋ 款遊戲、用 0.1 折開局 👉 [u2game 官方 0.1 折儲值入口](https://btgamevip.com/u2game-brand-guide.html?utm_source=btgamevip&utm_medium=blog&utm_campaign=u2game-games)
 
 延伸閱讀：[u2game 是什麼](https://btgamevip.com/2026/07/25/what-is-u2game.html)｜[0.1 折手遊推薦](https://btgamevip.com/2026/07/25/mobile-game-01-discount-recommend.html)｜[u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)｜[u2game 安全嗎](https://btgamevip.com/2026/07/25/u2game-safe-review.html)
