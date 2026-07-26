@@ -2,7 +2,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {%- seo -%}
+  {%- comment -%} ALL-253: 36 篇舊文的 front-matter image 指向已失效的外部圖（static.u2game99.com 那張 bk1.webp，實測 404）。
+       這裡攔截 seo 輸出、把死連結換成站台自托預設圖，一處修好全部舊文，不必逐篇改 front matter。 {%- endcomment -%}
+  {%- capture seo_output -%}{%- seo -%}{%- endcapture -%}
+  {{- seo_output | replace: "https://static.u2game99.com/web3/pc/img/bk1.webp", "https://btgamevip.com/assets/posts/what-is-u2game-main-og.png" -}}
   <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
   {%- feed_meta -%}
   <!-- AllWell site-wide GA4 (ALL-3 referral attribution). Overrides minima's head.html to inject GA4 on every theme-rendered page (all blog posts). Click->download funnel only; deposits/commission live in the u2 backend (da00467). -->
