@@ -82,6 +82,15 @@ const LINKS = {
     "tw-jinbitanxian-b": { gid: "2325", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "jinbitanxian_topup_202607", utm_content: "tweet_b" } },
     "tw-wangzhejizhan-a": { gid: "2295", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhejizhan_evergreen_202607", utm_content: "tweet_a" } },
     "tw-wangzhejizhan-b": { gid: "2295", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhejizhan_evergreen_202607", utm_content: "tweet_b" } },
+    // ALL-287 / daily 2026-07-26 social (母 ALL-286 / 祖 ALL-285) — xiyoumaoxian gid2363 launch / dandanqimiao gid2359 topup / yihaojuntuan gid2352 evergreen, ag da00467
+    "tw-xiyoumaoxian-a": { gid: "2363", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "xiyoumaoxian_launch_202607", utm_content: "tweet_a" } },
+    "tw-xiyoumaoxian-b": { gid: "2363", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "xiyoumaoxian_launch_202607", utm_content: "tweet_b" } },
+    "fb-xiyoumaoxian-a": { gid: "2363", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "xiyoumaoxian_launch_202607", utm_content: "image_a" } },
+    "fb-xiyoumaoxian-b": { gid: "2363", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "xiyoumaoxian_launch_202607", utm_content: "image_b" } },
+    "tw-dandanqimiao-a": { gid: "2359", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "dandanqimiao_topup_202607", utm_content: "tweet_a" } },
+    "tw-dandanqimiao-b": { gid: "2359", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "dandanqimiao_topup_202607", utm_content: "tweet_b" } },
+    "tw-yihaojuntuan-a": { gid: "2352", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "yihaojuntuan_evergreen_202607", utm_content: "tweet_a" } },
+    "tw-yihaojuntuan-b": { gid: "2352", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "yihaojuntuan_evergreen_202607", utm_content: "tweet_b" } },
 };
 
 function readCookie(request, name) {
