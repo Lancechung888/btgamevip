@@ -87,6 +87,6 @@ A：便宜來自遊戲廠商為折扣渠道另開的內建折扣版本（折扣�
 
 u2game 支援用台灣人熟悉的 **MyCard 會員扣點**付款，付款走 MyCard 官方 `u2game99` 頁、還有「會員扣點享回饋」可憑交易序號換虛寶序號——這是正規、可查、你自己完成的金流，跟「私訊叫你轉帳」的詐騙代儲是兩回事。記住：**官方頁付款、自己登入、不交帳密、留好交易序號**，就能安心用折扣價儲值。
 
-想從官方渠道開始、用 MyCard 安全儲值 360＋ 款遊戲的 0.1 折 👉 [u2game 官方 0.1 折儲值入口](https://btgamevip.com/u2game/?utm_source=btgamevip&utm_medium=blog&utm_campaign=u2game-mycard)
+想從官方渠道開始、用 MyCard 安全儲值 360＋ 款遊戲的 0.1 折 👉 [u2game 官方 0.1 折儲值入口](https://btgamevip.com/u2game-brand-guide.html?utm_source=btgamevip&utm_medium=blog&utm_campaign=u2game-mycard)
 
 延伸閱讀：[u2game 是什麼](https://btgamevip.com/2026/07/25/what-is-u2game.html)｜[u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)｜[u2game 安全嗎](https://btgamevip.com/2026/07/25/u2game-safe-review.html)｜[u2game 0.1 折怎麼用](https://btgamevip.com/2026/07/25/u2game-discount-how.html)
