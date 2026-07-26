@@ -73,6 +73,15 @@ const LINKS = {
     "fb-zhaohuanshi_fenzheng-b": { gid: "2317", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "zhaohuanshi_fenzheng_launch_202607", utm_content: "image_b" } },
     "tw-zhaohuanshi_fenzheng-a": { gid: "2317", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "zhaohuanshi_fenzheng_launch_202607", utm_content: "tweet_a" } },
     "tw-zhaohuanshi_fenzheng-b": { gid: "2317", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "zhaohuanshi_fenzheng_launch_202607", utm_content: "tweet_b" } },
+    // ALL-230 / daily 2026-07-25 social — wenxiaoyao gid2358 launch (0.05折+送5000抽券) / jinbitanxian gid2325 topup (0.1折) / wangzhejizhan gid2295 evergreen (0.1折+全圖鑑), ag da00467
+    "tw-wenxiaoyao-a": { gid: "2358", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wenxiaoyao_launch_202607", utm_content: "tweet_a" } },
+    "tw-wenxiaoyao-b": { gid: "2358", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wenxiaoyao_launch_202607", utm_content: "tweet_b" } },
+    "fb-wenxiaoyao-a": { gid: "2358", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "wenxiaoyao_launch_202607", utm_content: "image_a" } },
+    "fb-wenxiaoyao-b": { gid: "2358", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "wenxiaoyao_launch_202607", utm_content: "image_b" } },
+    "tw-jinbitanxian-a": { gid: "2325", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "jinbitanxian_topup_202607", utm_content: "tweet_a" } },
+    "tw-jinbitanxian-b": { gid: "2325", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "jinbitanxian_topup_202607", utm_content: "tweet_b" } },
+    "tw-wangzhejizhan-a": { gid: "2295", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhejizhan_evergreen_202607", utm_content: "tweet_a" } },
+    "tw-wangzhejizhan-b": { gid: "2295", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhejizhan_evergreen_202607", utm_content: "tweet_b" } },
 };
 
 function readCookie(request, name) {
