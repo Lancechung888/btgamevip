@@ -5,9 +5,6 @@ description: "2025最新手遊充值優惠情報！U2game 0.1折起+專屬代金
 # 重要：必須填寫你的完整網址，Sitemap 才能生成正確連結
 url: "https://btgamevip.com" 
 
-# 站台預設 OG 主圖（ALL-253）：頁面未自訂 image 時 jekyll-seo-tag 會 fallback 到這張，並用 url 轉成絕對網址
-image: /assets/posts/what-is-u2game-main-og.png
-
 # 佈景主題
 theme: minima
 
