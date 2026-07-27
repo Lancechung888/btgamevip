@@ -124,7 +124,16 @@ function handle(request) {
 
     if (entry && entry.to) {
         // ALL-233: retired slug — 302 to an internal page instead of a dead u2 gid.
-        return Response.redirect(entry.to, 302);
+        // Board 2026-07-28: keep carrying the entry's UTM. This branch used to return
+        // before the UTM loop below, so every click arriving from an already-published
+        // post on a retired slug landed unlabelled and was invisible in GA4.
+        // ag/gid/ldy are deliberately NOT added here — the destination is our own site,
+        // not u2, so there is no payout param to carry.
+        const to = new URL(entry.to);
+        for (const [k, v] of Object.entries(entry.utm || {})) {
+            if (v) to.searchParams.set(k, String(v));
+        }
+        return Response.redirect(to.toString(), 302);
     }
 
     if (!entry || !entry.gid) {
