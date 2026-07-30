@@ -24,5 +24,13 @@ layout: null
     <priority>0.8</priority>
   </url>
   {% endif %}
+  {% if f.name == 'index.html' and f.path contains '/save/' %}
+  <url>
+    <loc>{{ site.url }}{{ f.path | remove: 'index.html' }}</loc>
+    <lastmod>{{ f.modified_time | date_to_xmlschema }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  {% endif %}
   {% endfor %}
 </urlset>
