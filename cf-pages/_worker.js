@@ -91,6 +91,14 @@ const LINKS = {
     "tw-dandanqimiao-b": { gid: "2359", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "dandanqimiao_topup_202607", utm_content: "tweet_b" } },
     "tw-yihaojuntuan-a": { gid: "2352", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "yihaojuntuan_evergreen_202607", utm_content: "tweet_a" } },
     "tw-yihaojuntuan-b": { gid: "2352", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "yihaojuntuan_evergreen_202607", utm_content: "tweet_b" } },
+    // ALL-390 / daily 2026-07-30 social（訊息軸「這款遊戲怎麼儲值最省」，重啟第一週）— 規格來源：
+    // ALL-390 附件 ALL-390-links-registry.json（Social Editor 2026-07-30），Board 2026-07-30 上稿。
+    // 目的地是自家 landing，所以用 to: 而不是 gid:（to: 分支只帶 UTM、不帶 ag/gid/ldy；u2 歸因由
+    // landing 上的下載按鈕 ag=da00467 承接）。
+    "tw-save-daomubiji": { to: "https://btgamevip.com/games/xin-daomubiji-topup-discount/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "save_compare_202607", utm_content: "x_20260730" } },
+    "fb-save-shengguang": { to: "https://btgamevip.com/games/shengguang-zhizhan/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "save_howto_202607", utm_content: "fb_20260730" } },
+    // ig-save = IG link-in-bio（ALL-375 已申請）。本週指向聖光之戰 landing；以後每週輪替只改這一行的 to:。
+    "ig-save": { to: "https://btgamevip.com/games/shengguang-zhizhan/", utm: { utm_source: "instagram", utm_medium: "social_bio", utm_campaign: "save_ig_bio_202607", utm_content: "ig_20260730" } },
 };
 
 function readCookie(request, name) {
