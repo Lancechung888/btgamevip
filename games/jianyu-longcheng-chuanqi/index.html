@@ -1,20 +1,4 @@
 <!DOCTYPE html>
-<!--
-  AllWell / U2game — REUSABLE GAME LANDING TEMPLATE (ALL-11)
-  ================================================================
-  Render one HTML file per game/campaign by replacing every double-brace token.
-  Tokens are documented in ../games/*.json (see dragon-tiger.json) and
-  in game-landing-pages.md §"How to add a new game".
-
-  Design notes baked in (from ALL-4 audit fixes):
-    - LCP hero is eager + fetchpriority=high + WebP (no loading="lazy")
-    - explicit width/height on images (CLS = 0)
-    - NO jQuery: QR uses a ~0-dep image endpoint, encodes the DOWNLOAD url (not page url)
-    - CTAs are semantic, keyboard-operable <a>/<button>
-    - Attribution (ALL-3): GA4 `download_click` event + first-party aw_cid on click.
-      The u2 download URL params (ag/gid/ldy) are PASSED THROUGH UNCHANGED —
-      we never mutate payout-bearing params (see game-landing-pages.md §Attribution).
--->
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -27,7 +11,7 @@
   <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://btgamevip.com/games/jianyu-longcheng-chuanqi/">
 
-  <!-- hreflang (add market variants as they come online; x-default per ALL-4 fix) -->
+  
   <link rel="alternate" hreflang="zh-Hant" href="https://btgamevip.com/games/jianyu-longcheng-chuanqi/">
   <link rel="alternate" hreflang="x-default" href="https://btgamevip.com/games/jianyu-longcheng-chuanqi/">
 
@@ -47,14 +31,7 @@
   <link rel="preconnect" href="https://static.u2game99.com" crossorigin>
   <link rel="preconnect" href="https://qd.u2game99.com" crossorigin>
 
-  <!-- ===================== GA4 (attribution measurement, ALL-3) =====================
-       Set G-VB0GS9LLLB to a real "G-XXXXXXX" to activate measurement.
-       CEO 2026-07-10: a test GA4 property is sanctioned — it measures the
-       click/download funnel; commission itself is attributed in the u2 backend
-       (not GA4), so a test property is fine and payout-safe.
-       GUARDED: with an empty/placeholder token the loader stays fully inert — no
-       broken GTM request ships. Once a real ID is set, the existing
-       `download_click` event (bottom script) reports for real. -->
+  
   <script>
   (function () {
     var GA4_ID = "G-VB0GS9LLLB";
@@ -168,7 +145,7 @@
       <p>Android / iOS 免費下載，刀刀暴擊全服高爆・散人也能當大佬</p>
     </header>
 
-    <!-- LCP element: eager, high priority, WebP, explicit dims (ALL-4 fixes) -->
+    
     <img class="hero" src="https://btgamevip.com/assets/img/games/jianyu-longcheng/jianyu-longcheng-og-1200x630.jpg" alt="剑御龙城猎魔暴击合击版 儲值折扣下載 刀刀暴擊全服高爆傳奇手遊"
          width="1200" height="630" fetchpriority="high" decoding="async">
 
