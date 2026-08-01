@@ -1,20 +1,4 @@
 <!DOCTYPE html>
-<!--
-  AllWell / U2game — REUSABLE GAME LANDING TEMPLATE (ALL-11)
-  ================================================================
-  Render one HTML file per game/campaign by replacing every double-brace token.
-  Tokens are documented in ../games/*.json (see dragon-tiger.json) and
-  in game-landing-pages.md §"How to add a new game".
-
-  Design notes baked in (from ALL-4 audit fixes):
-    - LCP hero is eager + fetchpriority=high + WebP (no loading="lazy")
-    - explicit width/height on images (CLS = 0)
-    - NO jQuery: QR uses a ~0-dep image endpoint, encodes the DOWNLOAD url (not page url)
-    - CTAs are semantic, keyboard-operable <a>/<button>
-    - Attribution (ALL-3): GA4 `download_click` event + first-party aw_cid on click.
-      The u2 download URL params (ag/gid/ldy) are PASSED THROUGH UNCHANGED —
-      we never mutate payout-bearing params (see game-landing-pages.md §Attribution).
--->
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
@@ -24,11 +8,11 @@
   <title>斗羅大陸：斗神再臨 0.1折充值下載 | U2game 首儲續儲省90% (2026)</title>
   <meta name="description" content="透過 U2game 下載斗羅大陸：斗神再臨，享 0.1折起手遊儲值優惠，首儲續儲最高省90%，Android/iOS 一鍵下載，福利秒到帳、安全穩定。">
   <meta name="keywords" content="斗羅大陸 儲值, 斗羅大陸 0.1折, 斗羅大陸 斗神再臨 下載, U2game, 手遊折扣, Douluo Dalu 儲值">
-  <!-- ALL-233: 斗羅大陸 retired pending valid u2 gid (1401 dead). noindex so we stop ranking a dead-download page. Reversible: restore index,follow when a valid 23xx gid lands. -->
+  
   <meta name="robots" content="noindex,follow">
   <link rel="canonical" href="https://btgamevip.com/games/douluo-dalu/">
 
-  <!-- hreflang (add market variants as they come online; x-default per ALL-4 fix) -->
+  
   <link rel="alternate" hreflang="zh-Hant" href="https://btgamevip.com/games/douluo-dalu/">
   <link rel="alternate" hreflang="x-default" href="https://btgamevip.com/games/douluo-dalu/">
 
@@ -48,14 +32,7 @@
   <link rel="preconnect" href="https://static.u2game99.com" crossorigin>
   <link rel="preconnect" href="https://qd.u2game99.com" crossorigin>
 
-  <!-- ===================== GA4 (attribution measurement, ALL-3) =====================
-       Set G-VB0GS9LLLB to a real "G-XXXXXXX" to activate measurement.
-       CEO 2026-07-10: a test GA4 property is sanctioned — it measures the
-       click/download funnel; commission itself is attributed in the u2 backend
-       (not GA4), so a test property is fine and payout-safe.
-       GUARDED: with an empty/placeholder token the loader stays fully inert — no
-       broken GTM request ships. Once a real ID is set, the existing
-       `download_click` event (bottom script) reports for real. -->
+  
   <script>
   (function () {
     var GA4_ID = "G-VB0GS9LLLB";
@@ -174,15 +151,13 @@
       <p>Android / iOS 一鍵下載，儲值最高省 90%</p>
     </header>
 
-    <!-- LCP element: eager, high priority, WebP, explicit dims (ALL-4 fixes) -->
+    
     <img class="hero" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="斗羅大陸斗神再臨 U2game 0.1折充值下載"
          width="921" height="750" fetchpriority="high" decoding="async">
 
     <div class="price-hook">60元拿648！<span>0.1折起，省90%直接到手</span></div>
 
-    <!-- ALL-233: download CTAs + QR removed. u2 gid 1401 is dead (down.html has no title/button);
-         keeping the buttons would send 100% of clicks to a zero-conversion dead page. Do NOT re-add
-         a gid here until lance confirms a valid 23xx gid from the u2 backend. -->
+    
     <div class="notice-box" role="status">
       <p class="notice-title">本檔目前暫停代理</p>
       <p>「斗羅大陸：斗神再臨」下載連結維護中，暫時無法提供下載。</p>
