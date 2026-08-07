@@ -2,7 +2,7 @@
 layout: post
 title: "u2game儲值教學：3步驟儲值＋0.1折怎麼領（2026）"
 date: 2026-07-25 11:00:00 +0800
-description: "u2game儲值只要3步驟：選遊戲下載折扣版→登入自己帳號選金額→用MyCard官方金流付款，0.1折自動折抵、首儲送代金券。本文教你怎麼領0.1折、MyCard怎麼付、沒到帳怎麼辦，全程走官方渠道不交帳密。"
+description: "u2game儲值只要3步驟：選遊戲下載折扣版→登入自己帳號選金額→用MyCard官方金流付款，0.1折自動折抵、首儲送抵用券。本文教你怎麼領0.1折、MyCard怎麼付、沒到帳怎麼辦，全程走官方渠道不交帳密。"
 tags: ["u2game", "u2game 儲值教學", "u2game 儲值", "MyCard", "0.1折"]
 image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
 ---
@@ -12,7 +12,7 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "u2game儲值教學：3步驟儲值＋0.1折怎麼領（2026）",
-  "description": "u2game儲值只要3步驟：選遊戲下載折扣版→登入自己帳號選金額→用MyCard官方金流付款，0.1折自動折抵、首儲送代金券。本文教你怎麼領0.1折、MyCard怎麼付、沒到帳怎麼辦，全程走官方渠道不交帳密。",
+  "description": "u2game儲值只要3步驟：選遊戲下載折扣版→登入自己帳號選金額→用MyCard官方金流付款，0.1折自動折抵、首儲送抵用券。本文教你怎麼領0.1折、MyCard怎麼付、沒到帳怎麼辦，全程走官方渠道不交帳密。",
   "image": "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png",
   "datePublished": "2026-07-25",
   "dateModified": "2026-07-25",
@@ -45,7 +45,7 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
       "name": "u2game 怎麼儲值？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "3 步——選遊戲下載折扣版、用自己帳號登入選金額、走 MyCard 官方金流付款。0.1 折自動折抵、首儲送代金券。"
+        "text": "3 步——選遊戲下載折扣版、用自己帳號登入選金額、走 MyCard 官方金流付款。0.1 折自動折抵、首儲送抵用券。"
       }
     },
     {
@@ -53,7 +53,7 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
       "name": "u2game 的 0.1 折怎麼領？要輸入折扣碼嗎？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "不用。折扣是折扣版本內建的，走折扣渠道儲值就自動套用，加上代金券實付更低。"
+        "text": "不用。折扣是折扣版本內建的，走折扣渠道儲值就自動套用，加上抵用券實付更低。"
       }
     },
     {
@@ -69,7 +69,7 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
       "name": "u2game 首儲送什麼？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "多數遊戲首次儲值會加送代金券，可在後續結帳折抵，所以先領首儲最划算。"
+        "text": "多數遊戲首次儲值會加送抵用券，可在後續結帳折抵，所以先領首儲最划算。"
       }
     },
     {
@@ -86,7 +86,7 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
 
 # u2game 儲值教學：3 步驟搞定，0.1 折自動折抵
 
-**先給答案：u2game 儲值只要 3 步——① 選遊戲、下載它的折扣版；② 用你自己的帳號登入、選儲值金額；③ 走 MyCard 官方金流付款。折扣（0.1 折起）會自動折抵，首儲送的代金券也會一併入帳。** 全程你自己登入、不需要交出帳號密碼，這就是安全又最省的儲值方式。這篇把每一步、怎麼領 0.1 折、MyCard 怎麼付、沒到帳怎麼辦一次講清楚。
+**先給答案：u2game 儲值只要 3 步——① 選遊戲、下載它的折扣版；② 用你自己的帳號登入、選儲值金額；③ 走 MyCard 官方金流付款。折扣（0.1 折起）會自動折抵，首儲送的抵用券（也寫作「代金券」）也會一併入帳。** 全程你自己登入、不需要交出帳號密碼，這就是安全又最省的儲值方式。這篇把每一步、怎麼領 0.1 折、MyCard 怎麼付、沒到帳怎麼辦一次講清楚。
 
 > **開始前先確認官方渠道**：網域是 `u2game99.com`、扣款走 MyCard 官方 `app.mycard520.com.tw/u2game99`、全程你自己登入。任何叫你交帳密或私下轉帳的都不是官方。詳見 [u2game 安全嗎](https://btgamevip.com/2026/07/25/u2game-safe-review.html)。
 
@@ -98,8 +98,8 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
 
 進遊戲後**用你自己的帳號登入**（新玩家先註冊一個），到儲值頁選你要的金額或禮包。這裡有兩個省錢重點：
 
-- **首儲**：很多遊戲首次儲值會多送代金券，先領首儲最划算。
-- **代金券**：註冊或活動領到的代金券，在結帳時可折抵，讓實付更低。
+- **首儲**：很多遊戲首次儲值會多送抵用券，先領首儲最划算。
+- **抵用券**：註冊或活動領到的抵用券，在結帳時可折抵，讓實付更低。
 
 ## 第 3 步：用 MyCard 官方金流付款
 
@@ -109,7 +109,7 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
 
 ## 0.1 折怎麼領？會自動折抵嗎？
 
-**0.1 折是「折扣版本內建」的，你走折扣渠道儲值就會自動套用，不用另外輸入什麼折扣碼。** 原價 NT$648 的禮包，0.1 折後約 NT$6.48，省約 90%。加上首儲送的代金券，實付還能更低。要記住的重點只有一個：**折扣來自你下載的是「折扣版本」**，走原版遊戲儲值就沒有折扣。想深入看折扣機制，見 [u2game 0.1 折怎麼用](https://btgamevip.com/)。
+**0.1 折是「折扣版本內建」的，你走折扣渠道儲值就會自動套用，不用另外輸入什麼折扣碼。** 原價 NT$648 的禮包，0.1 折後約 NT$6.48，省約 90%。加上首儲送的抵用券，實付還能更低。要記住的重點只有一個：**折扣來自你下載的是「折扣版本」**，走原版遊戲儲值就沒有折扣。想深入看折扣機制，見 [u2game 0.1 折怎麼用](https://btgamevip.com/)。
 
 還沒下載平台的新玩家，從[u2game 0.1 折下載與儲值入口](https://btgamevip.com/u2game/)開始最快——平台介紹、雙平台下載與儲值入口都整理在同一頁。
 
@@ -133,16 +133,16 @@ image: "https://btgamevip.com/assets/posts/u2game-topup-guide-main-og.png"
 ## 常見問題 FAQ
 
 **Q：u2game 怎麼儲值？**
-A：3 步——選遊戲下載折扣版、用自己帳號登入選金額、走 MyCard 官方金流付款。0.1 折自動折抵、首儲送代金券。
+A：3 步——選遊戲下載折扣版、用自己帳號登入選金額、走 MyCard 官方金流付款。0.1 折自動折抵、首儲送抵用券。
 
 **Q：u2game 的 0.1 折怎麼領？要輸入折扣碼嗎？**
-A：不用。折扣是折扣版本內建的，走折扣渠道儲值就自動套用，加上代金券實付更低。
+A：不用。折扣是折扣版本內建的，走折扣渠道儲值就自動套用，加上抵用券實付更低。
 
 **Q：u2game 用 MyCard 怎麼付？**
 A：選好金額後跳到 MyCard 官方頁（`app.mycard520.com.tw/u2game99`）在你自己裝置上付款，有交易紀錄，屬正規金流。
 
 **Q：u2game 首儲送什麼？**
-A：多數遊戲首次儲值會加送代金券，可在後續結帳折抵，所以先領首儲最划算。
+A：多數遊戲首次儲值會加送抵用券，可在後續結帳折抵，所以先領首儲最划算。
 
 **Q：u2game 儲值沒到帳怎麼辦？**
 A：先確認付款成功、登入的是同一帳號、等幾分鐘重開；仍沒到就帶交易紀錄找平台或 MyCard 客服，因走正規金流可查。
