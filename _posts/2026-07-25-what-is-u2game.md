@@ -122,6 +122,8 @@ image: "https://btgamevip.com/assets/posts/what-is-u2game-main-og.png"
 
 **下載平台、註冊帳號、領折扣券都免費，你只在「實際儲值」時才付錢**——而且付的是折扣後的價格。換句話說，不儲值就不用花錢，儲值時比原價省。首儲送代金券的遊戲，等於再多拿一筆回饋。
 
+看完想直接試的話，本站把下載、註冊到首儲的入口整理在[u2game 儲值入口總覽](https://btgamevip.com/u2game/)，照著走就能用折扣價完成第一筆儲值。
+
 ## u2game 有哪些遊戲？
 
 u2game 集結 360＋ 款正版授權手遊，類型涵蓋 MMORPG、卡牌、放置、策略等，包含不少台灣玩家熟悉的授權 IP 作品。你可以在平台上依類型或熱門度找想玩的遊戲，每款都標示折扣與首儲禮包。想儲值時，看 [u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html) 一步步操作。

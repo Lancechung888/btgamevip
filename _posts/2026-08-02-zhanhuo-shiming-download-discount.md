@@ -39,6 +39,8 @@ u2game 平台在架的《戰火使命》標示為「0.1 折首款觸碰互動二
 
 安卓與 iOS 雙平台都有入口。下載與儲值流程跟 u2game 其他遊戲相同：從官方入口（認明 `u2game99.com`）進入遊戲頁 → 註冊／登入平台帳號 → 下載安裝 → 進遊戲儲值，折扣自動生效、不需要輸入序號。完整流程可參考 [u2game 下載教學](https://btgamevip.com/2026/07/25/u2game-download.html)與[儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)；對「0.1 折為什麼可能存在」有疑慮，先看 [0.1 折是真的嗎：折扣服機制拆解](https://btgamevip.com/2026/07/23/mobile-game-01-discount-real.html)。
 
+如果你根本還沒用過這個平台，先看[u2game 是什麼、怎麼儲值最省](https://btgamevip.com/u2game/)，把平台底細摸清楚再入坑也不遲。
+
 ## 四、適合誰玩？三個誠實判斷
 
 1. **適合放置掛機黨**：核心是離線養成與陣容策略，想要高操作即時戰鬥的玩家不適合；

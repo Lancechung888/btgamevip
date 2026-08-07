@@ -48,6 +48,8 @@ date: 2026-08-02
 
 對平台安全性有疑慮，可先看 [u2game 安全嗎：實測與風險拆解](https://btgamevip.com/2026/07/25/u2game-safe-review.html)。順帶一提，游族在 u2game 上架的還有《新盜墓筆記》0.1 折版，玩法品味相近的可以參考 [新盜墓筆記儲值折扣指南](https://btgamevip.com/2026/07/25/xin-daomubiji-topup-discount.html)。
 
+第一次接觸折扣平台的話，建議先從[u2game 平台介紹與 0.1 折儲值入口](https://btgamevip.com/u2game/)把背景與流程看過一遍，再決定從哪一版開玩。
+
 ## 常見問題 FAQ
 
 **Q：少年西遊記2 台灣有代理嗎？**
