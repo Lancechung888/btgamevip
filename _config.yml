@@ -30,6 +30,7 @@ exclude:
   - netlify
   - netlify.toml
   - cf-pages
+  - tools
   - SEO_KEYWORD_RESEARCH.md
   - SEO-7DAY-PLAN.md
   - SEO_GEO_CONTENT_MATRIX_7D.md
