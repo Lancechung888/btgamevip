@@ -36,7 +36,7 @@ image: /assets/posts/u2game-games-list-main-og.png
 | **新不良人** | 畫江湖之不良人第六季正版授權 | 武俠卡牌 RPG | 動畫 IP 武俠、代言人安心亞 |
 | **新盜墓筆記** | 南派三叔《盜墓筆記》正版授權 | 3D 盜墓 MMORPG | 九門下墓摸金、拍賣行自由交易 |
 
-這四款都能在平台用折扣價儲值，適合不同口味：喜歡格鬥選拳魂覺醒、喜歡掛機修仙選星海飛馳、喜歡動畫武俠選新不良人、喜歡開放探險 MMO 選新盜墓筆記。想看更完整、附連結的 0.1 折遊戲清單，見 [0.1 折手遊推薦](https://btgamevip.com/2026/07/25/mobile-game-01-discount-recommend.html)。
+這四款都能在平台用折扣價儲值，適合不同口味：喜歡格鬥選拳魂覺醒、喜歡掛機修仙選星海飛馳、喜歡動畫武俠選新不良人、喜歡開放探險 MMO 選新盜墓筆記。
 
 ## 新手怎麼從 u2game 挑遊戲？3 個原則
 
@@ -68,4 +68,4 @@ u2game 是「一個平台、數百款遊戲」，重點不是它有多少款，�
 
 想直接逛 360＋ 款遊戲、用 0.1 折開局 👉 [u2game 官方 0.1 折儲值入口](https://btgamevip.com/u2game-brand-guide.html?utm_source=btgamevip&utm_medium=blog&utm_campaign=u2game-games)
 
-延伸閱讀：[u2game 是什麼](https://btgamevip.com/2026/07/25/what-is-u2game.html)｜[0.1 折手遊推薦](https://btgamevip.com/2026/07/25/mobile-game-01-discount-recommend.html)｜[u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)｜[u2game 安全嗎](https://btgamevip.com/2026/07/25/u2game-safe-review.html)
+延伸閱讀：[u2game 是什麼](https://btgamevip.com/2026/07/25/what-is-u2game.html)｜[u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)｜[u2game 安全嗎](https://btgamevip.com/2026/07/25/u2game-safe-review.html)

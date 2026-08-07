@@ -71,4 +71,4 @@ A：核心養成與陣容思路大致通用，但陸服版本進度通常較前�
 
 想用 0.1 折開玩陸版 👉 [少年西遊記2（0.1折免費版）下載入口](https://qd.u2game99.com/down.html?ag=da00467&gid=2386&utm_source=btgamevip&utm_medium=blog&utm_campaign=shaonian-xiyouji2)｜先了解平台 👉 [u2game 0.1 折儲值入口總覽](https://btgamevip.com/u2game/?utm_source=btgamevip&utm_medium=blog&utm_campaign=shaonian-xiyouji2)
 
-延伸閱讀：[u2game 是什麼](https://btgamevip.com/2026/07/25/what-is-u2game.html)｜[u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)｜[0.1 折手遊推薦清單](https://btgamevip.com/2026/07/25/mobile-game-01-discount-recommend.html)
+延伸閱讀：[u2game 是什麼](https://btgamevip.com/2026/07/25/what-is-u2game.html)｜[u2game 儲值教學](https://btgamevip.com/2026/07/25/u2game-topup-guide.html)
