@@ -5,6 +5,7 @@ slug: xindouluodalu-taiwan-guanfu
 main_keyword: 新斗羅大陸 關服
 lsi: 新斗羅大陸, 新斗羅大陸 陸服, 新斗羅大陸 神魂不滅, 新斗羅大陸 禮包碼, 新斗羅大陸 攻略, 新斗羅大陸 角色, 斗羅大陸 手遊, 新斗罗大陆
 date: 2026-08-04
+image: /assets/posts/xin-douluo-dalu-taiwan-shutdown-main-og.png
 ---
 
 # 新斗羅大陸關服了嗎？台版結束營運始末、神魂不滅是什麼、陸服現況一次看懂
