@@ -25,8 +25,9 @@ defaults:
     values:
       layout: "post"
 
-# 排除 Netlify 專屬檔（ALL-231：主站建置改 GitHub Pages）
+# 排除 Netlify 專屬檔（主站建置改 GitHub Pages）與內部工作文件（不對外發布）
 exclude:
   - netlify
   - netlify.toml
   - cf-pages
+  - SEO_KEYWORD_RESEARCH.md
