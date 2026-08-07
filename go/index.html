@@ -10,25 +10,24 @@ sitemap: false
 <meta name="robots" content="noindex,nofollow">
 <title>前往下載… | U2game</title>
 <!--
-  AllWell first-party tracking redirect service (ALL-3).
+  First-party tracking redirect service.
   Purpose: give every referral link a clean, first-party, trackable URL, e.g.
     https://btgamevip.com/go/?c=fb_example_20260711&gid=2346
   Behaviour:
-    1. Read campaign label `c` (our sub-id) + `gid` + any utm_* params.
+    1. Read campaign label `c` + `gid` + any utm_* params.
     2. Fire a GA4 `download_redirect` event so we can attribute the CLICK
        to a channel / post / campaign in GA4.
     3. 302-style client redirect to the u2 download page.
   Abuse-resistant: the destination host is HARD-CODED to qd.u2game99.com and
   `gid` is coerced to digits only, so this can never be used as an open redirect.
-  Attribution note: u2 does NOT support sub-id passthrough (confirmed by CEO
-  2026-07-11), so the deposit itself is attributed at the u2 channel level
-  (ag=da00467). This service closes the CLICK side of the funnel; deposits are
-  correlated with GA4 campaign click volume over time (approximate attribution).
+  Attribution note: the destination does not carry the campaign label through,
+  so this service only closes the CLICK side of the funnel; downstream results
+  are correlated with GA4 campaign click volume over time (approximate).
 -->
 <script>
 (function () {
   var qs = new URLSearchParams(window.location.search);
-  // gid: digits only. ALL-233: removed the old default 1401 (斗羅大陸) — that gid is dead at u2.
+  // gid: digits only. The old hard-coded default gid was removed — that title is no longer available.
   // A /go/ hit with NO valid gid now falls back to the games index, never a dead download page.
   var gid = (qs.get('gid') || '').replace(/[^0-9]/g, '');
   var campaign = (qs.get('c') || qs.get('utm_campaign') || 'direct').slice(0, 120);

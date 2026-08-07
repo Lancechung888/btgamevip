@@ -204,7 +204,7 @@
     var ANDROID_URL = "https://qd.u2game99.com/down.html?ag=da00467&gid=2317&ldy=1";          // u2 URL, params UNCHANGED
     var QR_TARGET   = ANDROID_URL;                // QR encodes the DOWNLOAD url, not page url
 
-    // ---- First-party click id (aw_cid): stable per browser, opaque, no PII (ALL-3) ----
+    // ---- First-party click id (aw_cid): stable per browser, opaque, no PII ----
     function getAwCid() {
       try {
         var k = "aw_cid", v = localStorage.getItem(k);
@@ -223,7 +223,7 @@
       return new URLSearchParams(location.search).get(name) || "";
     }
 
-    // ---- fire GA4 event on CTA click (no-op until GA4/gtag lands via ALL-3) ----
+    // ---- fire GA4 event on CTA click (no-op until GA4/gtag has loaded) ----
     function trackDownload(platform) {
       var payload = {
         game_slug: GAME_SLUG,
