@@ -15,7 +15,25 @@ layout: null
     <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
   </url>
   {% endfor %}
+  {%- comment -%} 補收根層可索引承接頁。
+       根因：本檔為手寫模板（其存在會讓 jekyll-sitemap 自動產生器停用），先前只列首頁、
+       site.posts、以及 /games/ 與 /save/ 下的 site.static_files。凡帶 front matter 的檔案
+       在 Jekyll 屬 Page 而非 StaticFile，前述迴圈一律看不到，因此承接頁結構性地漏收。
+       規則＝收 site.html_pages，排除首頁(/ 已於上方列出)、/404.html，以及 front matter 帶
+       sitemap:false 的頁。轉址殼／noindex 頁一律以 sitemap:false 標記＝單一退出訊號。
+       本迴圈補收：/games/（遊戲索引頁）與 u2game 品牌承接頁。 {%- endcomment -%}
+  {% for page in site.html_pages %}
+  {% if page.sitemap != false and page.url != '/' and page.url != '/404.html' %}
+  <url>
+    <loc>{{ site.url }}{{ page.url | remove: 'index.html' }}</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  {% endif %}
+  {% endfor %}
   {% for f in site.static_files %}
+  {%- comment -%} /games/ 個別遊戲頁（無 front matter＝static_files）。 {%- endcomment -%}
   {% if f.path contains '/games/' and f.name == 'index.html' %}
   <url>
     <loc>{{ site.url }}{{ f.path | remove: 'index.html' }}</loc>
