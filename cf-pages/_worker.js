@@ -99,6 +99,25 @@ const LINKS = {
     "fb-save-shengguang": { to: "https://btgamevip.com/games/shengguang-zhizhan/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "save_howto_202607", utm_content: "fb_20260730" } },
     // ig-save = IG link-in-bio（ALL-375 已申請）。本週指向聖光之戰 landing；以後每週輪替只改這一行的 to:。
     "ig-save": { to: "https://btgamevip.com/games/shengguang-zhizhan/", utm: { utm_source: "instagram", utm_medium: "social_bio", utm_campaign: "save_ig_bio_202607", utm_content: "ig_20260730" } },
+    // 2026-07-28 launch cohort - 4 titles, one landing page each.
+    // Destination is our own landing page, so these use to: rather than gid: — the to: branch
+    // carries UTM only, and the download button on the landing page carries the payout params.
+    "fb-tianxuan_yingxiong-a": { to: "https://btgamevip.com/games/tianxuan-yingxiong/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "tianxuan_yingxiong_launch_202607", utm_content: "image_a" } },
+    "fb-tianxuan_yingxiong-b": { to: "https://btgamevip.com/games/tianxuan-yingxiong/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "tianxuan_yingxiong_launch_202607", utm_content: "image_b" } },
+    "tw-tianxuan_yingxiong-a": { to: "https://btgamevip.com/games/tianxuan-yingxiong/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "tianxuan_yingxiong_launch_202607", utm_content: "tweet_a" } },
+    "tw-tianxuan_yingxiong-b": { to: "https://btgamevip.com/games/tianxuan-yingxiong/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "tianxuan_yingxiong_launch_202607", utm_content: "tweet_b" } },
+    "fb-gongfu_zhiye-a": { to: "https://btgamevip.com/games/gongfu-zhiye/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "gongfu_zhiye_launch_202607", utm_content: "image_a" } },
+    "fb-gongfu_zhiye-b": { to: "https://btgamevip.com/games/gongfu-zhiye/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "gongfu_zhiye_launch_202607", utm_content: "image_b" } },
+    "tw-gongfu_zhiye-a": { to: "https://btgamevip.com/games/gongfu-zhiye/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "gongfu_zhiye_launch_202607", utm_content: "tweet_a" } },
+    "tw-gongfu_zhiye-b": { to: "https://btgamevip.com/games/gongfu-zhiye/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "gongfu_zhiye_launch_202607", utm_content: "tweet_b" } },
+    "fb-douzhuan_wulin-a": { to: "https://btgamevip.com/games/douzhuan-wulin/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "douzhuan_wulin_launch_202607", utm_content: "image_a" } },
+    "fb-douzhuan_wulin-b": { to: "https://btgamevip.com/games/douzhuan-wulin/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "douzhuan_wulin_launch_202607", utm_content: "image_b" } },
+    "tw-douzhuan_wulin-a": { to: "https://btgamevip.com/games/douzhuan-wulin/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "douzhuan_wulin_launch_202607", utm_content: "tweet_a" } },
+    "tw-douzhuan_wulin-b": { to: "https://btgamevip.com/games/douzhuan-wulin/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "douzhuan_wulin_launch_202607", utm_content: "tweet_b" } },
+    "fb-wangzhe_zhijian2-a": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "image_a" } },
+    "fb-wangzhe_zhijian2-b": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "image_b" } },
+    "tw-wangzhe_zhijian2-a": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "tweet_a" } },
+    "tw-wangzhe_zhijian2-b": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "tweet_b" } },
 };
 
 function readCookie(request, name) {
