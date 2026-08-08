@@ -261,7 +261,63 @@ rc, out = run(BASE_FILES, extra=["--baseline", bl + ".nope"])
 check("--baseline 指向不存在的檔 → rc 2（不確定豁免什麼就不豁免）", rc == 2, out[-300:])
 os.unlink(bl)
 
-# --- 12. 公版規則表本身不得含內部資訊 ----------------------------------------
+# --- 12. 站台身分不變式（og:site_name） --------------------------------------
+# 這條擋的是「手寫完整 HTML 的頁繞過版型 include」——那些頁不共用版型，
+# 所以共用版型偵測抓不到它們，只能逐頁比對站名常數。
+CANON = "BT 手遊情報站｜台灣手遊儲值攻略與下載入口"
+
+
+def handwritten(site_name):
+    """模擬繞過 include 的手寫頁：自己硬寫 <head>，站名自己填。"""
+    return ('<!doctype html><html><head><title>手寫頁</title>'
+            '<meta property="og:site_name" content="%s">'
+            '</head><body><p>本頁不走版型。</p></body></html>' % site_name)
+
+
+rc, out = run({"index.html": page(), "a/index.html": page(),
+               "games/x/index.html": handwritten("U2game")})
+s = summary(out)
+check("og:site_name 自稱平台方名字 → error、擋部署",
+      rc == 1 and s["error"] == 1 and "site_identity" in out, out[-600:])
+check("錯誤訊息帶得出實際值與正規值",
+      "og:site_name='U2game'" in out and CANON in out, out[-600:])
+
+rc, out = run({"index.html": page(), "a/index.html": page(),
+               "games/x/index.html": handwritten(CANON)})
+check("og:site_name 等於正規站名 → 放行", rc == 0 and summary(out)["error"] == 0,
+      out[-400:])
+
+# 沒有 og:site_name 這一欄的頁（例：404）不在本條射程內，不得誤報。
+rc, out = run({"index.html": page(), "a/index.html": page(),
+               "404.html": '<!doctype html><html><head><title>頁面不存在 | %s</title>'
+                           '</head><body><p>找不到</p></body></html>' % CANON})
+check("頁面沒有 og:site_name → 不誤報", rc == 0 and summary(out)["error"] == 0,
+      out[-400:])
+
+# 單引號屬性、屬性順序顛倒、實體編碼 —— 換個寫法就繞過去的閘等於沒有。
+rc, out = run({"index.html": page(), "a/index.html": page(),
+               "games/x/index.html": '<!doctype html><html><head>'
+               "<meta content='BT&nbsp;Game' property='og:site_name'>"
+               "</head><body><p>x</p></body></html>"})
+check("單引號＋屬性順序顛倒＋HTML 實體 → 一樣擋得下",
+      rc == 1 and summary(out)["error"] == 1, out[-600:])
+
+# 基建層：規則表缺這個常數＝沒有可比對的基準，一律 rc 2（不受任何豁免影響）。
+with open(RULES, encoding="utf-8") as fh:
+    _rules_obj = json.load(fh)
+check("公版規則表帶得出具名常數 site_identity.canonical_site_name",
+      _rules_obj.get("site_identity", {}).get("canonical_site_name") == CANON,
+      repr(_rules_obj.get("site_identity")))
+_stripped = dict(_rules_obj)
+_stripped.pop("site_identity", None)
+_fd, _noident = tempfile.mkstemp(suffix=".json")
+with os.fdopen(_fd, "w", encoding="utf-8") as fh:
+    json.dump(_stripped, fh, ensure_ascii=False)
+rc, out = run({"index.html": page()}, rules=_noident)
+check("規則表缺站名常數 → rc 2（fail-closed，不是靜默略過）", rc == 2, out[-400:])
+os.unlink(_noident)
+
+# --- 13. 公版規則表本身不得含內部資訊 ----------------------------------------
 with open(RULES, encoding="utf-8") as fh:
     rules_text = fh.read()
 leaks = [p for p in (r"ALL-\d+", "da00467", "cps", "分成", "firstpay",

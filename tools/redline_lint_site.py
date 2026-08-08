@@ -35,6 +35,12 @@ front-matter title 在建置時聚合而成 —— 只審 markdown 一樣掃不�
     **判 error**。站名去折已於 2026-08-08 上線，此類命中的角色是「回歸偵測」，
     不是待辦提示，所以不降 warn。
   * 語境閘：合規政策定義在規則表的 `context_gates`，工程端不得自行增刪詞條。
+  * 站台身分不變式：每一份建置產物只要有 `og:site_name`，其值就必須等於規則表
+    `site_identity.canonical_site_name`，否則 **error**。存在的理由是站上有一批
+    手寫完整 HTML 的頁（`layout: null`/`none`）自己硬寫 `<head>`，不走
+    `_includes/head.html`、也不走 jekyll-seo-tag —— 改 include 改不到它們，
+    抽樣驗收又剛好會抽到走 include 的頁而顯示「全站已清」。
+    這條比對的是我方站名這個自家常數，不涉及外部契約判定，故不需要 provenance。
 
 用法：
     python3 tools/redline_lint_site.py                      # 預設 _config.yml + _site
@@ -429,6 +435,18 @@ def load_rules(path: str) -> dict:
     if d:
         rules["density"] = dict(d, _pat=re.compile(d["pattern"]),
                                 _strict=re.compile(d["strict_pattern"]))
+
+    # 站台身分不變式的正規站名。fail-closed：規則表沒帶這個常數，
+    # 或帶了空字串，就等於這條閘無從比對 —— 那是基礎建設層失敗，不是「沒命中」。
+    ident = raw.get("site_identity") or {}
+    canon = ident.get("canonical_site_name")
+    if not isinstance(canon, str) or not canon.strip():
+        print("ERROR: 規則表 %s 缺少 site_identity.canonical_site_name —— "
+              "站台身分不變式沒有可比對的常數，一律當失敗（fail-closed）" % path,
+              file=sys.stderr)
+        sys.exit(2)
+    rules["site_identity"] = dict(ident, canonical_site_name=canon)
+
     if not (rules["by_name"] or rules["by_gid"] or rules["gates"]):
         print("ERROR: 規則表 %s 是空的（沒有任何可執行規則）" % path, file=sys.stderr)
         sys.exit(2)
@@ -454,6 +472,50 @@ def url_to_relpath(href: str, base_relpath: str = ""):
     if path.endswith("/") or "." not in os.path.basename(path):
         path = path.rstrip("/") + "/index.html"
     return path.lstrip("/")
+
+
+SITE_NAME_META_RE = re.compile(
+    r"<meta\b[^>]*>", re.I)
+META_ATTR_RE = re.compile(
+    r'([a-zA-Z:_-]+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'>]+))')
+
+
+def check_site_identity(raw: str, ident: dict) -> list:
+    """站台身分不變式：本頁若有 og:site_name，它必須等於正規站名。
+
+    為什麼這條要單獨存在（而不是靠版型 include 保證）：站上有一批頁是手寫完整
+    HTML（`layout: null` / `layout: none`），自己硬寫 `<head>`，不走
+    `_includes/head.html`、也不走 jekyll-seo-tag。任何 chrome 層的裁示改的是
+    include，這些頁一個字都不會被改到，而抽樣驗收只要抽到走 include 的頁就會
+    顯示「全站已清」—— 靜默漏頁。這條把「站名」變成建置產物層的不變式，
+    誰繞過版型都躲不掉。
+
+    授權定位：這比對的是**我方站名**這個我們自己 100% 說了算的常數，
+    不是禁詞條目、不涉及外部契約判定，所以不需要 provenance；
+    正規站名寫在規則表的具名常數 site_identity.canonical_site_name，
+    日後改站名只改一處。
+    """
+    canon = ident["canonical_site_name"]
+    findings = []
+    for m in SITE_NAME_META_RE.finditer(raw):
+        attrs = {}
+        for a in META_ATTR_RE.finditer(m.group(0)):
+            attrs[a.group(1).lower()] = next(
+                (g for g in (a.group(2), a.group(3), a.group(4)) if g is not None), "")
+        key = (attrs.get("property") or attrs.get("name") or "").lower()
+        if key != "og:site_name":
+            continue
+        value = html.unescape(attrs.get("content", "")).strip()
+        if value == canon:
+            continue
+        findings.append(dict(
+            sev=ident.get("severity", "error"), cat="site_identity",
+            line=raw.count("\n", 0, m.start()) + 1,
+            match="og:site_name=%r ≠ 正規站名 %r" % (value, canon),
+            msg=ident.get("message", "og:site_name 不等於全站正規站名。"),
+            fix=ident.get("suggestion", "改成規則表 site_identity.canonical_site_name 的值。"),
+        ))
+    return findings
 
 
 def discover_build_files(root: str):
@@ -636,7 +698,7 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         sys.exit(2)
 
     # 第 1 趟：全站解析。共用版型偵測需要全站語料，不能一檔一檔看。
-    parsed, gid_index = {}, {}
+    parsed, gid_index, identity = {}, {}, {}
     for full in files:
         rel = os.path.relpath(full, build_root).replace(os.sep, "/")
         with open(full, encoding="utf-8", errors="replace") as fh:
@@ -646,6 +708,12 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         ex.close()
         parsed[rel] = ex.blocks
         gid_index[rel] = set(GID_RE.findall(raw))
+        # 身分不變式看的是原始 HTML 的 meta 標籤，不走區塊化 ——
+        # 區塊化會把 chrome meta 併進共用版型偵測，而繞過 include 的頁正好
+        # 不共用版型，靠共用版型偵測是抓不到它們的。
+        hits = check_site_identity(raw, rules["site_identity"])
+        if hits:
+            identity[rel] = hits
     boilerplate = find_boilerplate(parsed)
 
     # 第 2 趟：逐塊判定。
@@ -665,10 +733,15 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
                              is_chrome(b, boilerplate), findings, page_gated)
             gated.extend((rel,) + g for g in page_gated)
         findings.extend(scan_density(blocks, rules))
+        findings.extend(identity.pop(rel, []))
         if findings:
             out[rel] = findings
+    for rel, hits in identity.items():          # 解析不出任何區塊的頁也要收
+        out.setdefault(rel, []).extend(hits)
     print("[build] 掃 %d 份建置產物、共用版型區塊 %d 塊、規則表 %s"
           % (len(files), len(boilerplate), rules_path))
+    print("[build] 站台身分不變式：正規站名 %r"
+          % rules["site_identity"]["canonical_site_name"])
     return out, gated, len(files)
 
 

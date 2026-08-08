@@ -51,9 +51,15 @@ SECTIONS = {
     "__root__": {
         # context_gate_policy 是刻意公開的：它是「語境閘該不該開」的判準本身，
         # 不是 provenance。留在私版等於下一個人改規則時看不到它，又會重問一次。
-        "public": ["version", "context_gate_policy", "discount_patterns", "by_name",
-                   "frozen", "by_gid", "wording", "context_gates", "density"],
-        "private_only": ["_comment"],
+        # site_identity 是刻意公開的：它裝的是「我方站名」這個我們自己說了算的常數，
+        # 不含任何來源／契約判定，公開它才有辦法在 CI 上比對。
+        "public": ["version", "context_gate_policy", "site_identity", "discount_patterns",
+                   "by_name", "frozen", "by_gid", "wording", "context_gates", "density"],
+        "private_only": ["_comment", "_site_identity_comment"],
+    },
+    "site_identity": {
+        "public": ["canonical_site_name", "severity", "public_message", "public_suggestion"],
+        "private_only": ["source", "message", "suggestion", "notes"],
     },
     "by_name": {
         "public": ["id", "names", "rule", "severity", "public_message", "public_suggestion"],
@@ -133,8 +139,9 @@ def build_public(priv: dict) -> dict:
                 filter_keys(item, section, "%s[%d] (%s)" % (section, i, item.get("id", "?")))
                 for i, item in enumerate(out[section])
             ]
-    if "density" in out:
-        out["density"] = filter_keys(out["density"], "density", "density")
+    for section in ("site_identity", "density"):
+        if section in out:
+            out[section] = filter_keys(out[section], section, section)
     out["_generated_by"] = ("tools/export_redline_rules.py —— 本檔為自動產出的公版，"
                             "請勿手改；改規則請改私版後重跑本腳本。")
     return out

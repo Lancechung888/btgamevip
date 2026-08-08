@@ -1,6 +1,12 @@
 {
   "context_gate_policy": "語境例外閘（context_gates）的開設判準：只開在『判定標準由我方自訂』的詞條上（例：自訂宣稱紀律、消費者保護語境）—— 那裡的判官是我們自己，機器看否定詞就判得準，開一次閘省下反覆改寫。對外契約型紅線 —— by_name／by_gid／frozen —— 一律不開語境閘：這類詞條的判定方在外部、多以關鍵字比對、不判語境，我方語境正確不等於對方判定正確；風險不對稱：開閘的下行不在我方掌握，改寫的下行通常只有一兩個詞。語境閘的新增與放寬一律需合規核可，工程端不得自行增刪。",
   "version": "1.1",
+  "site_identity": {
+    "canonical_site_name": "BT 手遊情報站｜台灣手遊儲值攻略與下載入口",
+    "severity": "error",
+    "message": "og:site_name 不等於全站正規站名。這一欄就是分享卡片上顯示的「發佈者」，它自成一格，跟本頁標題無關。",
+    "suggestion": "把 og:site_name 改成規則表 site_identity.canonical_site_name 的值。手寫完整 HTML 的頁面不走版型 include，chrome 欄位得自己對齊。"
+  },
   "discount_patterns": [
     "0\\.\\d+\\s*折",
     "\\d+\\s*折",
