@@ -231,8 +231,7 @@ layout: null
         </div>
 
         <div class="qrcode-box">
-            <div id="mobile-qrcode"></div>
-            <img id="mobile-qrcode-fallback" alt="下載QR Code" style="display:none;width:220px;height:220px;margin:0 auto;" />
+            <img id="mobile-qrcode" alt="掃碼下載 U2game APP" width="220" height="220" loading="lazy" decoding="async" style="width:220px;height:220px;margin:0 auto;" />
             <p style="color:#333;font-size:18px;margin-top:12px;font-weight:bold;">掃碼下載，福利秒到帳！</p>
         </div>
 
@@ -253,8 +252,7 @@ layout: null
         </section>
 
         <div class="footer-qr">
-            <div id="mobile-qrcode2" style="width:200px;height:200px;margin:0 auto;"></div>
-            <img id="mobile-qrcode2-fallback" alt="下載QR Code" style="display:none;width:200px;height:200px;margin:0 auto;" />
+            <img id="mobile-qrcode2" alt="掃碼下載 U2game APP" width="200" height="200" loading="lazy" decoding="async" style="width:200px;height:200px;margin:0 auto;" />
             <p style="margin-top:12px;font-size:20px;">再掃一次，0.1折直接領！</p>
         </div>
     </div>
@@ -309,8 +307,6 @@ layout: null
     <div class="big-btn ios-btn" onclick="down_btn('ios')">iOS 立即領</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-qrcode@1.0/jquery.qrcode.min.js"></script>
 <script>
     const iosUrl = "https://mobapp.u2game99.com/#/front-page/recommendgame?key=zYshWpBN15";
     const androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
@@ -324,27 +320,18 @@ layout: null
         }
     }
 
-    // QR Code（加防呆：若CDN被擋，不影響主流程）
-    function createQR(id, size=220, fallbackId=null) {
-        const targetUrl = window.location.href;
-
-        // 優先用本地qrcode插件
-        if (window.jQuery && jQuery.fn && jQuery.fn.qrcode) {
-            jQuery(id).qrcode({ width: size, height: size, text: targetUrl });
-            return;
-        }
-
-        // 插件失敗時，改用外部API圖片降級
-        if (fallbackId) {
-            const img = document.getElementById(fallbackId);
-            if (img) {
-                img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(targetUrl)}`;
-                img.style.display = 'block';
-            }
-        }
+    // QR Code：純 <img>，不依賴任何第三方 JS。
+    // 編碼的是「帶歸因參數的 Android 下載連結」而非本頁網址 —— 掃碼即下載，
+    // 且後台分得出掃碼(qr)與點按鈕(cta)，以及是首屏還是頁尾那顆。
+    function createQR(id, size, content) {
+        const img = document.getElementById(id);
+        if (!img) return;
+        const targetUrl = androidUrl + '&utm_source=site&utm_medium=qr&utm_content=' + content;
+        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size +
+                  '&data=' + encodeURIComponent(targetUrl);
     }
-    createQR('#mobile-qrcode', 220, 'mobile-qrcode-fallback');
-    createQR('#mobile-qrcode2', 200, 'mobile-qrcode2-fallback');
+    createQR('mobile-qrcode', 220, 'hero-qr');
+    createQR('mobile-qrcode2', 200, 'footer-qr');
 
     // 8秒彈窗
     setTimeout(() => {

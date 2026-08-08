@@ -211,7 +211,7 @@
     var GAME_SLUG = "zhaohuanshi_fenzheng";
     var CAMPAIGN  = "zhaohuanshi_fenzheng_launch_202607";
     var ANDROID_URL = "https://qd.u2game99.com/down.html?ag=da00467&gid=2317&ldy=1";          // u2 URL, params UNCHANGED
-    var QR_TARGET   = ANDROID_URL;                // QR encodes the DOWNLOAD url, not page url
+    var QR_TARGET   = ANDROID_URL + "&utm_source=landing&utm_medium=referral&utm_campaign=" + CAMPAIGN + "&utm_content=hero-qr&utm_term=" + GAME_SLUG;                // QR encodes the DOWNLOAD url, not page url
 
     // ---- First-party click id (aw_cid): stable per browser, opaque, no PII ----
     function getAwCid() {
