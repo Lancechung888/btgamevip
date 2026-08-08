@@ -1,0 +1,12 @@
+# Jekyll 建置產物
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# git worktree 暫存目錄
+_wt_*/
+
+# 紅線規則表的「私版」——含 provenance／稽核欄位（來源公告、工單號、罰則）。
+# 公版由 tools/export_redline_rules.py 單向產出成 tools/redline_rules.json 才進 repo。
+# 這一行是唯一擋住內部資訊外流的東西，不要刪。
+data/

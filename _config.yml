@@ -54,6 +54,9 @@ exclude:
   - netlify.toml
   - cf-pages
   - tools
+  # data/ 是紅線規則表的私版（含 provenance），已在 .gitignore。
+  # 這裡再排一次是雙保險：萬一本機有人 build，不會把它複製進 _site 一起公開。
+  - data
   - SEO_KEYWORD_RESEARCH.md
   - SEO-7DAY-PLAN.md
   - SEO_GEO_CONTENT_MATRIX_7D.md

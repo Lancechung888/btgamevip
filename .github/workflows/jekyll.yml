@@ -52,10 +52,21 @@ jobs:
         run: python3 tools/strip-html-comments.py _site
       - name: Verify no HTML comments are published
         run: python3 tools/strip-html-comments.py --check _site
-      - name: Redline lint (rendered HTML)
+      - name: Redline lint (rendered HTML chrome)
         # 查 build 產物，不查原始碼：站名／站說明是 build 時才注入每一頁的，
         # 只審 markdown 看不到，過去就是這樣漏掉的。
+        # 這一步是 chrome 快篩：_config.yml 的 title/description ＋ 每頁 meta ＋ feed 頻道層。
         run: python3 tools/redline_lint_site.py --site-root _site
+      - name: Redline lint (build output, fail-closed)
+        # 區塊級全面閘。位置是刻意的：在 upload-pages-artifact 之前。
+        # 放到 deploy 之後等於還是 post-deploy —— 違規已經上線了才發現，白做。
+        # 非 0 即中斷整個 workflow，deploy job 因 needs: build 不會執行。
+        # 禁止在這裡加 `|| true` 或 continue-on-error：閘的價值全在它會擋。
+        run: >-
+          python3 tools/redline_lint_site.py
+          --build-root _site
+          --rules tools/redline_rules.json
+          --baseline tools/redline_baseline.json
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3

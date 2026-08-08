@@ -21,7 +21,11 @@ layout: null
     <link rel="canonical" href="https://btgamevip.com/">
 
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="U2game">
+    {%- comment -%}
+      og:site_name 是「站名」欄位，不是本頁標題：全站一致，分享卡片才會長成同一個品牌。
+      首頁是手寫頁（layout: null），不吃 _config.yml 的 title，所以要在這裡各別同步。
+    {%- endcomment -%}
+    <meta property="og:site_name" content="BT 手遊情報站｜台灣手遊儲值攻略與下載入口">
     <meta property="og:locale" content="zh_TW">
     <meta property="og:title" content="U2game是什麼？0.1折起儲值優惠｜正版安全評價＋儲值教學">
     <meta property="og:description" content="U2game 安全嗎？正版授權手遊儲值平台，360+ 遊戲儲值 0.1 折起，首儲再送 100% 抵用券。3 分鐘看懂 U2game 是什麼、怎麼領 0.1 折券、如何安全下載，直儲與代儲差別一次搞懂。">

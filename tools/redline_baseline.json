@@ -1,0 +1,61 @@
+{
+  "_comment": "紅線閘的既有存量清單。只能變短：清完一筆刪一筆，全清完就連同 CI 上的 --baseline 參數一起刪掉。新增條目必須經合規核可，不是工程端自己加。",
+  "entries": [
+    {
+      "key": "2026/07/26/u2game-games-list.html|context_gate|學生黨",
+      "page": "2026/07/26/u2game-games-list.html",
+      "category": "context_gate",
+      "match": "學生黨",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    },
+    {
+      "key": "2026/07/28/u2game-refund.html|context_gate|未成年",
+      "page": "2026/07/28/u2game-refund.html",
+      "category": "context_gate",
+      "match": "未成年",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    },
+    {
+      "key": "2026/07/29/xiuxian-mobile-game-2026.html|game_redline|折扣",
+      "page": "2026/07/29/xiuxian-mobile-game-2026.html",
+      "category": "game_redline",
+      "match": "折扣",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    },
+    {
+      "key": "2026/07/29/zhetian-dilu-zhengfeng-beginner-guide.html|context_gate|穩定收益",
+      "page": "2026/07/29/zhetian-dilu-zhengfeng-beginner-guide.html",
+      "category": "context_gate",
+      "match": "穩定收益",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    },
+    {
+      "key": "games/zhizun-bingwang/index.html|game_redline|折扣",
+      "page": "games/zhizun-bingwang/index.html",
+      "category": "game_redline",
+      "match": "折扣",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    },
+    {
+      "key": "save/compare/index.html|game_redline|「至尊兵王」×「折數」",
+      "page": "save/compare/index.html",
+      "category": "game_redline",
+      "match": "「至尊兵王」×「折數」",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    },
+    {
+      "key": "save/compare/index.html|game_redline|「遮天」×「折數」",
+      "page": "save/compare/index.html",
+      "category": "game_redline",
+      "match": "「遮天」×「折數」",
+      "owner": "Content Editor",
+      "note": "待 Content 文案改寫；清掉後把這筆從本檔刪除"
+    }
+  ]
+}

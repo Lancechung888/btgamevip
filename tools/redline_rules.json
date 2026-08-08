@@ -1,0 +1,349 @@
+{
+  "version": "1.1",
+  "discount_patterns": [
+    "0\\.\\d+\\s*折",
+    "\\d+\\s*折",
+    "折扣",
+    "折數",
+    "返現",
+    "返利",
+    "首充號",
+    "折扣號",
+    "代儲折"
+  ],
+  "by_name": [
+    {
+      "id": "fanren-xinghaifeichi",
+      "names": [
+        "凡人修仙傳",
+        "星海飛馳"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "yinian-jiange",
+      "names": [
+        "一念劍歌"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "zhangjian-fengmo",
+      "names": [
+        "仗劍封魔"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "zhensanguo-wushuang-ba",
+      "names": [
+        "re:真[·・‧\\s]?三國無雙"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "qingyunian",
+      "names": [
+        "慶餘年",
+        "慶余年"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "jinxiu-shangpu",
+      "names": [
+        "錦繡商鋪"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "shanggu-wangguan",
+      "names": [
+        "上古王冠"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "xinbulianger",
+      "names": [
+        "新不良人"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "douluo-nizhuan-shikong",
+      "names": [
+        "斗羅逆轉時空",
+        "逆轉時空"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "gedou-sanguozhi",
+      "names": [
+        "格鬥三國志"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "sanguozhi-huanxiang-dalu-2",
+      "names": [
+        "三國志幻想大陸",
+        "梟之歌",
+        "枭之歌"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "bailong-baye",
+      "names": [
+        "百龍霸業"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "jingling-shengdian-liming",
+      "names": [
+        "精靈盛典"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "douluo-ip-family",
+      "names": [
+        "斗羅"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現（單純提及關服／新聞不算，故採同塊判定）"
+    },
+    {
+      "id": "zhizun-bingwang",
+      "names": [
+        "至尊兵王"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    },
+    {
+      "id": "zhetian",
+      "names": [
+        "遮天"
+      ],
+      "rule": "no_discount",
+      "severity": "error",
+      "message": "點名遊戲與折數字樣同塊出現"
+    }
+  ],
+  "frozen": [
+    {
+      "id": "gid1160",
+      "names": [
+        "gid1160",
+        "gid=1160"
+      ],
+      "severity": "error",
+      "message": "永久跳過名單：不得出現在任何對外文案或落地頁"
+    },
+    {
+      "id": "jiuzhou-qunjianglu",
+      "names": [
+        "九州群將錄",
+        "九州群将录"
+      ],
+      "severity": "error",
+      "message": "永久跳過名單：不得出現在任何對外文案或落地頁"
+    },
+    {
+      "id": "wohewodetiangong",
+      "names": [
+        "我和我的天宮",
+        "我和我的天宫"
+      ],
+      "severity": "error",
+      "message": "永久跳過名單：不得出現在任何對外文案或落地頁"
+    },
+    {
+      "id": "gid2409-yongzhe-chuancheng",
+      "names": [
+        "勇者傳承"
+      ],
+      "severity": "error",
+      "message": "永久跳過名單：不得出現在任何對外文案或落地頁"
+    },
+    {
+      "id": "gid2392-wodeyingxiong-zhilu",
+      "names": [
+        "我的英雄之路"
+      ],
+      "severity": "error",
+      "message": "永久跳過名單：不得出現在任何對外文案或落地頁"
+    }
+  ],
+  "by_gid": [
+    {
+      "id": "gid-2367-2356-no-discount",
+      "gids": [
+        "2367",
+        "2356"
+      ],
+      "patterns": [
+        "0\\.\\d+\\s*折",
+        "\\d+\\s*折",
+        "折扣",
+        "折數",
+        "返現"
+      ],
+      "severity": "error",
+      "message": "該款規則為禁折字／折數／返現"
+    },
+    {
+      "id": "gid-2368-first-topup-full-price",
+      "gids": [
+        "2368"
+      ],
+      "patterns": [
+        "首儲[^。！？\\n]{0,12}(折|免費|0\\s*元|優惠價)"
+      ],
+      "unless_page": [
+        "首儲為原價",
+        "首儲原價"
+      ],
+      "severity": "error",
+      "message": "該款規則為『首儲原價』，不得宣稱首儲有折／免費"
+    },
+    {
+      "id": "gid-2317-no-nt-rate-fixed",
+      "gids": [
+        "2317"
+      ],
+      "patterns": [
+        "折後\\s*NT\\$?\\s*\\d+",
+        "NT\\$\\s*\\d+\\s*(折後|抵|換)",
+        "兌換比",
+        "\\d+\\s*[:：]\\s*\\d+\\s*(兌換|比例)",
+        "固定額度",
+        "送\\s*(自選\\s*)?\\d{2,}\\s*(連抽|抽|元寶|鑽石|點券)"
+      ],
+      "severity": "error",
+      "message": "該款規則為禁折後 NT$／兌換比／固定額度（單純折數未被該款禁止）"
+    }
+  ],
+  "wording": [
+    {
+      "id": "gambling-mechanic",
+      "pattern": "老虎機|吃角子|拉霸|輪盤賭|賭輪盤",
+      "severity": "error",
+      "message": "賭博機制字樣，一律不得進入任何對外文案（不分遊戲）",
+      "suggestion": "整段改寫；遊戲原始簡介若含此類字樣，禁止照抄"
+    },
+    {
+      "id": "fixed-amount-giveaway",
+      "pattern": "送\\s*(自選\\s*)?\\d{2,}\\s*(連抽|抽|元寶|鑽石|點券|代金|金幣|平台幣)",
+      "severity": "error",
+      "message": "固定額度贈送（如「送自選 1000 連抽」）一律不得進入任何對外文案（不分遊戲）",
+      "suggestion": "改為不承諾固定數量的寫法（如「登入可領抵用券，數量以當下活動為準」）"
+    },
+    {
+      "id": "first-topup-free",
+      "pattern": "首儲[^。！？\\n]{0,12}(免費|0\\s*元)",
+      "severity": "warn",
+      "message": "『首儲＋免費』組合與全站去折數方向相反，列為觀察項",
+      "suggestion": "交 Content 判定去留並寫出判準；不要憑感覺改"
+    },
+    {
+      "id": "discount-in-title-aggregation",
+      "pattern": "0\\.\\d+\\s*折",
+      "severity": "info",
+      "message": "折數字樣（泛用 SEO 詞，非點名遊戲時不構成違規）",
+      "suggestion": "單筆不處理；看頁面層級的聚合值"
+    }
+  ],
+  "context_gates": [
+    {
+      "id": "minor-refund",
+      "pattern": "未成年",
+      "gate": "allow_if_same_sentence",
+      "cues": [
+        "退費",
+        "退款",
+        "申請",
+        "監護人",
+        "家長"
+      ],
+      "chrome_never_pass": true,
+      "severity": "error",
+      "message": "「未成年」須在退費／申請語境內才放行；chrome（title／og:*／meta description／feed）一律不放行",
+      "suggestion": "改寫為退費／監護人申請說明，或整段移除；chrome 不得出現此詞"
+    },
+    {
+      "id": "zero-risk",
+      "pattern": "零風險",
+      "gate": "require_negation_before_same_sentence",
+      "cues": [
+        "沒有",
+        "不",
+        "無法",
+        "難以",
+        "不能"
+      ],
+      "silent_pass": true,
+      "severity": "error",
+      "message": "「零風險」只有在同句、且否定詞位於該詞之前時才放行",
+      "suggestion": "把句子改成明確否定式（如「沒有平台能保證零風險」），或整句移除"
+    },
+    {
+      "id": "student-crowd",
+      "pattern": "學生黨",
+      "gate": "none",
+      "severity": "error",
+      "message": "詞條例外已駁回，維持 error",
+      "suggestion": "文案改寫由 Content Editor 處理；工程端不得自行增刪詞條"
+    },
+    {
+      "id": "stable-income",
+      "pattern": "穩定收益",
+      "gate": "none",
+      "severity": "error",
+      "message": "詞條例外已駁回，維持 error",
+      "suggestion": "文案改寫由 Content Editor 處理；工程端不得自行增刪詞條"
+    }
+  ],
+  "density": {
+    "pattern": "折",
+    "strict_pattern": "0\\.\\d+\\s*折",
+    "aggregation_threshold": 5,
+    "title_max_chars": 90,
+    "severity": "warn",
+    "message": "折數字樣被索引／樞紐頁聚合（帶連結的標題塊自帶折數，等於把散在各篇的折數收斂成單一高權重頁面）",
+    "suggestion": "索引頁的折數來自各篇 front-matter title；要降只能改標，改標影響既有排名，須由 Content 出判定表後才動"
+  },
+  "_generated_by": "tools/export_redline_rules.py —— 本檔為自動產出的公版，請勿手改；改規則請改私版後重跑本腳本。"
+}
