@@ -12,6 +12,7 @@
 
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import re
@@ -207,25 +208,58 @@ check("建置產物目錄不存在 → rc 2", proc.returncode == 2,
 # --- 11. baseline：只豁免列名的那幾筆，其餘照擋 -------------------------------
 BASE_FILES = {"index.html": page(body="<p>上古王冠現在有 0.1 折超值方案</p>"),
               "a/index.html": page(), "b/index.html": page()}
-bl = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
-json.dump({"entries": [{"key": "index.html|game_redline|「上古王冠」×「0.1 折」",
-                        "page": "index.html", "owner": "Content Editor",
-                        "note": "測試用"}]}, bl, ensure_ascii=False)
-bl.close()
-rc, out = run(BASE_FILES, extra=["--baseline", bl.name])
-check("baseline 列名的 error → 不擋部署但仍印出 BASELINED",
+BASE_KEY = "index.html|game_redline|「上古王冠」×「0.1 折」"
+FUTURE = (datetime.date.today() + datetime.timedelta(days=30)).isoformat()
+PAST = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
+
+
+def baseline_file(**extra):
+    fh = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
+    entry = {"key": BASE_KEY, "page": "index.html", "owner": "Content Editor",
+             "note": "測試用"}
+    entry.update(extra)
+    json.dump({"entries": [entry]}, fh, ensure_ascii=False)
+    fh.close()
+    return fh.name
+
+
+bl = baseline_file(due=FUTURE)
+rc, out = run(BASE_FILES, extra=["--baseline", bl])
+check("baseline 列名（未到期）的 error → 不擋部署但仍印出 BASELINED",
       rc == 0 and "BASELINED" in out and summary(out)["error"] == 0, out[-500:])
+check("BASELINED 那行帶到期日與 owner", "BASELINED (due %s, owner=Content Editor)" % FUTURE in out,
+      out[-500:])
+
+# 護欄②：到期日過了就升回會擋部署的 error（不是繼續提醒）。
+expired = baseline_file(due=PAST)
+rc, out = run(BASE_FILES, extra=["--baseline", expired])
+check("baseline 條目過期 → 升回 error、擋部署",
+      rc == 1 and summary(out)["error"] == 1 and "EXPIRED" in out, out[-600:])
+os.unlink(expired)
+
+# fail-closed：沒有到期日的豁免不算豁免（否則清單永遠不會變短）。
+nodue = baseline_file()
+rc, out = run(BASE_FILES, extra=["--baseline", nodue])
+check("baseline 條目缺 due → 不豁免（fail-closed）",
+      rc == 1 and summary(out)["error"] == 1, out[-600:])
+os.unlink(nodue)
+
+baddue = baseline_file(due="2026/08/15")
+rc, out = run(BASE_FILES, extra=["--baseline", baddue])
+check("baseline 條目 due 格式不對 → 不豁免（fail-closed）",
+      rc == 1 and summary(out)["error"] == 1, out[-600:])
+os.unlink(baddue)
 
 # 同一份 baseline，換一筆沒列名的違規 → 照樣擋。
 rc, out = run({"index.html": page(body="<p>一念劍歌限時 0.3 折</p>"),
                "a/index.html": page(), "b/index.html": page()},
-              extra=["--baseline", bl.name])
+              extra=["--baseline", bl])
 check("baseline 未列名的 error → 照樣擋", rc == 1 and summary(out)["error"] >= 1,
       out[-500:])
 
-rc, out = run(BASE_FILES, extra=["--baseline", bl.name + ".nope"])
+rc, out = run(BASE_FILES, extra=["--baseline", bl + ".nope"])
 check("--baseline 指向不存在的檔 → rc 2（不確定豁免什麼就不豁免）", rc == 2, out[-300:])
-os.unlink(bl.name)
+os.unlink(bl)
 
 # --- 12. 公版規則表本身不得含內部資訊 ----------------------------------------
 with open(RULES, encoding="utf-8") as fh:

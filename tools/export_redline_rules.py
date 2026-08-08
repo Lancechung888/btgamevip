@@ -49,8 +49,10 @@ PUBLIC = os.path.join(HERE, "redline_rules.json")
 # rename：私版鍵 → 公版鍵（public_message → message 等；公版說明是另外寫的乾淨版本）。
 SECTIONS = {
     "__root__": {
-        "public": ["version", "discount_patterns", "by_name", "frozen", "by_gid",
-                   "wording", "context_gates", "density"],
+        # context_gate_policy 是刻意公開的：它是「語境閘該不該開」的判準本身，
+        # 不是 provenance。留在私版等於下一個人改規則時看不到它，又會重問一次。
+        "public": ["version", "context_gate_policy", "discount_patterns", "by_name",
+                   "frozen", "by_gid", "wording", "context_gates", "density"],
         "private_only": ["_comment"],
     },
     "by_name": {

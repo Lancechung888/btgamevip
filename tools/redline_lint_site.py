@@ -55,10 +55,14 @@ Publisher 連一篇乾淨稿都推不上去 —— 閘會在第一天就被繞�
 所以既有存量走 `--baseline`：一份**逐筆列名、進版控、每次執行都完整列印**的清單。
 它不是 `|| true`，也不是 continue-on-error：
   * 清單外的任何 error 照樣讓整個 workflow 非 0 中斷，deploy 不執行；
-  * 清單內的每一筆每次都以 BASELINED 印出來，看得到、賴不掉；
+  * 清單內的每一筆每次都以 BASELINED (due …, owner=…) 印出來，看得到、賴不掉；
   * 清單只能變短。存量清完就刪掉這個檔案與 CI 上的 --baseline 參數。
-基礎建設層的失敗（規則檔缺檔／JSON 壞掉／腳本自己爆掉）**不受 baseline 影響**，
-一律非 0。
+三條護欄（合規核可，工程端不得自行放寬）：
+  ① 只能變短 —— 清一筆刪一筆；**新增條目一律需合規核可**，工程端不得自行往裡加。
+  ② 每筆帶到期日 `due`（YYYY-MM-DD）；**過期即自動升回會擋部署的 error**。
+     `due` 缺漏或格式不對＝不豁免（fail-closed）—— 沒有到期日的豁免不會變短。
+  ③ 基礎建設層的失敗（規則檔缺檔／JSON 壞掉／腳本自己爆掉）**永不受 baseline 影響**，
+     一律非 0。
 
 退出碼：0 = 全綠；1 = 有（非 baseline 的）error 級命中；
         2 = 用法／檔案／規則表錯誤或腳本自身丟例外。
@@ -69,6 +73,7 @@ fail-closed：規則檔缺檔、JSON 壞掉、腳本自己爆掉，一律非 0 �
 from __future__ import annotations
 
 import argparse
+import datetime
 import html
 import json
 import os
@@ -673,6 +678,17 @@ def finding_key(rel: str, f: dict) -> str:
     return "%s|%s|%s" % (rel, f["cat"], f["match"])
 
 
+# 存量清單的三條護欄。同一份字串同時寫進 baseline 檔的 _comment 與每次執行的輸出，
+# 兩邊不會走鐘 —— 規則只有一份，看得到、賴不掉。
+BASELINE_RULES = (
+    "存量清單三條規則：①只能變短 —— 清掉一筆就從清單刪一筆；新增條目一律需合規核可，"
+    "工程端不得自行往裡加（自行加＝把閘改回 `|| true` 的慢動作版）。"
+    "②每筆帶到期日 due，過期即自動升回會擋部署的 error，不是繼續提醒。"
+    "③基礎建設層失敗（規則檔缺檔／JSON 壞掉／腳本自身例外）永不受本清單影響。"
+    "全部清完就連同 CI 上的 --baseline 參數一起刪掉。"
+)
+
+
 def load_baseline(path: str):
     if not path:
         return None
@@ -687,6 +703,23 @@ def load_baseline(path: str):
         print("ERROR: baseline %s JSON 解析失敗：%s" % (path, exc), file=sys.stderr)
         sys.exit(2)
     return {e["key"]: e for e in data.get("entries", [])}
+
+
+DUE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def baseline_state(entry: dict, today: str):
+    """一筆存量現在還算不算數。回傳 (仍豁免?, 說明)。
+
+    fail-closed：`due` 缺漏或格式不對一律**不豁免**。豁免沒有到期日，
+    就會變成一張永遠不會變短的清單 —— 那才是 `|| true` 的慢動作版。
+    過期後這筆自動升回 error，閘真的會擋，不是繼續提醒。"""
+    due = entry.get("due")
+    if not isinstance(due, str) or not DUE_RE.fullmatch(due):
+        return False, "缺少（或格式不是 YYYY-MM-DD 的）到期日 due"
+    if due < today:
+        return False, "已於 %s 到期" % due
+    return True, due
 
 
 def main() -> int:
@@ -716,17 +749,27 @@ def main() -> int:
     if args.build_root:
         by_page, gated, pages = run_build_scan(args.build_root, args.rules)
         baseline = load_baseline(args.baseline)
-        baselined, blocking, seen_keys = [], 0, set()
+        today = datetime.date.today().isoformat()
+        baselined, blocking, seen_keys, expired = [], 0, set(), []
 
         for rel in sorted(by_page):
             print("\n%s" % rel)
             for f in sorted(by_page[rel], key=lambda x: (x["sev"] != "error", x["line"])):
                 key = finding_key(rel, f)
-                is_base = f["sev"] == "error" and baseline is not None and key in baseline
-                if is_base:
+                listed = f["sev"] == "error" and baseline is not None and key in baseline
+                is_base = False
+                if listed:
                     seen_keys.add(key)
-                    baselined.append((rel, f, baseline[key]))
-                    mark = "BASELINED"
+                    entry = baseline[key]
+                    owner = entry.get("owner", "?")
+                    is_base, why = baseline_state(entry, today)
+                    if is_base:
+                        baselined.append((rel, f, entry))
+                        mark = "BASELINED (due %s, owner=%s)" % (why, owner)
+                    else:
+                        blocking += 1
+                        expired.append((key, owner, why))
+                        mark = "FAIL"
                 elif f["sev"] == "error":
                     blocking += 1
                     mark = "FAIL"
@@ -734,12 +777,15 @@ def main() -> int:
                     mark = "warn"
                 print("  %s L%d [%s] %s :: %s" % (mark, f["line"], f["cat"],
                                                   f["match"], f["msg"]))
-                if f["fix"] and mark != "BASELINED":
+                if f["fix"] and not is_base:
                     print("        → %s" % f["fix"])
-                if is_base:
+                if listed and is_base:
                     print("        → 既有存量（owner: %s）：%s"
                           % (baseline[key].get("owner", "?"),
                              baseline[key].get("note", "")))
+                elif listed:
+                    print("        → 這筆列在存量清單裡，但豁免%s —— 已升回會擋部署的 error"
+                          "（owner: %s）。" % (why, baseline[key].get("owner", "?")))
         warns = sum(1 for fs in by_page.values() for f in fs if f["sev"] == "warn")
         errors = blocking
         gated_pass = len(gated)
@@ -748,27 +794,30 @@ def main() -> int:
                 print("  gated-pass %s L%d [%s] %s :: %s" % (rel, line, gid, match, excerpt))
 
         if args.write_baseline:
+            due = (datetime.date.today() + datetime.timedelta(days=7)).isoformat()
             entries = [dict(key=finding_key(rel, f), page=rel, category=f["cat"],
-                            match=f["match"], owner="Content Editor",
+                            match=f["match"], owner="Content Editor", due=due,
                             note="待 Content 文案改寫；清掉後把這筆從本檔刪除")
                        for rel in sorted(by_page) for f in by_page[rel]
                        if f["sev"] == "error"]
             with open(args.write_baseline, "w", encoding="utf-8", newline="\n") as fh:
-                json.dump({"_comment": "紅線閘的既有存量清單。只能變短：清完一筆刪一筆，"
-                                       "全清完就連同 CI 上的 --baseline 參數一起刪掉。"
-                                       "新增條目必須經合規核可，不是工程端自己加。",
-                           "entries": entries}, fh, ensure_ascii=False, indent=2)
+                json.dump({"_comment": BASELINE_RULES, "entries": entries},
+                          fh, ensure_ascii=False, indent=2)
                 fh.write("\n")
-            print("\n已寫出 baseline %s（%d 筆）" % (args.write_baseline, len(entries)))
+            print("\n已寫出 baseline %s（%d 筆，due=%s）"
+                  % (args.write_baseline, len(entries), due))
             return 0
 
         if baseline is not None:
             stale = [k for k in baseline if k not in seen_keys]
-            print("\n既有存量 baseline：%d 筆列名、%d 筆本次仍命中、%d 筆已消失（可從清單刪除）"
-                  % (len(baseline), len(seen_keys), len(stale)))
+            print("\n既有存量 baseline（今天 %s）：%d 筆列名、%d 筆本次仍命中、"
+                  "%d 筆已過期或無效到期日（已升回 error）、%d 筆已消失（可從清單刪除）"
+                  % (today, len(baseline), len(seen_keys), len(expired), len(stale)))
+            for k, owner, why in expired:
+                print("  EXPIRED %s（owner: %s）：%s" % (k, owner, why))
             for k in stale:
                 print("  stale %s" % k)
-            print("  ↑ 這些不擋部署，但它們是真命中。清單只能變短。")
+            print("  ↑ 這些不擋部署，但它們是真命中。%s" % BASELINE_RULES)
     else:
         failures = []
         check_config(args.config, failures)
