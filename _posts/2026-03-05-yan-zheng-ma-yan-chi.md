@@ -37,7 +37,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 連按會觸發限頻，導致每次等待更久。
 
 延伸排查：
-- 手機號碼格式教學：<https://btgamevip.com/posts/btgamevip-shou-ji-hao-ma-ge-shi-zheng-que-xie-fa>
-- 註冊頁打不開處理：<https://btgamevip.com/posts/zhu-ce-ye-kai-bu-qi-lai>
+- [手機號碼格式教學](https://btgamevip.com/2026/03/09/btgamevip-shou-ji-hao-ma-ge-shi-zheng-que-xie-fa.html)
+- [註冊頁打不開的處理方式](https://btgamevip.com/2026/03/04/zhu-ce-ye-kai-bu-qi-lai.html)
 
 👉 立即下載：<https://btgamevip.com/>

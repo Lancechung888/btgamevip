@@ -73,7 +73,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 ## 延伸閱讀
 
 - [註冊驗證碼收不到？5個排查步驟](/2026/03/02/zhu-ce-yan-zheng-ma-shou-bu-dao.html)
-- [註冊一直轉圈怎麼解？1分鐘快速排查](/2026/03/03/zhu-ce-yi-zhi-zhuan-quan-zen-me-jie.html)
+- [註冊一直轉圈怎麼解？1分鐘快速排查](/2026/03/02/zhu-ce-yi-zhi-zhuan-quan-zen-me-jie.html)
 
 ---
 

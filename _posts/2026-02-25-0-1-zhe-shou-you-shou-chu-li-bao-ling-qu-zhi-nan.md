@@ -20,7 +20,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 別一進平台就亂領。先確認你偏好的遊戲類型（RPG、卡牌、放置），再看該類型近期活動，效率最高。
 
 若你還在找方向，可先看這篇：
-- [熱門手遊下載指南](https://btgamevip.com/2026/02/24/re-men-shou-you-xia-zai-zhi-nan.html)
+- [熱門手遊下載指南](https://btgamevip.com/2026/02/23/re-men-shou-you-xia-zai-zhi-nan.html)
 
 ## 第二步：先領免費資源，再考慮首儲
 
@@ -77,4 +77,4 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 如果你要快速開始，建議先從平台首頁活動區進入，再按本文流程走一遍，通常就能少踩很多坑。
 
 延伸閱讀：
-- [手遊充值 0.1 折攻略：怎麼把折扣用到極致](https://btgamevip.com/2026/02/24/0-1-zhe-shou-you-chong-zhi-gong-lue.html)
+- [手遊充值 0.1 折攻略：怎麼把折扣用到極致](https://btgamevip.com/2026/02/23/0-1-zhe-shou-you-chong-zhi-gong-lue.html)

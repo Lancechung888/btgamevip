@@ -11,6 +11,17 @@ theme: minima
 # 允許未來時間貼文建置（每日發布：貼文日期可能領先 runner 的 UTC 時鐘）
 future: true
 
+# 沒有 timezone: 設定＝建置以 runner 的 UTC 為準，這是刻意保留的現況。
+# 後果：front matter 寫 `date: YYYY-MM-DD 0X:XX +0800`（台北凌晨）的貼文，
+# 換算 UTC 會退一天，永久連結的 /年/月/日 因此比檔名日期早一天。
+# 全站目前有 20 篇處於這個狀態，且都已上線、已進 sitemap。
+#
+# 不要為了「對齊檔名」而補上 timezone: Asia/Taipei ——那會一次改掉這 20 篇的
+# 永久連結，等同 20 個 URL 搬家；沒有配套 301 就是把既有索引與外部連結全部打掉，
+# 傷害遠大於日期好看。要改，必須先有轉址方案並經 Board 裁示。
+#
+# 寫內鏈時的唯一正解＝以 sitemap.xml 上的實際網址為準，不要照檔名日期自己拼。
+
 # 外掛清單（新增了 jekyll-sitemap）
 plugins:
   - jekyll-feed
