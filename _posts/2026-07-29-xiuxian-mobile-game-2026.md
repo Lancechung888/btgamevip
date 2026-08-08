@@ -42,7 +42,7 @@ image: "/assets/posts/xiuxian-mobile-game-2026-main-og.png"
 
 - 想看玩法與安全下載：**[《遮天：帝路爭鋒》儲值下載專屬頁 →](https://btgamevip.com/games/zhetian-dilu-zhengfeng/)**
 - 偏武俠一點的可以看：**[《劍御龍城》專屬頁 →](https://btgamevip.com/games/jianyu-longcheng-chuanqi/)**
-- 想一次逛更多 BT／折扣手遊：**[U2game 遊戲總覽與省錢入口 →](https://btgamevip.com/u2game/)**
+- 想一次逛更多 BT 手遊：**[U2game 遊戲總覽與省錢入口 →](https://btgamevip.com/u2game/)**
 
 想直接開玩《遮天：帝路爭鋒》，也可從官方渠道免費下載（安卓／iOS 皆可）：
 

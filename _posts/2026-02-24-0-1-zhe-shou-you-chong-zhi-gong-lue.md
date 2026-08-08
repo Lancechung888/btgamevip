@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "0.1折手遊充值攻略：新手不踩雷的3步流程（2026）"
+title: "0.1折手遊儲值攻略：新手不踩雷的3步流程（2026）"
 date: 2026-02-24 02:10:00 +0800
-description: "0.1折手遊充值怎麼做才不浪費？用3步流程避開常見錯誤，先穩再省，提升整體遊玩效率。"
-tags: ["0.1折手遊", "手遊充值", "首儲攻略", "手遊省錢"]
+description: "0.1折手遊儲值怎麼做才不浪費？用3步流程避開常見錯誤，先穩再省，提升整體遊玩效率。"
+tags: ["0.1折手遊", "手遊儲值", "首儲攻略", "手遊省錢"]
 image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 ---
 
-很多人做 **0.1折手遊充值**，第一筆就下太重。  
+很多人做 **0.1折手遊儲值**，第一筆就下太重。  
 結果不是沒省到，而是把預算花在錯的時間。  
 這篇給你一個可以直接照做的 3 步流程，先把浪費降到最低。
 
@@ -47,7 +47,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 
 **先做：** 每天固定看一次活動更新，再下決策。
 
-![充值前30秒檢查清單](/assets/posts/recharge_checklist.png)
+![儲值前30秒檢查清單](/assets/posts/recharge_checklist.png)
 
 ## 快速檢查清單（30秒）
 
@@ -58,7 +58,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 
 ## 延伸閱讀
 
-- [手遊充值省錢策略（2026）](/2026/02/25/shou-you-chong-zhi-sheng-qian-ce-lue-2026.html)
+- [手遊儲值省錢策略（2026）](/2026/02/25/shou-you-chong-zhi-sheng-qian-ce-lue-2026.html)
 - [手遊折扣平台怎麼選才安全](/2026/02/26/shou-you-zhe-kou-ping-tai-an-quan-xuan-ze.html)
 - [U2game 首頁入口](https://btgamevip.com/)
 
