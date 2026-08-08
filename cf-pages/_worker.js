@@ -118,6 +118,11 @@ const LINKS = {
     "fb-wangzhe_zhijian2-b": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "image_b" } },
     "tw-wangzhe_zhijian2-a": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "tweet_a" } },
     "tw-wangzhe_zhijian2-b": { to: "https://btgamevip.com/games/wangzhe-zhijian-2/", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "wangzhe_zhijian2_launch_202607", utm_content: "tweet_b" } },
+    // u2game 品牌詞承接：目的地是自家品牌導引頁（非 u2），故走 to: 分支，不帶 ag/gid/ldy、零 payout 影響。
+    "tw-u2_brand-a": { to: "https://btgamevip.com/u2game-brand-guide", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "u2game_brand_202608", utm_content: "tweet_a" } },
+    "tw-u2_brand-b": { to: "https://btgamevip.com/u2game-brand-guide", utm: { utm_source: "twitter", utm_medium: "social_organic", utm_campaign: "u2game_brand_202608", utm_content: "tweet_b" } },
+    "fb-u2_brand-a": { to: "https://btgamevip.com/u2game-brand-guide", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "u2game_brand_202608", utm_content: "image_a" } },
+    "fb-u2_brand-b": { to: "https://btgamevip.com/u2game-brand-guide", utm: { utm_source: "facebook", utm_medium: "social_organic", utm_campaign: "u2game_brand_202608", utm_content: "image_b" } },
 };
 
 function readCookie(request, name) {
