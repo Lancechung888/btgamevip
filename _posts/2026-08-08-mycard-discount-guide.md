@@ -3,6 +3,7 @@ layout: post
 title: "MyCard 折扣 2026 全整理：95 折沒了嗎？哪裡買便宜、回饋怎麼疊一次看懂"
 description: "搜「mycard 折扣」的玩家常撲空：早年 95 折早已走入歷史。2026 年 MyCard 便宜買法其實是「通路檔期＋支付回饋」：商城 95 折、電商檔期、信用卡回饋整理，加上折扣天花板的誠實比較。"
 date: 2026-08-08
+image: /assets/posts/og-mycard-discount-guide.png
 lang: zh-Hant
 ---
 
