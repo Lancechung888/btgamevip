@@ -41,7 +41,19 @@ layout: null
     <link rel="preconnect" href="https://static.u2game99.com" crossorigin>
     <link rel="preconnect" href="https://webpage.u2game99.com" crossorigin>
     <link rel="alternate" hreflang="zh-Hant" href="https://btgamevip.com/">
-    
+    {%- comment -%}
+      x-default 是「其他語系／未匹配時的預設落點」。全站目前只有 zh-Hant 一種語系，
+      少了這條，Google 對非 zh-Hant 的查詢會自己挑一頁當預設，等於把選擇權交出去。
+      指向同一個 URL 是單語系站的標準寫法。
+    {%- endcomment -%}
+    <link rel="alternate" hreflang="x-default" href="https://btgamevip.com/">
+
+    {%- comment -%}
+      LCP：手機版首屏最大元素是 .hero-img。preload 讓它與 CSS 平行下載，
+      不必等 CSSOM 建好才發請求。與下面 <img> 的 fetchpriority 是同一件事的兩半。
+    {%- endcomment -%}
+    <link rel="preload" as="image" href="https://btgamevip.com/assets/posts/what-is-u2game-main-og.png" fetchpriority="high">
+
     <link rel="stylesheet" href="https://static.u2game99.com/web3/pc/css/index1.css" media="screen and (min-width: 769px)">
 
     <style>
@@ -202,12 +214,17 @@ layout: null
 
 <div class="mobile-container">
     <div class="mobile-header">
-        <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="U2game手遊折扣平台" loading="eager" decoding="async">
+        <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="U2game手遊折扣平台" width="180" height="180" loading="eager" decoding="async">
         <h1>U2game 是什麼？台灣玩家的手遊 0.1 折儲值平台完整指南</h1>
         <p>手遊 0.1 折儲值平台</p>
     </div>
 
-    <img class="hero-img" src="https://btgamevip.com/assets/posts/what-is-u2game-main-og.png" alt="U2game 0.1折儲值優惠" loading="eager" decoding="async" onerror="this.onerror=null;this.src='https://static.u2game99.com/web3/pc/img/bk1.png';">
+    {%- comment -%}
+      LCP 元素。width/height 是原圖真實像素(1200x630)，配上 CSS 的 width:90%/height:auto
+      就能讓瀏覽器在圖到位前先按長寬比預留位置 —— 這是 CLS 從「圖一載入就把下面內容推走」
+      降到 0 的關鍵。fetchpriority=high 配合 head 的 preload 一起生效。
+    {%- endcomment -%}
+    <img class="hero-img" src="https://btgamevip.com/assets/posts/what-is-u2game-main-og.png" alt="U2game 0.1折儲值優惠" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src='https://static.u2game99.com/web3/pc/img/bk1.png';">
 
     <div style="padding:0 20px;">
         <div class="highlight">首儲禮包 0.1 折起・省下的直接到手</div>
@@ -262,9 +279,9 @@ layout: null
     <div class="container">
         <nav><div class="nav-box"><div class="nav-left"><img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" alt="U2game"><span>U2game</span><span>手遊 0.1 折儲值平台</span></div></div></nav>
         <div class="content1-top">
-            <img class="mobile-icon" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="U2game手遊下載" loading="lazy" decoding="async">
+            <img class="mobile-icon" src="https://static.u2game99.com/web3/pc/img/bk1.png" alt="U2game手遊下載" width="921" height="750" loading="lazy" decoding="async">
             <div class="right-content">
-                <img class="text-top" src="https://static.u2game99.com/web3/pc/img/text.png" alt="U2game 手遊 0.1 折儲值平台">
+                <img class="text-top" src="https://static.u2game99.com/web3/pc/img/text.png" alt="U2game 手遊 0.1 折儲值平台" width="496" height="282" loading="lazy" decoding="async">
                 <div class="top_center">
                     <div class="text" style="font-size:28px;line-height:1.4;">
                         正版授權＋超多禮包＋儲值抵用券<br>
@@ -300,7 +317,7 @@ layout: null
 <div class="overlay" id="overlay"></div>
 <div class="popup" id="popup">
     <div class="popup-close" onclick="document.getElementById('popup').style.display='none';document.getElementById('overlay').style.display='none';">×</div>
-    <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" width="80" alt="禮包">
+    <img src="https://webpage.u2game99.com/common/u2game/img/icon/u2_icon.png" width="80" height="80" alt="禮包" loading="lazy" decoding="async">
     <h3 style="color:#ff3b30;margin:15px 0;font-size:24px;">限時福利！</h3>
     <p style="font-size:18px;line-height:1.5;">現在下載立即送<br><b>100% 首儲抵用券</b></p>
     <div class="big-btn android-btn" onclick="down_btn('android')">Android 立即領</div>
