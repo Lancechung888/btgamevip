@@ -42,12 +42,35 @@ front-matter title 在建置時聚合而成 —— 只審 markdown 一樣掃不�
     抽樣驗收又剛好會抽到走 include 的頁而顯示「全站已清」。
     這條比對的是我方站名這個自家常數，不涉及外部契約判定，故不需要 provenance。
 
+--text 模式（非建置產物：社群文案）
+----------------------------------
+上面所有模式掃的都是**建置產物**，而閘只保護它掃得到的路徑。社群貼文
+（FB／X／IG，以及未來的 TG 廣播）不經 Jekyll、不進 repo、不觸發 workflow，
+所以 CI 閘對它們的覆蓋率是 0% —— 同一句「0.1 折首儲」寫進 `.md` 會被擋下，
+寫進 FB 貼文則直接出去。判定我們的是 u2，它不管這段文字是從 Jekyll 出去
+還是從 Playwright 出去。
+
+`--text` 吃純文字（檔案路徑或 `-` 讀 stdin），跑的是**同一份**公版規則表，
+不另立第二份 —— 兩份規則表一定會走散。與 `--build-root` 的差異只有三處，
+都是因為純文字沒有 HTML 結構：
+
+  * 點名遊戲 × 折數字樣改用**整篇共現**，不是同塊共現。一則貼文對 u2 而言
+    就是一個不可分割的單位，沒有連結清單要切；遊戲名在第一行、折數在第五行
+    正是最典型的違規樣態，用同塊判定會整批漏掉。
+  * 沒有 chrome（沒有 `<title>`／`og:*`），所以 chrome 專屬的加嚴一律不適用。
+  * 不跑 density（那條看的是索引頁把各篇標題聚合起來的效果，貼文沒有這回事）。
+
+逐 gid 規則照跑：貼文裡帶的 `?gid=NNNN` 就是該則文案的遊戲語境。
+發文腳本一律在「真正送出前」跑本模式，非 0 即中止且不重試。
+
 用法：
     python3 tools/redline_lint_site.py                      # 預設 _config.yml + _site
     python3 tools/redline_lint_site.py --site-root _site
     python3 tools/redline_lint_site.py --config-only        # 沒有 build 產物時只跑檢查 1
     python3 tools/redline_lint_site.py --strict-body        # 連正文提及也算「涉及該款」
     python3 tools/redline_lint_site.py --build-root _site --rules tools/redline_rules.json
+    python3 tools/redline_lint_site.py --text draft.txt     # 社群文案草稿（可重複 --text）
+    cat draft.txt | python3 tools/redline_lint_site.py --text -
 
 最後一行固定輸出：REDLINE: error=N warn=N gated-pass=N pages=N
 其中 error 一律指「會擋下部署的 error」，也就是不在 baseline 裡的那些。
@@ -684,6 +707,96 @@ def scan_density(blocks, rules):
                  msg=d.get("message", ""), fix=d.get("suggestion", ""))]
 
 
+def read_text_input(spec: str) -> str:
+    """讀一份文案。`-` 代表 stdin。fail-closed：讀不到就是失敗，不是空字串。"""
+    if spec == "-":
+        data = sys.stdin.buffer.read()
+        try:
+            return data.decode("utf-8")
+        except UnicodeDecodeError:
+            print("ERROR: stdin 不是合法的 UTF-8 —— 讀不準的文字不能判成乾淨",
+                  file=sys.stderr)
+            sys.exit(2)
+    if not os.path.isfile(spec):
+        print("ERROR: 找不到文案檔 %s —— 掃不到的東西一律當失敗（fail-closed）" % spec,
+              file=sys.stderr)
+        sys.exit(2)
+    try:
+        with open(spec, encoding="utf-8") as fh:
+            return fh.read()
+    except (OSError, UnicodeDecodeError) as exc:
+        print("ERROR: 讀取文案檔 %s 失敗：%s" % (spec, exc), file=sys.stderr)
+        sys.exit(2)
+
+
+def scan_text_doc(text: str, rules: dict) -> tuple:
+    """掃一份純文字文案。回傳 (findings, gated)。
+
+    區塊化：一行一塊。行是社群文案唯一天然的邊界，也讓命中報得出行號。
+    但 by_name × 折數的共現判定**故意提到整篇**（見模組 docstring）——
+    同塊判定是為了 HTML 上相鄰卻不相干的連結標題而設的誤報防線，
+    純文字沒有那個結構，沿用只會把「遊戲名在第一行、折數在第五行」整批放掉。
+    """
+    findings, gated = [], []
+
+    def line_of(pos):
+        return text.count("\n", 0, pos) + 1
+
+    # (1) 點名遊戲 × 折數字樣：整篇共現
+    for r in rules["by_name"]:
+        nm = next((m for p in r["_names"] for m in (p.search(text),) if m), None)
+        if not nm:
+            continue
+        dm = next((m for p in rules["discount"] for m in (p.search(text),) if m), None)
+        if not dm:
+            continue
+        findings.append(dict(
+            sev=r.get("severity", "error"), cat="game_redline",
+            line=line_of(dm.start()),
+            match="「%s」×「%s」" % (nm.group(0), dm.group(0)),
+            msg="%s（%s）｜整篇共現：遊戲名在 L%d、折數字樣在 L%d"
+                % (r.get("message", "禁折款"), r["id"],
+                   line_of(nm.start()), line_of(dm.start())),
+            fix="移除折數字樣，或整則文案不提這款"))
+
+    # (2)~(5) 其餘規則逐行判定。by_name 已在上面用整篇語意判過，這裡關掉，
+    # 否則同一行同時命中會開兩張重複的單。
+    per_line = dict(rules, by_name=[])
+    ctx_gids = set(GID_RE.findall(text))
+    for i, raw_line in enumerate(text.split("\n"), 1):
+        line = raw_line.strip()
+        if not line:
+            continue
+        block = dict(line=i, text=line, links=[], where="text", anchored=False)
+        # chrome=False：純文字沒有版型 chrome，chrome 專屬的加嚴無從適用。
+        scan_build_block(block, per_line, ctx_gids, text, False, findings, gated)
+    return findings, gated
+
+
+def run_text_scan(specs: list, rules_path: str) -> tuple:
+    """回傳 (findings_by_doc, gated, docs)。"""
+    rules = load_rules(rules_path)
+    by_doc, gated, nonempty = {}, [], 0
+    for spec in specs:
+        name = "<stdin>" if spec == "-" else spec
+        text = read_text_input(spec).replace("\r\n", "\n")
+        if text.strip():
+            nonempty += 1
+        f, g = scan_text_doc(text, rules)
+        if f:
+            by_doc[name] = f
+        gated.extend((name,) + x for x in g)
+    if not nonempty:
+        # 空輸入判成綠燈是這種閘最典型的靜默失效：管線接錯、檔案沒寫進去、
+        # 變數是空的，全都長得像「沒有命中」。
+        print("ERROR: 所有輸入都是空的 —— 沒有東西可掃不等於乾淨（fail-closed）",
+              file=sys.stderr)
+        sys.exit(2)
+    print("[text] 掃 %d 份文案、規則表 %s（純文字模式：不判 chrome、不跑 density）"
+          % (len(specs), rules_path))
+    return by_doc, gated, len(specs)
+
+
 def run_build_scan(build_root: str, rules_path: str) -> tuple:
     """回傳 (findings_by_page, gated, pages)。"""
     if not os.path.isdir(build_root):
@@ -807,6 +920,8 @@ def main() -> int:
                     help="連正文提及也算「涉及該款」（誤報會變多）")
     ap.add_argument("--build-root", default=None,
                     help="CI 閘模式：對建置產物做區塊級判定")
+    ap.add_argument("--text", action="append", metavar="FILE",
+                    help="純文字模式：掃社群文案草稿（可重複；`-` 讀 stdin）")
     ap.add_argument("--rules", default=os.path.join("tools", "redline_rules.json"),
                     help="--build-root 用的公版規則表")
     ap.add_argument("--show-gated", action="store_true",
@@ -819,8 +934,21 @@ def main() -> int:
 
     errors = warns = gated_pass = pages = 0
 
-    if args.build_root:
-        by_page, gated, pages = run_build_scan(args.build_root, args.rules)
+    if args.text and args.build_root:
+        print("ERROR: --text 與 --build-root 是兩種輸入，請分開跑", file=sys.stderr)
+        return 2
+    if args.text and (args.baseline or args.write_baseline):
+        # 存量清單是站台既有內容的過渡機制，只能變短、且新增需合規核可。
+        # 社群文案是每天新寫的，沒有「存量」可言 —— 開這個口就是給貼文開後門。
+        print("ERROR: --text 不支援 baseline 豁免（社群文案沒有存量，一律當場擋）",
+              file=sys.stderr)
+        return 2
+
+    if args.text or args.build_root:
+        if args.text:
+            by_page, gated, pages = run_text_scan(args.text, args.rules)
+        else:
+            by_page, gated, pages = run_build_scan(args.build_root, args.rules)
         baseline = load_baseline(args.baseline)
         today = datetime.date.today().isoformat()
         baselined, blocking, seen_keys, expired = [], 0, set(), []
@@ -907,7 +1035,8 @@ def main() -> int:
         errors = len(failures)
 
     if errors:
-        print("\n有 %d 處 error 級紅線命中 —— 不得部署。" % errors)
+        print("\n有 %d 處 error 級紅線命中 —— %s。"
+              % (errors, "不得發文（零重試，改稿後重跑）" if args.text else "不得部署"))
     else:
         print("\nOK：無 error 級紅線命中。")
     # 這一行的格式是對外契約（CI log 與班次報告都靠它取數），不要改。

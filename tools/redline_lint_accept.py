@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""redline_lint_site.py --build-root 的驗收測試。
+"""redline_lint_site.py --build-root 與 --text 的驗收測試。
 
 為什麼要有：這支 lint 是擋在 deploy 前面的閘，它自己壞掉的失敗樣態是「安靜地全綠」
 —— 規則沒載到、區塊沒切開、語境閘寫反，輸出看起來都一樣是 OK。所以每條判準都要有
@@ -59,6 +59,28 @@ def run(files, extra=(), rules=RULES):
         proc = subprocess.run(
             [sys.executable, LINT, "--build-root", root, "--rules", rules, *extra],
             capture_output=True, text=True, encoding="utf-8", env=env)
+        return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def run_text(docs, extra=(), rules=RULES, stdin=None):
+    """把 docs（名稱 → 內容）寫成臨時文案檔，跑 --text，回 (rc, stdout)。"""
+    root = tempfile.mkdtemp(prefix="redline-text-")
+    try:
+        args = []
+        for name, content in docs.items():
+            full = os.path.join(root, name)
+            with open(full, "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(content)
+            args += ["--text", full]
+        if stdin is not None:
+            args += ["--text", "-"]
+        env = dict(os.environ, PYTHONIOENCODING="utf-8")
+        proc = subprocess.run(
+            [sys.executable, LINT, "--rules", rules, *args, *extra],
+            capture_output=True, text=True, encoding="utf-8", env=env,
+            input=stdin)
         return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
     finally:
         shutil.rmtree(root, ignore_errors=True)
@@ -324,6 +346,96 @@ leaks = [p for p in (r"ALL-\d+", "da00467", "cps", "分成", "firstpay",
                      "後台", "公告", "嚴控", "罰款", "封禁")
          if re.search(p, rules_text, re.I)]
 check("公版規則表零內部欄位", not leaks, "命中：%s" % leaks)
+
+# --- 14. --text 純文字模式（社群文案：非建置產物路徑）------------------------
+# 為什麼要有這一節：CI 閘掃的是建置產物，社群貼文不經 Jekyll、不進 repo，
+# 對它的覆蓋率本來是 0%。判定我們的是 u2，它不管文字從哪個管線出去。
+
+DIRTY_POST = """【今日推薦】上古王冠 改版上線！
+
+老玩家回歸禮包直接領，
+新手入坑首儲 0.1 折起。
+還有老虎機小遊戲每天免費轉。
+
+下載 → https://qd.u2game99.com/?ag=xxxx&gid=2367&ldy=1
+"""
+CLEAN_POST = """【開服快報】本週新服開放時間整理
+
+三個時段各有不同的開服活動，
+入坑前先看版本差異與角色定位。
+
+完整整理 → https://btgamevip.com/games/
+"""
+
+rc, out = run_text({"dirty.txt": DIRTY_POST})
+s = summary(out)
+check("故意寫壞的貼文 → rc 1、逐筆列名", rc == 1 and s and s["error"] >= 2, out[-800:])
+check("命中帶得出規則 id（禁折款＋賭博字樣）",
+      "shanggu-wangguan" in out and "老虎機" in out, out[-800:])
+
+rc, out = run_text({"clean.txt": CLEAN_POST})
+check("乾淨貼文 → rc 0", rc == 0 and summary(out)["error"] == 0, out[-400:])
+
+# 整篇共現：純文字沒有 HTML 區塊結構，遊戲名與折數分行寫是最典型的違規樣態，
+# 沿用建置產物的「同塊」判定會整批漏掉。
+rc, out = run_text({"split.txt": "上古王冠 改版上線\n\n入坑首儲 0.1 折起\n"})
+check("遊戲名與折數不同行 → 仍算整篇共現、error",
+      rc == 1 and summary(out)["error"] >= 1 and "整篇共現" in out, out[-600:])
+
+# 但兩者都沒有就不能誤報 —— 只提遊戲、不提折數是正常文案。
+rc, out = run_text({"nameonly.txt": "上古王冠 改版上線，新副本開放。\n"})
+check("只提禁折款、不提折數 → 0 error", rc == 0 and summary(out)["error"] == 0,
+      out[-400:])
+
+# stdin 管線：發文腳本是把記憶體裡的文案餵進來，不見得有檔案。
+rc, out = run_text({}, stdin=DIRTY_POST)
+check("stdin（`-`）→ 一樣擋得下", rc == 1 and summary(out)["error"] >= 2, out[-600:])
+
+# 多份一起掃（一天多平台）。
+rc, out = run_text({"a.txt": CLEAN_POST, "b.txt": DIRTY_POST})
+check("多份文案：一份髒就整批非 0", rc == 1 and summary(out)["pages"] == 2, out[-600:])
+
+# 永久跳過名單／未授權蹭 IP：出現即命中，不需要折數。
+rc, out = run_text({"ip.txt": "勇者傳承 新版本上線，快來體驗。\n"})
+check("未授權蹭 IP 名單出現在貼文 → error", rc == 1 and summary(out)["error"] >= 1,
+      out[-400:])
+
+# 語境閘照跑（規則表同一份，工程端不得自行增刪詞條）。
+rc, out = run_text({"g1.txt": "沒有任何平台能保證零風險，請自行評估。\n"})
+check("零風險＋同句前置否定 → gated-pass，不算 error",
+      rc == 0 and summary(out)["error"] == 0 and summary(out)["gated"] == 1, out[-400:])
+rc, out = run_text({"g2.txt": "本站儲值零風險，放心買。\n"})
+check("零風險無否定 → error", rc == 1 and summary(out)["error"] >= 1, out[-400:])
+
+# 空輸入是這種閘最典型的靜默失效（管線接錯／變數是空的），必須 fail-closed。
+rc, out = run_text({"empty.txt": "\n\n"})
+check("空文案 → rc 2（沒有東西可掃 ≠ 乾淨）", rc == 2, out[-400:])
+
+rc, out = run_text({"x.txt": CLEAN_POST}, rules=os.path.join(HERE, "no_such.json"))
+check("--text 規則檔缺檔 → rc 2", rc == 2 and "fail-closed" in out, out[-300:])
+
+_bad = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
+_bad.write('{ "by_name": [[[ ')
+_bad.close()
+rc, out = run_text({"x.txt": CLEAN_POST}, rules=_bad.name)
+os.unlink(_bad.name)
+check("--text 規則檔 JSON 壞掉 → rc 2", rc == 2 and "JSON" in out, out[-300:])
+
+proc = subprocess.run([sys.executable, LINT, "--rules", RULES, "--text",
+                       os.path.join(HERE, "definitely_no_draft.txt")],
+                      capture_output=True, text=True, encoding="utf-8",
+                      env=dict(os.environ, PYTHONIOENCODING="utf-8"))
+check("--text 指向不存在的檔 → rc 2", proc.returncode == 2,
+      (proc.stdout or "") + (proc.stderr or ""))
+
+# baseline 是站台既有內容的過渡機制；貼文每天新寫，開這個口就是給貼文開後門。
+rc, out = run_text({"x.txt": CLEAN_POST}, extra=["--baseline", "whatever.json"])
+check("--text 不接受 baseline 豁免 → rc 2", rc == 2, out[-300:])
+
+# 兩種輸入不得混用（避免「以為掃了建置產物、其實只掃了文案」）。
+rc, out = run_text({"x.txt": CLEAN_POST}, extra=["--build-root", HERE])
+check("--text 與 --build-root 混用 → rc 2", rc == 2, out[-300:])
+
 
 # --- 收尾 --------------------------------------------------------------------
 failed = [n for n, ok, _ in results if not ok]
