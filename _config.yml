@@ -17,6 +17,15 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+# 版型導覽列：明確指定哪幾頁進 minima 導覽列，並固定順序。
+# 不指定時 minima 會列出「所有帶 title 的 site.pages」，導覽列內容會隨新增頁面漂移，
+# 而且長 SEO 標題會原樣塞進導覽列。這三頁是全站三個主要入口（品牌／遊戲／文章），
+# 它們各自的 front matter 另外帶了短 title 供導覽列顯示。
+header_pages:
+  - u2game/index.html
+  - games/index.html
+  - blog/index.html
+
 # 分類與標籤設定（可選，對 SEO 更有利）
 defaults:
   - scope:

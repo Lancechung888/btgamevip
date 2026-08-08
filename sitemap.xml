@@ -32,9 +32,38 @@ layout: null
   </url>
   {% endif %}
   {% endfor %}
+  {%- comment -%} 補收 posts 以外的 collection 文件。site.html_pages 只涵蓋 Page，
+       未來若在 _config.yml 開任何 collection（output: true），其文件兩個迴圈都收不到。
+       今日站上沒有 posts 以外的 collection，本迴圈輸出 0 筆＝結構性保險。 {%- endcomment -%}
+  {% for doc in site.documents %}
+  {%- comment -%} 只認 DocumentDrop 真的有的欄位（collection / url / front matter）；
+       output_ext 之類的 Document 方法在 Drop 上讀不到，會靜默變 nil。 {%- endcomment -%}
+  {% assign doc_tail = doc.url | slice: -1, 1 %}
+  {% assign doc_ext = doc.url | slice: -5, 5 %}
+  {% if doc.collection != 'posts' and doc.sitemap != false %}
+  {% if doc_tail == '/' or doc_ext == '.html' %}
+  <url>
+    <loc>{{ site.url }}{{ doc.url | remove: 'index.html' }}</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
   {% for f in site.static_files %}
-  {%- comment -%} /games/ 個別遊戲頁（無 front matter＝static_files）。 {%- endcomment -%}
-  {% if f.path contains '/games/' and f.name == 'index.html' %}
+  {%- comment -%} 無 front matter 的承接頁在 Jekyll 屬 StaticFile，上面兩個迴圈都看不到。
+       白名單改用「路徑前綴」判定，不再用 contains：contains 是子字串比對，
+       /assets/games/... 這類路徑會被 '/games/' 誤收。副檔名另外驗一次，避免
+       目錄名剛好叫 index.html 之類的邊界情況。 {%- endcomment -%}
+  {% assign seg_games = f.path | slice: 0, 7 %}
+  {% assign seg_save = f.path | slice: 0, 6 %}
+  {% assign seg_assets = f.path | slice: 0, 8 %}
+  {% assign seg_admin = f.path | slice: 0, 7 %}
+  {% assign seg_go = f.path | slice: 0, 4 %}
+  {% if f.name == 'index.html' and f.extname == '.html' %}
+  {% unless seg_assets == '/assets/' or seg_admin == '/admin/' or seg_go == '/go/' %}
+  {% if seg_games == '/games/' %}
   <url>
     <loc>{{ site.url }}{{ f.path | remove: 'index.html' }}</loc>
     <lastmod>{{ f.modified_time | date_to_xmlschema }}</lastmod>
@@ -42,13 +71,15 @@ layout: null
     <priority>0.8</priority>
   </url>
   {% endif %}
-  {% if f.name == 'index.html' and f.path contains '/save/' %}
+  {% if seg_save == '/save/' %}
   <url>
     <loc>{{ site.url }}{{ f.path | remove: 'index.html' }}</loc>
     <lastmod>{{ f.modified_time | date_to_xmlschema }}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  {% endif %}
+  {% endunless %}
   {% endif %}
   {% endfor %}
 </urlset>

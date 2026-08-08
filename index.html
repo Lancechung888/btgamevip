@@ -136,6 +136,13 @@ layout: null
             .pc-only { display: block; }
         }
 
+        /* ==== 固定站內導覽（手機／PC 共用，不受 .pc-only 切換影響）==== */
+        .site-hub { background:#1b3f80; padding:24px 16px 28px; }
+        .site-hub h2 { color:#fff; font-size:17px; text-align:center; margin-bottom:14px; font-weight:normal; opacity:.9; }
+        .site-hub ul { list-style:none; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:900px; margin:0 auto; }
+        .site-hub a { display:block; background:#fff; color:#1b3f80; text-decoration:none; font-size:15px; font-weight:bold; border-radius:999px; padding:10px 18px; }
+        .site-hub a:hover, .site-hub a:focus-visible { background:#ffd54a; color:#3d2a00; }
+
         /* 彈窗 */
         .overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:9998; }
         .popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:90%; max-width:340px; background:#fff; border-radius:20px; padding:25px; text-align:center; z-index:9999; }
@@ -274,6 +281,18 @@ layout: null
         </div>
     </div>
 </div>
+
+<nav class="site-hub" aria-label="站內導覽">
+    <h2>站內導覽</h2>
+    <ul>
+        <li><a href="/u2game/">品牌總覽</a></li>
+        <li><a href="/games/">遊戲專區</a></li>
+        <li><a href="/blog/">全部文章</a></li>
+        <li><a href="/save/guide/">怎麼儲值最省</a></li>
+        <li><a href="/save/compare/">平台比較</a></li>
+        <li><a href="/save/safety/">安全須知</a></li>
+    </ul>
+</nav>
 
 <div class="overlay" id="overlay"></div>
 <div class="popup" id="popup">
