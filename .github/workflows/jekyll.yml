@@ -62,11 +62,14 @@ jobs:
         # 放到 deploy 之後等於還是 post-deploy —— 違規已經上線了才發現，白做。
         # 非 0 即中斷整個 workflow，deploy job 因 needs: build 不會執行。
         # 禁止在這裡加 `|| true` 或 continue-on-error：閘的價值全在它會擋。
+        # 已無 --baseline：閘上線時的 5 筆既有存量已在 4231a77 全數改稿清零，
+        # 依「清單全清即連同 --baseline 參數一併刪除」的規則移除，存量清單檔同時刪除。
+        # 本閘現為純 fail-closed，沒有任何豁免名單。要重新開豁免須先經合規核可，
+        # 工程端不得自行加回（腳本本身仍保留 --baseline／--write-baseline 機制與驗收覆蓋）。
         run: >-
           python3 tools/redline_lint_site.py
           --build-root _site
           --rules tools/redline_rules.json
-          --baseline tools/redline_baseline.json
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
