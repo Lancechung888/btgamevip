@@ -204,6 +204,11 @@ rc, out = run({"index.html": page(desc="未成年退費申請請洽監護人"),
 check("未成年出現在 meta description（chrome）→ error",
       rc == 1 and summary(out)["error"] >= 1, out[-500:])
 
+rc, out = run({"index.html": page(footer="未成年消費可由監護人申請退款"),
+               "a/index.html": page(), "b/index.html": page()})
+check("手寫頁獨有 header/footer 仍按 chrome 判定，不靠 30% 共用版型",
+      rc == 1 and summary(out)["error"] >= 1 and "chrome" in out, out[-500:])
+
 # --- 7. 語境閘：零風險（否定詞須同句且在前）----------------------------------
 rc, out = run({"index.html": page(body="<p>沒有任何平台能保證零風險，請自行評估。</p>"),
                "a/index.html": page(), "b/index.html": page()})
