@@ -484,7 +484,7 @@ def load_rules(path: str) -> dict:
         "meta:og:site_name", "meta:og:locale", "meta:og:title",
         "meta:og:description", "meta:og:url", "meta:og:image",
         "meta:twitter:card", "meta:twitter:title",
-        "meta:twitter:description", "meta:twitter:image",
+        "meta:twitter:description", "meta:twitter:image", "footer:site_name",
     }
     try:
         if not isinstance(handwritten, dict):
@@ -574,6 +574,7 @@ META_ATTR_RE = re.compile(
 HEAD_RE = re.compile(r"<head\b[^>]*>(.*?)</head\s*>", re.I | re.S)
 HEAD_TAG_RE = re.compile(r"<(meta|link)\b[^>]*>", re.I)
 TITLE_VALUE_RE = re.compile(r"<title\b[^>]*>(.*?)</title\s*>", re.I | re.S)
+FOOTER_RE = re.compile(r"<footer\b[^>]*>(.*?)</footer\s*>", re.I | re.S)
 
 
 def _tag_attrs(tag: str) -> dict:
@@ -610,6 +611,11 @@ def collect_handwritten_chrome(raw: str) -> dict:
         if key:
             found.setdefault(key, []).append(
                 (html.unescape(value or "").strip(), line))
+    footer = FOOTER_RE.search(raw)
+    if footer:
+        line = raw.count("\n", 0, footer.start()) + 1
+        value = html.unescape(re.sub(r"<[^>]+>", " ", footer.group(1)))
+        found["footer:site_name"] = [(" ".join(value.split()), line)]
     return found
 
 
@@ -651,7 +657,9 @@ def check_handwritten_chrome(raw: str, rel: str, rule: dict,
                 msg=message, fix=suggestion))
             continue
         expected = expected_values.get(field)
-        if expected is not None and actual[0] != expected:
+        matches_expected = (expected in actual[0] if field == "footer:site_name"
+                            else actual[0] == expected)
+        if expected is not None and not matches_expected:
             findings.append(dict(
                 sev="error", cat="handwritten_chrome", line=line,
                 match="%s actual=%r expected=%r" % (field, actual[0], expected),

@@ -388,6 +388,11 @@ check("具名頁 title 缺正規站名尾綴 → EXIT=1 且帶實際值與應有
       rc == 1 and "title-site-name actual='Fixture without publisher suffix'" in out
       and CANON in out, out[-600:])
 
+rc, out = run({"blog/index.html": page(footer="© BT Game")})
+check("具名頁 footer 沿用舊站名 → EXIT=1 且帶實際值與應有值",
+      rc == 1 and "footer:site_name actual='© BT Game'" in out and CANON in out,
+      out[-600:])
+
 # 單引號屬性、屬性順序顛倒、實體編碼 —— 換個寫法就繞過去的閘等於沒有。
 rc, out = run({"index.html": page(), "a/index.html": page(),
                "games/x/index.html": '<!doctype html><html><head>'

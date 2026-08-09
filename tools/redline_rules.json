@@ -23,13 +23,30 @@
         "meta:twitter:card",
         "meta:twitter:title",
         "meta:twitter:description",
+        "meta:twitter:image",
+        "footer:site_name"
+      ],
+      "head_only": [
+        "title",
+        "meta:description",
+        "link:canonical",
+        "meta:og:type",
+        "meta:og:site_name",
+        "meta:og:locale",
+        "meta:og:title",
+        "meta:og:description",
+        "meta:og:url",
+        "meta:og:image",
+        "meta:twitter:card",
+        "meta:twitter:title",
+        "meta:twitter:description",
         "meta:twitter:image"
       ]
     },
     "pages": [
       {
         "path": "404.html",
-        "field_set": "standard"
+        "field_set": "head_only"
       },
       {
         "path": "blog/index.html",
@@ -105,7 +122,7 @@
       },
       {
         "path": "index.html",
-        "field_set": "standard"
+        "field_set": "head_only"
       },
       {
         "path": "save/compare/index.html",
@@ -131,7 +148,8 @@
     "expected_values": {
       "meta:og:site_name": "$canonical_site_name",
       "meta:og:locale": "zh_TW",
-      "meta:twitter:card": "summary_large_image"
+      "meta:twitter:card": "summary_large_image",
+      "footer:site_name": "$canonical_site_name"
     },
     "title_site_name": true,
     "severity": "error",
