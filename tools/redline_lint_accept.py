@@ -107,6 +107,33 @@ s = summary(out)
 check("乾淨站台 → rc 0 且 error=0", rc == 0 and s and s["error"] == 0, out[-400:])
 check("summary 行存在且 pages 正確", s and s["pages"] == 3, out[-200:])
 
+# --- 1a. /games/* robots noindex deploy 前不變式 -----------------------------
+rc, out = run({'index.html': page(), 'a/index.html': page(),
+               'games/clean/index.html': page().replace(
+                   '</head>', '<meta name=robots content=index,follow>\n</head>')})
+check('/games/* rendered robots=index,follow → 放行',
+      rc == 0 and summary(out)['error'] == 0, out[-500:])
+
+rc, out = run({'index.html': page(), 'a/index.html': page(),
+               'games/blocked/index.html': page().replace(
+                   '</head>', '<meta content=NOINDEX,nofollow name=robots>\n</head>')})
+check('/games/* rendered robots=noindex（屬性倒序）→ error、擋部署',
+      rc == 1 and summary(out)['error'] == 1 and 'game_robots' in out,
+      out[-700:])
+
+rc, out = run({'index.html': page(), 'a/index.html': page(),
+               'games/none/index.html': page().replace(
+                   '</head>', '<meta name=robots content=none>\n</head>')})
+check('/games/* rendered robots=none（等同 noindex,nofollow）→ error、擋部署',
+      rc == 1 and summary(out)['error'] == 1 and 'game_robots' in out,
+      out[-700:])
+
+rc, out = run({'index.html': page(), 'a/index.html': page(),
+               'blog/private/index.html': page().replace(
+                   '</head>', '<meta name=robots content=noindex>\n</head>')})
+check('非 /games/* 的刻意 noindex 頁不受 scoped 閘誤擋',
+      rc == 0 and summary(out)['error'] == 0, out[-500:])
+
 # --- 2. 點名遊戲 × 折數，同塊共現 --------------------------------------------
 rc, out = run({"index.html": page(body="<p>上古王冠現在有 0.1 折超值方案</p>"),
                "a/index.html": page(), "b/index.html": page()})

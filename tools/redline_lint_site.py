@@ -541,6 +541,31 @@ def check_site_identity(raw: str, ident: dict) -> list:
     return findings
 
 
+def check_game_robots(raw: str, rel: str) -> list:
+    '''Rendered /games/* HTML must not request noindex; live audit covers headers.'''
+    rel = rel.replace('\\', '/').lstrip('./')
+    if not rel.startswith('games/'):
+        return []
+    findings = []
+    for m in SITE_NAME_META_RE.finditer(raw):
+        attrs = {}
+        for a in META_ATTR_RE.finditer(m.group(0)):
+            attrs[a.group(1).lower()] = next(
+                (g for g in (a.group(2), a.group(3), a.group(4)) if g is not None), '')
+        if attrs.get('name', '').strip().lower() != 'robots':
+            continue
+        value = html.unescape(attrs.get('content', '')).strip()
+        blocked = sorted(set(re.split(r'[\s,]+', value.lower())) & {'noindex', 'none'})
+        if blocked:
+            findings.append(dict(
+                sev='error', cat='game_robots', line=raw.count('\n', 0, m.start()) + 1,
+                match='robots=%r' % value,
+                msg='/games/* rendered HTML must not contain noindex (%s).'
+                    % '/'.join(blocked),
+                fix='Remove noindex/none; verify meta and X-Robots-Tag after deploy.'))
+    return findings
+
+
 def discover_build_files(root: str):
     out = []
     for dirpath, dirnames, filenames in os.walk(root):
@@ -825,6 +850,7 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         # 區塊化會把 chrome meta 併進共用版型偵測，而繞過 include 的頁正好
         # 不共用版型，靠共用版型偵測是抓不到它們的。
         hits = check_site_identity(raw, rules["site_identity"])
+        hits.extend(check_game_robots(raw, rel))
         if hits:
             identity[rel] = hits
     boilerplate = find_boilerplate(parsed)
