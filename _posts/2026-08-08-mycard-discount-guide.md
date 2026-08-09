@@ -9,6 +9,8 @@ lang: zh-Hant
 
 先給答案：**「mycard 95 折」那種官網直接打折的年代已經結束了**——這也是為什麼你會在搜尋下拉看到「mycard 95折沒了」。2026 年想買便宜的 MyCard，靠的不是單一折扣入口，而是「**通路檔期＋支付回饋**」兩層疊加：挑對商城買點數（約 93～95 折），再用有回饋的支付方式結帳，實際成本大約可以壓到 9 折上下。這篇把現行管道一次整理清楚，最後也誠實講：MyCard 折扣有天花板，如果你玩的遊戲本身有折扣儲值體系，省的幅度是另一個量級。
 
+**想先看遊戲內容與開始方式？** [查看《黎明召喚》遊戲資訊 →](https://btgamevip.com/games/liming-zhaohuan/?utm_source=blog&utm_medium=internal&utm_campaign=mycard_guide_ab_20260810&utm_content=above_fold)
+
 ## 30 秒版答案
 
 - **官方原價**：官網、超商、遊戲內直買 MyCard 都是原價，沒有公開的通用折扣碼。
