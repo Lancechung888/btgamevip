@@ -53,13 +53,26 @@ SECTIONS = {
         # 不是 provenance。留在私版等於下一個人改規則時看不到它，又會重問一次。
         # site_identity 是刻意公開的：它裝的是「我方站名」這個我們自己說了算的常數，
         # 不含任何來源／契約判定，公開它才有辦法在 CI 上比對。
-        "public": ["version", "context_gate_policy", "site_identity", "discount_patterns",
+        "public": ["version", "context_gate_policy", "site_identity", "handwritten_chrome", "discount_patterns",
                    "by_name", "frozen", "by_gid", "wording", "context_gates", "density"],
-        "private_only": ["_comment", "_site_identity_comment"],
+        # These draft sections remain private until their own approved exporter change lands.
+        # Listing them explicitly preserves fail-closed handling without mixing that work into
+        # an unrelated public export.
+        "private_only": ["_comment", "_site_identity_comment", "jargon", "official_names",
+                         "_official_names_comment"],
     },
     "site_identity": {
         "public": ["canonical_site_name", "severity", "public_message", "public_suggestion"],
         "private_only": ["source", "message", "suggestion", "notes"],
+    },
+    "handwritten_chrome": {
+        "public": ["field_sets", "pages", "expected_values", "title_site_name", "severity",
+                   "public_message", "public_suggestion"],
+        "private_only": ["source", "message", "suggestion", "notes"],
+    },
+    "handwritten_chrome_page": {
+        "public": ["path", "field_set"],
+        "private_only": ["source", "notes"],
     },
     "by_name": {
         "public": ["id", "names", "rule", "severity", "public_message", "public_suggestion"],
@@ -142,6 +155,14 @@ def build_public(priv: dict) -> dict:
     for section in ("site_identity", "density"):
         if section in out:
             out[section] = filter_keys(out[section], section, section)
+    if "handwritten_chrome" in out:
+        out["handwritten_chrome"] = filter_keys(
+            out["handwritten_chrome"], "handwritten_chrome", "handwritten_chrome")
+        out["handwritten_chrome"]["pages"] = [
+            filter_keys(item, "handwritten_chrome_page",
+                        "handwritten_chrome.pages[%d]" % i)
+            for i, item in enumerate(out["handwritten_chrome"].get("pages", []))
+        ]
     out["_generated_by"] = ("tools/export_redline_rules.py —— 本檔為自動產出的公版，"
                             "請勿手改；改規則請改私版後重跑本腳本。")
     return out

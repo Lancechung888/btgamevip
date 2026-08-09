@@ -24,11 +24,25 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 LINT = os.path.join(HERE, "redline_lint_site.py")
 RULES = os.path.join(HERE, "redline_rules.json")
+with open(RULES, encoding="utf-8") as _rules_fh:
+    _RULES_OBJ = json.load(_rules_fh)
+CANON = _RULES_OBJ["site_identity"]["canonical_site_name"]
 
 PAGE = """<!doctype html><html><head>
 <title>{title}</title>
 <meta property="og:site_name" content="BT 手遊情報站｜台灣手遊儲值攻略與下載入口">
 <meta name="description" content="{desc}">
+<link rel="canonical" href="https://btgamevip.com/test/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="https://btgamevip.com/test/">
+<meta property="og:image" content="https://btgamevip.com/assets/posts/what-is-u2game-main-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="https://btgamevip.com/assets/posts/what-is-u2game-main-og.png">
 </head><body>
 <header><p>BT 手遊情報站</p></header>
 {body}
@@ -42,15 +56,20 @@ PLAIN_FOOTER = "BT 手遊情報站｜台灣手遊儲值攻略與下載入口"
 results = []
 
 
-def page(title="一般標題｜BT 手遊情報站", desc="一般說明", body="", footer=PLAIN_FOOTER):
+def page(title="一般標題｜BT 手遊情報站｜台灣手遊儲值攻略與下載入口", desc="一般說明", body="", footer=PLAIN_FOOTER):
     return PAGE.format(title=title, desc=desc, body=body, footer=footer)
 
 
-def run(files, extra=(), rules=RULES):
+def run(files, extra=(), rules=RULES, populate_named=True):
     """把 files（相對路徑 → 內容）寫成臨時建置產物，跑 lint，回 (rc, stdout)。"""
     root = tempfile.mkdtemp(prefix="redline-accept-")
     try:
-        for rel, content in files.items():
+        materialized = dict(files)
+        if populate_named and rules == RULES:
+            clean = page(title="Fixture｜%s" % CANON)
+            for item in _RULES_OBJ["handwritten_chrome"]["pages"]:
+                materialized.setdefault(item["path"], clean)
+        for rel, content in materialized.items():
             full = os.path.join(root, rel.replace("/", os.sep))
             os.makedirs(os.path.dirname(full), exist_ok=True)
             with open(full, "w", encoding="utf-8") as fh:
@@ -105,7 +124,9 @@ rc, out = run({"index.html": page(body="<p>平台介紹與下載入口，儲值�
                "b/index.html": page(body="<p>版本差異說明。</p>")})
 s = summary(out)
 check("乾淨站台 → rc 0 且 error=0", rc == 0 and s and s["error"] == 0, out[-400:])
-check("summary 行存在且 pages 正確", s and s["pages"] == 3, out[-200:])
+_expected_pages = len({"index.html", "a/index.html", "b/index.html"} |
+                      {item["path"] for item in _RULES_OBJ["handwritten_chrome"]["pages"]})
+check("summary 行存在且 pages 正確", s and s["pages"] == _expected_pages, out[-200:])
 
 # --- 1a. /games/* robots noindex deploy 前不變式 -----------------------------
 rc, out = run({'index.html': page(), 'a/index.html': page(),
@@ -336,12 +357,31 @@ rc, out = run({"index.html": page(), "a/index.html": page(),
 check("og:site_name 等於正規站名 → 放行", rc == 0 and summary(out)["error"] == 0,
       out[-400:])
 
-# 沒有 og:site_name 這一欄的頁（例：404）不在本條射程內，不得誤報。
+# 具名手寫頁缺 og:site_name 或任何 chrome 欄位都必須擋下。
 rc, out = run({"index.html": page(), "a/index.html": page(),
                "404.html": '<!doctype html><html><head><title>頁面不存在 | %s</title>'
                            '</head><body><p>找不到</p></body></html>' % CANON})
-check("頁面沒有 og:site_name → 不誤報", rc == 0 and summary(out)["error"] == 0,
+check("具名 404 缺 og:site_name → error（缺格 fail-closed）",
+      rc == 1 and summary(out)["error"] > 0 and
+      "meta:og:site_name actual=<missing> expected=<present>" in out,
       out[-400:])
+
+broken = page(title="Fixture｜%s" % CANON).replace(
+    'name="twitter:card" content="summary_large_image"',
+    'name="twitter:card" content="summary"')
+rc, out = run({"404.html": broken})
+check("具名頁實際值不符 → EXIT=1 且帶實際值與應有值",
+      rc == 1 and
+      "meta:twitter:card actual='summary' expected='summary_large_image'" in out,
+      out[-600:])
+rc, out = run({"404.html": page(title="Fixture｜%s" % CANON)})
+check("具名頁改回完整 chrome → EXIT=0", rc == 0 and summary(out)["error"] == 0,
+      out[-400:])
+
+rc, out = run({"404.html": page(title="Fixture without publisher suffix")})
+check("具名頁 title 缺正規站名尾綴 → EXIT=1 且帶實際值與應有值",
+      rc == 1 and "title-site-name actual='Fixture without publisher suffix'" in out
+      and CANON in out, out[-600:])
 
 # 單引號屬性、屬性順序顛倒、實體編碼 —— 換個寫法就繞過去的閘等於沒有。
 rc, out = run({"index.html": page(), "a/index.html": page(),
@@ -365,6 +405,19 @@ with os.fdopen(_fd, "w", encoding="utf-8") as fh:
 rc, out = run({"index.html": page()}, rules=_noident)
 check("規則表缺站名常數 → rc 2（fail-closed，不是靜默略過）", rc == 2, out[-400:])
 os.unlink(_noident)
+
+_stripped = dict(_rules_obj)
+_stripped.pop("handwritten_chrome", None)
+_fd, _nohandwritten = tempfile.mkstemp(suffix=".json")
+with os.fdopen(_fd, "w", encoding="utf-8") as fh:
+    json.dump(_stripped, fh, ensure_ascii=False)
+rc, out = run({"index.html": page()}, rules=_nohandwritten)
+check("規則表缺 handwritten_chrome 常數 → rc 2（fail-closed）", rc == 2, out[-400:])
+os.unlink(_nohandwritten)
+
+rc, out = run({"index.html": page()}, populate_named=False)
+check("具名清單頁未出現在 build → rc 2（基建層，不受 baseline）",
+      rc == 2 and "named handwritten_chrome pages missing from build" in out, out[-500:])
 
 # --- 13. 公版規則表本身不得含內部資訊 ----------------------------------------
 with open(RULES, encoding="utf-8") as fh:

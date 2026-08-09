@@ -7,6 +7,137 @@
     "message": "og:site_name 不等於全站正規站名。這一欄就是分享卡片上顯示的「發佈者」，它自成一格，跟本頁標題無關。",
     "suggestion": "把 og:site_name 改成規則表 site_identity.canonical_site_name 的值。手寫完整 HTML 的頁面不走版型 include，chrome 欄位得自己對齊。"
   },
+  "handwritten_chrome": {
+    "field_sets": {
+      "standard": [
+        "title",
+        "meta:description",
+        "link:canonical",
+        "meta:og:type",
+        "meta:og:site_name",
+        "meta:og:locale",
+        "meta:og:title",
+        "meta:og:description",
+        "meta:og:url",
+        "meta:og:image",
+        "meta:twitter:card",
+        "meta:twitter:title",
+        "meta:twitter:description",
+        "meta:twitter:image"
+      ]
+    },
+    "pages": [
+      {
+        "path": "404.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "blog/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/bailian-wangzhe/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/doupo-cangqiong-sannian/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/douzhuan-wulin/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/fudichouxin-chuanqi/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/gongfu-zhiye/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/jianyu-longcheng-chuanqi/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/liming-zhaohuan/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/sanshiliu-ji/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/shengguang-zhizhan/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/shijie-yihua-zhihou/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/tianxuan-yingxiong/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/wangzhe-zhijian-2/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/xin-daomubiji-topup-discount/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/zhaohuanshi-fenzheng/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/zhetian-dilu-zhengfeng/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "games/zhizun-bingwang/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "save/compare/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "save/guide/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "save/safety/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "u2game/index.html",
+        "field_set": "standard"
+      },
+      {
+        "path": "why-us/index.html",
+        "field_set": "standard"
+      }
+    ],
+    "expected_values": {
+      "meta:og:site_name": "$canonical_site_name",
+      "meta:og:locale": "zh_TW",
+      "meta:twitter:card": "summary_large_image"
+    },
+    "title_site_name": true,
+    "severity": "error",
+    "message": "Named handwritten HTML pages must expose the complete site chrome field set.",
+    "suggestion": "Align the named page head fields with the shared head output; missing fields fail closed."
+  },
   "discount_patterns": [
     "0\\.\\d+\\s*折",
     "\\d+\\s*折",

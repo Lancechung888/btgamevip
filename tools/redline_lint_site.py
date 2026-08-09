@@ -470,6 +470,70 @@ def load_rules(path: str) -> dict:
         sys.exit(2)
     rules["site_identity"] = dict(ident, canonical_site_name=canon)
 
+    # 具名手寫頁 chrome 契約。這些頁刻意繞過共用 head，因此清單或欄位集合
+    # 只要缺一塊，就不是「沒有命中」，而是閘失去射程：一律 rc 2。
+    handwritten = raw.get("handwritten_chrome")
+    known_fields = {
+        "title", "meta:description", "link:canonical", "meta:og:type",
+        "meta:og:site_name", "meta:og:locale", "meta:og:title",
+        "meta:og:description", "meta:og:url", "meta:og:image",
+        "meta:twitter:card", "meta:twitter:title",
+        "meta:twitter:description", "meta:twitter:image",
+    }
+    try:
+        if not isinstance(handwritten, dict):
+            raise ValueError("缺少 handwritten_chrome 具名常數")
+        field_sets = handwritten["field_sets"]
+        pages = handwritten["pages"]
+        expected = handwritten["expected_values"]
+        if not isinstance(field_sets, dict) or not field_sets:
+            raise ValueError("handwritten_chrome.field_sets 必須是非空物件")
+        if not isinstance(pages, list) or not pages:
+            raise ValueError("handwritten_chrome.pages 必須是非空清單")
+        if not isinstance(expected, dict):
+            raise ValueError("handwritten_chrome.expected_values 必須是物件")
+        clean_sets = {}
+        for set_name, fields in field_sets.items():
+            if (not isinstance(set_name, str) or not set_name or
+                    not isinstance(fields, list) or not fields or
+                    any(not isinstance(x, str) for x in fields)):
+                raise ValueError("field_sets.%s 格式不合法" % set_name)
+            if len(fields) != len(set(fields)):
+                raise ValueError("field_sets.%s 含重複欄位" % set_name)
+            unknown = sorted(set(fields) - known_fields)
+            if unknown:
+                raise ValueError("field_sets.%s 含未知欄位 %s" % (set_name, unknown))
+            clean_sets[set_name] = tuple(fields)
+        clean_pages, seen_paths = [], set()
+        for i, page in enumerate(pages):
+            if not isinstance(page, dict) or set(page) != {"path", "field_set"}:
+                raise ValueError("pages[%d] 只能含 path、field_set" % i)
+            rel, set_name = page["path"], page["field_set"]
+            if (not isinstance(rel, str) or not rel or "\\" in rel or
+                    rel.startswith("/") or ".." in rel.split("/")):
+                raise ValueError("pages[%d].path 不是安全的建置相對路徑" % i)
+            if rel in seen_paths:
+                raise ValueError("pages 含重複路徑 %s" % rel)
+            if set_name not in clean_sets:
+                raise ValueError("pages[%d] 引用不存在的 field_set %s" % (i, set_name))
+            seen_paths.add(rel)
+            clean_pages.append((rel, set_name))
+        all_fields = set().union(*(set(x) for x in clean_sets.values()))
+        for field, value in expected.items():
+            if field not in all_fields or not isinstance(value, str) or not value:
+                raise ValueError("expected_values.%s 未列在欄位集合內或值為空" % field)
+        if handwritten.get("title_site_name") is not True:
+            raise ValueError("handwritten_chrome.title_site_name 必須為 true")
+        if handwritten.get("severity") != "error":
+            raise ValueError("handwritten_chrome.severity 必須為 error")
+    except (KeyError, TypeError, ValueError) as exc:
+        print("ERROR: 規則表 %s 的具名手寫頁 chrome 契約不合法：%s（fail-closed）"
+              % (path, exc), file=sys.stderr)
+        sys.exit(2)
+    rules["handwritten_chrome"] = dict(
+        handwritten, field_sets=clean_sets, pages=clean_pages,
+        expected_values=dict(expected))
+
     if not (rules["by_name"] or rules["by_gid"] or rules["gates"]):
         print("ERROR: 規則表 %s 是空的（沒有任何可執行規則）" % path, file=sys.stderr)
         sys.exit(2)
@@ -501,6 +565,101 @@ SITE_NAME_META_RE = re.compile(
     r"<meta\b[^>]*>", re.I)
 META_ATTR_RE = re.compile(
     r'([a-zA-Z:_-]+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'>]+))')
+HEAD_RE = re.compile(r"<head\b[^>]*>(.*?)</head\s*>", re.I | re.S)
+HEAD_TAG_RE = re.compile(r"<(meta|link)\b[^>]*>", re.I)
+TITLE_VALUE_RE = re.compile(r"<title\b[^>]*>(.*?)</title\s*>", re.I | re.S)
+
+
+def _tag_attrs(tag: str) -> dict:
+    attrs = {}
+    for match in META_ATTR_RE.finditer(tag):
+        attrs[match.group(1).lower()] = next(
+            (value for value in (match.group(2), match.group(3), match.group(4))
+             if value is not None), "")
+    return attrs
+
+
+def collect_handwritten_chrome(raw: str) -> dict:
+    """收手寫頁 `<head>` 的具名欄位；保留每一筆值與原始行號以抓重複。"""
+    head_match = HEAD_RE.search(raw)
+    if not head_match:
+        return {}
+    head, offset = head_match.group(1), head_match.start(1)
+    found = {}
+    for title in TITLE_VALUE_RE.finditer(head):
+        line = raw.count("\n", 0, offset + title.start()) + 1
+        value = re.sub(r"<[^>]+>", "", title.group(1))
+        found.setdefault("title", []).append((html.unescape(value).strip(), line))
+    for match in HEAD_TAG_RE.finditer(head):
+        tag, kind = match.group(0), match.group(1).lower()
+        line = raw.count("\n", 0, offset + match.start()) + 1
+        key = value = None
+        attrs = _tag_attrs(tag)
+        if kind == "link" and "canonical" in attrs.get("rel", "").lower().split():
+            key, value = "link:canonical", attrs.get("href", "")
+        elif kind == "meta":
+            name = (attrs.get("property") or attrs.get("name") or "").lower()
+            if name == "description" or name.startswith(("og:", "twitter:")):
+                key, value = "meta:" + name, attrs.get("content", "")
+        if key:
+            found.setdefault(key, []).append(
+                (html.unescape(value or "").strip(), line))
+    return found
+
+
+def check_handwritten_chrome(raw: str, rel: str, rule: dict,
+                             canonical_site_name: str) -> list:
+    """逐頁比對具名手寫頁，不借用共用版型偵測；缺欄與錯值都直接 error。"""
+    page_map = dict(rule["pages"])
+    if rel not in page_map:
+        return []
+    fields = rule["field_sets"][page_map[rel]]
+    expected_values = dict(rule["expected_values"])
+    expected_values = {
+        key: canonical_site_name if value == "$canonical_site_name" else value
+        for key, value in expected_values.items()
+    }
+    found, findings = collect_handwritten_chrome(raw), []
+    message = rule.get("message", "具名手寫頁的 chrome 欄位集合不完整。")
+    suggestion = rule.get("suggestion", "補齊欄位並與共用 head 輸出對齊。")
+    for field in fields:
+        values = found.get(field, [])
+        actual = [value for value, _line in values]
+        line = values[0][1] if values else 1
+        if not values:
+            findings.append(dict(
+                sev="error", cat="handwritten_chrome", line=line,
+                match="%s actual=<missing> expected=<present>" % field,
+                msg=message, fix=suggestion))
+            continue
+        if len(values) != 1:
+            findings.append(dict(
+                sev="error", cat="handwritten_chrome", line=line,
+                match="%s actual=%r expected=exactly-one" % (field, actual),
+                msg=message, fix=suggestion))
+            continue
+        if not actual[0]:
+            findings.append(dict(
+                sev="error", cat="handwritten_chrome", line=line,
+                match="%s actual='' expected=<non-empty>" % field,
+                msg=message, fix=suggestion))
+            continue
+        expected = expected_values.get(field)
+        if expected is not None and actual[0] != expected:
+            findings.append(dict(
+                sev="error", cat="handwritten_chrome", line=line,
+                match="%s actual=%r expected=%r" % (field, actual[0], expected),
+                msg=message, fix=suggestion))
+    title_values = found.get("title", [])
+    if rule.get("title_site_name") and len(title_values) == 1:
+        actual, line = title_values[0]
+        if not actual.endswith(canonical_site_name):
+            findings.append(dict(
+                sev="error", cat="handwritten_chrome", line=line,
+                match="title-site-name actual=%r expected=suffix %r"
+                      % (actual, canonical_site_name),
+                msg=message, fix=suggestion))
+    return findings
 
 
 def check_site_identity(raw: str, ident: dict) -> list:
@@ -837,6 +996,7 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
 
     # 第 1 趟：全站解析。共用版型偵測需要全站語料，不能一檔一檔看。
     parsed, gid_index, identity = {}, {}, {}
+    named_pages = {path for path, _field_set in rules["handwritten_chrome"]["pages"]}
     for full in files:
         rel = os.path.relpath(full, build_root).replace(os.sep, "/")
         with open(full, encoding="utf-8", errors="replace") as fh:
@@ -850,9 +1010,17 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         # 區塊化會把 chrome meta 併進共用版型偵測，而繞過 include 的頁正好
         # 不共用版型，靠共用版型偵測是抓不到它們的。
         hits = check_site_identity(raw, rules["site_identity"])
+        hits.extend(check_handwritten_chrome(
+            raw, rel, rules["handwritten_chrome"],
+            rules["site_identity"]["canonical_site_name"]))
         hits.extend(check_game_robots(raw, rel))
         if hits:
             identity[rel] = hits
+    missing_named = sorted(named_pages - set(parsed))
+    if missing_named:
+        print("ERROR: named handwritten_chrome pages missing from build: %s"
+              % ", ".join(missing_named), file=sys.stderr)
+        sys.exit(2)
     boilerplate = find_boilerplate(parsed)
 
     # 第 2 趟：逐塊判定。
