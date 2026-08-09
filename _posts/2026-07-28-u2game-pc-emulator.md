@@ -2,6 +2,7 @@
 meta_title: u2game 電腦版怎麼玩？模擬器教學
 title: u2game 電腦版怎麼玩？用模擬器在電腦上玩 u2game 遊戲教學
 description: u2game 沒有獨立電腦版，想在電腦上玩要用 Android 模擬器跑手機版。本文教你用 LDPlayer／BlueStacks 安裝 u2game 遊戲盒子、登入同一帳號、照樣享 0.1 折儲值，並解答封號、iOS、鍵盤操作等常見問題。
+image: /assets/posts/u2game-pc-emulator-main-og.png
 slug: u2game-pc-emulator
 main_keyword: u2game 電腦版
 lsi: u2game 模擬器, u2game 電腦上玩, LDPlayer u2game, u2game 大螢幕, u2game 手遊盒子電腦版

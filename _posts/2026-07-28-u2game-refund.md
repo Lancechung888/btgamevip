@@ -2,6 +2,7 @@
 meta_title: u2game 可以退款嗎？退費規則與處理方式
 title: u2game 可以退款嗎？儲值退費規則、誤儲怎麼處理一次講清楚
 description: u2game 儲值可以退款嗎？虛擬點數與遊戲儲值一經使用多半不退，但 MyCard 誤儲、未使用的情況可循官方管道申請。本文說明退費原則、誤儲處理步驟與 MyCard 客服申訴方式，教你儲值前先避開退款糾紛。
+image: /assets/posts/u2game-refund-main-og.png
 slug: u2game-refund
 main_keyword: u2game 退款
 lsi: u2game 退費, u2game 儲值退款, mycard 誤儲, 遊戲儲值可以退嗎, u2game 儲錯怎麼辦

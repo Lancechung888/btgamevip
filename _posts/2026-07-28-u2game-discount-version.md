@@ -2,6 +2,7 @@
 meta_title: u2game 折扣版是什麼？和官方版差在哪
 title: u2game 折扣版是什麼？和官方版差在哪、能一起玩嗎一次看懂
 description: u2game 折扣版就是廠商授權、全場 0.1 折起的遊戲版本，用 MyCard 扣點、自己帳號直充。本文比較折扣版和官方版在儲值價、伺服器、進度互通、封號風險上的差別，並解答折扣版能不能和朋友一起玩。
+image: /assets/posts/u2game-discount-version-main-og.png
 slug: u2game-discount-version
 main_keyword: u2game 折扣版
 lsi: u2game 折扣服, 折扣版和官方版差別, u2game bt版, 折扣版能一起玩嗎, u2game 折扣版安全嗎
