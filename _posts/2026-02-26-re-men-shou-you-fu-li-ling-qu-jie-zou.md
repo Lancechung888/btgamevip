@@ -67,7 +67,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 ## 延伸閱讀
 
 - [手遊折扣平台怎麼選才安全](/2026/02/26/shou-you-zhe-kou-ping-tai-an-quan-xuan-ze.html)
-- [手遊充值省錢策略（2026）](/2026/02/25/shou-you-chong-zhi-sheng-qian-ce-lue-2026.html)
+- [手遊儲值省錢策略（2026）](/2026/02/25/shou-you-chong-zhi-sheng-qian-ce-lue-2026.html)
 
 ---
 
