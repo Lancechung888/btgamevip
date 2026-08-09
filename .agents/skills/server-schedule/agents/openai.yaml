@@ -1,0 +1,4 @@
+interface:
+  display_name: "Server Schedule"
+  short_description: "Fetch public u2 server openings as guarded JSON"
+  default_prompt: "Use $server-schedule to fetch the public u2 server-opening schedule as compliance-gated JSON."
