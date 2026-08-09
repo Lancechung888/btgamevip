@@ -87,7 +87,7 @@
     html { scroll-behavior:smooth; }
     body { margin:0; font-family:"Microsoft JhengHei","Noto Sans TC",Arial,sans-serif; color:#f8f3e7; background:#16120f; line-height:1.7; }
     a { color:inherit; }
-    .wrap { width:min(100% - 32px, 760px); margin:0 auto; padding-bottom:48px; }
+    .wrap { width:min(100% - 32px, 1120px); margin:0 auto; padding-bottom:48px; }
     .crumbs { padding:12px 0; font-size:13px; color:#d7c8aa; }
     .crumbs a { text-decoration:none; }
     .hero-card { position:relative; overflow:hidden; border-radius:24px; background:#29180e; box-shadow:0 18px 48px rgba(0,0,0,.38); }
@@ -113,6 +113,15 @@
     .faq dd { margin:4px 0 0; }
     .links a { color:#7c3517; font-weight:700; }
     footer { padding:18px 0 0; color:#c5b49e; text-align:center; font-size:12px; }
+    @media (min-width:860px) {
+      .hero-card { display:grid; grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr); align-items:stretch; }
+      .hero-card picture { height:100%; }
+      .hero-card img { height:100%; aspect-ratio:auto; object-position:center; }
+      .hero-copy { display:flex; flex-direction:column; justify-content:center; padding:30px; }
+      h1 { font-size:clamp(32px,3vw,40px); }
+      .quick-answer { margin-top:16px; padding:15px; }
+      .cta { margin-top:16px; }
+    }
     @media (max-width:560px) { .wrap { width:min(100% - 24px,760px); } .hero-copy,.panel { padding:19px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -126,19 +135,19 @@
       <header class="hero-card">
         <picture>
           <source srcset="/assets/img/games/bailian-wangzhe/hero.webp" type="image/webp">
-          <img src="/assets/img/games/bailian-wangzhe/hero.png" width="1200" height="900" fetchpriority="high" decoding="async" alt="百煉王者戰士揮舞長劍的官方遊戲主視覺">
+          <img src="/assets/img/games/bailian-wangzhe/hero.png" width="1200" height="900" fetchpriority="high" decoding="async" alt="百煉王者戰士揮舞長劍的遊戲主視覺">
         </picture>
         <div class="hero-copy">
           <div class="eyebrow">角色扮演・九職業版本辨識</div>
           <h1>百煉王者下載與玩法：九職業、靈獸與自動回收一次看</h1>
-          <p class="lead">搜尋結果混有卡牌、暗黑刷裝與其他傳奇版本；本站整理的是 u2 的靈獸復古九職業版本，下載前先核對名稱與 gid。</p>
-          <p class="quick-answer"><strong>先看答案：</strong>《百煉王者》gid 2346 是 u2 收錄的角色扮演遊戲，官方版本名帶有「靈獸復古九職業」。公開開服資料另標示自動回收與自動拾取；本頁不混用其他同名遊戲的角色、陣容或攻略。</p>
+          <p class="lead">搜尋結果混有卡牌、暗黑刷裝與其他傳奇版本；本站整理的是 u2 收錄的靈獸、復古與九職業版本，下載前先核對名稱與 gid。</p>
+          <p class="quick-answer"><strong>先看答案：</strong>《百煉王者》gid 2346 在 u2 歸類為角色扮演，收錄資訊以靈獸、復古與九職業作為辨識點。公開開服資料另標示自動回收與自動拾取；本頁不混用其他同名遊戲的角色、陣容或攻略。</p>
           <a class="cta download-link" data-platform="hero" href="/go/?c=bailian_wangzhe_landing_202608&amp;gid=2346&amp;utm_source=landing&amp;utm_medium=referral&amp;utm_campaign=bailian_wangzhe_launch_202608&amp;utm_content=hero_cta&amp;utm_term=bailian_wangzhe" rel="nofollow sponsored">前往《百煉王者》下載入口</a>
         </div>
       </header>
 
       <section class="grid" aria-label="遊戲特色">
-        <div class="feature"><h2>九職業版本</h2><p>官方版本名直接標示九職業；實際職業名稱、技能與平衡以遊戲當期內容為準。</p></div>
+        <div class="feature"><h2>九職業版本</h2><p>u2 收錄資訊標示九職業；實際職業名稱、技能與平衡以遊戲當期內容為準。</p></div>
         <div class="feature"><h2>靈獸主題</h2><p>版本名以靈獸作為辨識點，用來區隔卡牌與暗黑刷裝同名作。</p></div>
         <div class="feature"><h2>自動回收與拾取</h2><p>公開開服表標示自動回收、自動拾取，可減少整理掉落物的操作。</p></div>
         <div class="feature"><h2>核對 gid 2346</h2><p>下載前確認名稱與 gid，避免把其他同名作的攻略或安裝包當成本版本。</p></div>
@@ -146,7 +155,7 @@
 
       <section class="panel">
         <h2>《百煉王者》是哪一個版本？</h2>
-        <p>本頁只介紹 gid 2346。該遊戲在 u2 的官方版本名為「百煉王者（靈獸復古九職業）」，分類為角色扮演。搜尋首頁另有水墨卡牌、暗黑刷裝、單職業與三職業同名作，玩法資料不能互換。</p>
+        <p>本頁只介紹 gid 2346。u2 收錄頁以靈獸、復古與九職業作為辨識資訊，並將它分類為角色扮演。搜尋首頁另有水墨卡牌、暗黑刷裝、單職業與三職業同名作，玩法資料不能互換。</p>
       </section>
 
       <section class="panel">
