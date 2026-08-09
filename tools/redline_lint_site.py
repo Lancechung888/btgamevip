@@ -330,11 +330,13 @@ class _BuildExtractor(HTMLParser):
         self._in_title = False
         self._title_buf = []
         self._title_line = 1
+        self._chrome_regions = []
 
-    def _emit(self, segs, where="body"):
+    def _emit(self, segs, where=None):
         text = re.sub(r"\s+", " ", "".join(s[0] for s in segs)).strip()
         if not text:
             return
+        where = where or (self._chrome_regions[-1] if self._chrome_regions else "body")
         line = next((s[2] for s in segs if s[0].strip()), 1)
         own = {self._akeys.get(s[1], "") for s in segs if s[1] is not None}
         anc = {h for _k, h in self._astack if h}
@@ -386,6 +388,8 @@ class _BuildExtractor(HTMLParser):
             return
         if tag in BUILD_BLOCK_TAGS:
             self._flush()
+        if tag in {"header", "footer"}:
+            self._chrome_regions.append(tag)
         line = self.getpos()[0]
         if tag == "img":
             self._standalone(d.get("alt") or "", "img@alt", line)
@@ -406,6 +410,8 @@ class _BuildExtractor(HTMLParser):
             self._astack.pop()
         if tag in BUILD_BLOCK_TAGS:
             self._flush()
+        if tag in {"header", "footer"} and self._chrome_regions:
+            self._chrome_regions.pop()
 
     def handle_data(self, data):
         if self._in_title:
@@ -768,6 +774,7 @@ def is_chrome(block, boilerplate) -> bool:
     """
     where = block.get("where", "body")
     return (where == "<title>" or where.startswith("meta[")
+            or where in {"header", "footer"}
             or block["text"] in boilerplate)
 
 
