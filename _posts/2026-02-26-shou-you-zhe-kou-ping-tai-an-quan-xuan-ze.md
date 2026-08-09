@@ -71,7 +71,7 @@ image: "https://static.u2game99.com/web3/pc/img/bk1.webp"
 
 ## 延伸閱讀（建議一起看）
 
-- [手遊充值省錢策略（首儲/續儲）](/2026/02/25/shou-you-chong-zhi-sheng-qian-ce-lue-2026.html)
+- [手遊儲值省錢策略（首儲/續儲）](/2026/02/25/shou-you-chong-zhi-sheng-qian-ce-lue-2026.html)
 - [熱門手遊福利領取節奏](/2026/02/26/re-men-shou-you-fu-li-ling-qu-jie-zou.html)
 
 ---
