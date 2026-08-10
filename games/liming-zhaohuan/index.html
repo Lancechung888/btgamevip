@@ -211,15 +211,29 @@
       } catch (e) { return ""; }
     }
     function qp(name) { return new URLSearchParams(location.search).get(name) || ""; }
+    function sendExperimentView() {
+      var experimentCampaign = qp("aw_campaign");
+      if (!experimentCampaign || typeof window.gtag !== "function") return;
+      window.gtag("event", "experiment_view", {
+        campaign_name: experimentCampaign,
+        campaign_content: qp("aw_content"),
+        experiment_id: experimentCampaign,
+        variant_id: qp("aw_content"),
+        destination_slug: GAME_SLUG,
+        transport_type: "beacon"
+      });
+    }
     function trackDownload(platform) {
       var payload = {
         game_slug: GAME_SLUG, platform: platform, aw_cid: getAwCid(),
         utm_source: qp("utm_source"), utm_medium: qp("utm_medium"),
         utm_campaign: qp("utm_campaign") || CAMPAIGN,
-        utm_content: qp("utm_content"), utm_term: qp("utm_term") || GAME_SLUG
+        utm_content: qp("utm_content"), utm_term: qp("utm_term") || GAME_SLUG,
+        campaign_name: qp("aw_campaign") || qp("utm_campaign") || CAMPAIGN,
+        campaign_content: qp("aw_content") || qp("utm_content"),
+        link_url: ANDROID_URL,
+        transport_type: "beacon"
       };
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push(Object.assign({ event: "download_click" }, payload));
       if (typeof window.gtag === "function") { window.gtag("event", "download_click", payload); }
     }
     ["dl-android", "dl-ios"].forEach(function (id) {
@@ -228,6 +242,7 @@
     });
     var qr = document.getElementById("qr");
     if (qr) qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(QR_TARGET);
+    sendExperimentView();
   })();
   </script>
 </body>
