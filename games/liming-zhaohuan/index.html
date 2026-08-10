@@ -217,6 +217,8 @@
       window.gtag("event", "experiment_view", {
         campaign_name: experimentCampaign,
         campaign_content: qp("aw_content"),
+        content_id: experimentCampaign,
+        content_type: "cta_experiment",
         experiment_id: experimentCampaign,
         variant_id: qp("aw_content"),
         destination_slug: GAME_SLUG,
@@ -231,6 +233,8 @@
         utm_content: qp("utm_content"), utm_term: qp("utm_term") || GAME_SLUG,
         campaign_name: qp("aw_campaign") || qp("utm_campaign") || CAMPAIGN,
         campaign_content: qp("aw_content") || qp("utm_content"),
+        content_id: qp("aw_campaign") || qp("utm_campaign") || CAMPAIGN,
+        content_type: "cta_experiment",
         link_url: ANDROID_URL,
         transport_type: "beacon"
       };
