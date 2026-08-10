@@ -8,6 +8,8 @@ lang: zh-Hant
 
 先講結論：**你在 TapTap 上看到的《上古王冠》官方下載頁，是中國大陸版**（掛在 taptap.cn，要先裝中國版 TapTap 客戶端才下載得到）；而**台灣的 Google Play 直接搜「上古王冠」是找不到主條目的**——搜得到的是名字多兩個字的**《上古王冠：傳奇》（英文名 Heroes of Crown: Legends）**。再加上 u2 平台 2026 年 7 月新上架的版本，同一款遊戲在台灣玩家面前其實有三道門。這篇把三個入口的差異一次講清楚，幫你少走冤枉路。
 
+**想先確認平台與安裝方式？** [查看 u2game 平台介紹與下載指引 →](/u2game/?utm_source=blog&utm_medium=internal&utm_campaign=shanggu_entry_20260811&utm_content=above_fold)
+
 ## 30 秒版答案
 
 - 《上古王冠》是西方魔幻題材的**策略卡牌＋放置**手遊，主打 3D 建模與收集英雄，掛機就能拿資源。
