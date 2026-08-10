@@ -331,8 +331,52 @@ layout: null
     const iosUrl = "https://mobapp.u2game99.com/#/front-page/recommendgame?key=zYshWpBN15";
     const androidUrl = "https://qd.u2game99.com/down.html?ag=da00467&gid=2&ldy=1";
 
+    function homeAwCid() {
+        try {
+            var key = "aw_cid";
+            var value = localStorage.getItem(key);
+            if (!value) {
+                var buffer = new Uint8Array(16);
+                (self.crypto || {}).getRandomValues && self.crypto.getRandomValues(buffer);
+                value = Array.prototype.map.call(buffer, function (byte) {
+                    return ("0" + byte.toString(16)).slice(-2);
+                }).join("");
+                localStorage.setItem(key, value);
+            }
+            return value;
+        } catch (error) {
+            return "";
+        }
+    }
+
+    function homeQueryParam(name) {
+        return new URLSearchParams(location.search).get(name) || "";
+    }
+
+    function trackHomeDownload(platform) {
+        var payload = {
+            game_slug: "homepage",
+            platform: platform,
+            aw_cid: homeAwCid(),
+            utm_source: homeQueryParam("utm_source"),
+            utm_medium: homeQueryParam("utm_medium"),
+            utm_campaign: homeQueryParam("utm_campaign") || "homepage_downbtn_202608",
+            utm_content: homeQueryParam("utm_content") || "home-cta",
+            utm_term: homeQueryParam("utm_term") || "homepage"
+        };
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(Object.assign({ event: "download_click" }, payload));
+        if (typeof window.gtag === "function") {
+            window.gtag("event", "download_click", payload);
+        }
+    }
+
     // 先定義下載函式，避免第三方腳本失敗時按鈕失效
     function down_btn(type) {
+        var platform = type === 'ios' ? 'ios' : 'android';
+        try {
+            trackHomeDownload(platform);
+        } catch (error) {}
         if (type === 'ios') {
             window.open(iosUrl, '_blank');
         } else {
