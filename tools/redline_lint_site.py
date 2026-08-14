@@ -453,9 +453,10 @@ OFFICIAL_DENIED_EXACT = re.compile(
     r"折|返[现現]|首[儲储]禮包|"
     r"(?:送|贈|赠|瓜分).{0,12}(?:\d+|[百千萬万]+).{0,8}(?:連抽|连抽|代金|元|點|点|鑽|钻)"
 )
-OFFICIAL_CITATION_CUE = re.compile(
-    r"(?:u2\s*(?:官方\s*)?(?:的\s*)?(?:版本|玩法)名|"
-    r"該遊戲在\s*u2\s*(?:的\s*)?(?:版本|玩法)名|官方(?:版本|玩法))",
+OFFICIAL_CITATION_PREFIX = re.compile(
+    r"^\s*(?:(?:該遊戲在\s*)?u2\s*(?:官方\s*)?(?:的\s*)?"
+    r"(?:版本|玩法)名(?:為|是|：|:)?|"
+    r"(?:另有\s*)?官方(?:版本|玩法)(?:名)?(?:為|是|：|:)?)\s*$",
     re.I,
 )
 
@@ -925,19 +926,27 @@ def official_spans(text, zone, rel, ctx_gids, rules, page_state):
         return []
     used = page_state.setdefault("official", {})
     spans = []
+    rel_parts = [part for part in rel.replace("\\", "/").split("/") if part]
+    leaf = rel_parts[-1] if rel_parts else ""
+    if leaf.lower() in {"index.html", "index.htm"}:
+        page_slug = rel_parts[-2] if len(rel_parts) >= 2 else ""
+    else:
+        page_slug = leaf.rsplit(".", 1)[0]
     for item in rules["official_names"]:
-        slug_ok = item.get("slug") and any(
-            part == item["slug"] or part.startswith(item["slug"] + ".")
-            for part in rel.split("/"))
+        # Page identity comes only from the leaf (or the parent of index.html).
+        # A matching directory segment such as /named-slug/archive.html must not
+        # inherit another page's official-name exception.
+        slug_ok = item.get("slug") and page_slug == item["slug"]
         if not ((item["gid"] and item["gid"] in ctx_gids) or slug_ok):
             continue
         for match in re.finditer(re.escape(item["exact"]), text):
-            # 引號只證明字串邊界，不證明是引用。必須在同一句、引用之前明寫
-            # u2 官方版本／玩法名，避免「本站主打『…』」把行銷口吻洗成引用。
+            # 引號只證明字串邊界，不證明是引用。整段句首到名稱之間必須
+            # 完整符合中性引用句型，不能在 cue 後夾入或接續我方主張。
             sentence_start = max(
                 text.rfind(mark, 0, match.start()) for mark in "。！？!?；;\n"
             ) + 1
-            if not OFFICIAL_CITATION_CUE.search(text[sentence_start:match.start()]):
+            if not OFFICIAL_CITATION_PREFIX.fullmatch(
+                    text[sentence_start:match.start()]):
                 continue
             if used.get(item["id"], 0) >= item["max_per_page"]:
                 break
