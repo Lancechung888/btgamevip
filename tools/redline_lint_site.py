@@ -449,6 +449,15 @@ class _BuildExtractor(HTMLParser):
 
 OFFICIAL_REQUIRED = {"id", "exact", "allow_zones", "max_per_page"}
 OFFICIAL_OPTIONAL = {"gid", "slug"}
+OFFICIAL_DENIED_EXACT = re.compile(
+    r"折|返[现現]|首[儲储]禮包|"
+    r"(?:送|贈|赠|瓜分).{0,12}(?:\d+|[百千萬万]+).{0,8}(?:連抽|连抽|代金|元|點|点|鑽|钻)"
+)
+OFFICIAL_CITATION_CUE = re.compile(
+    r"(?:u2\s*(?:官方\s*)?(?:的\s*)?(?:版本|玩法)名|"
+    r"該遊戲在\s*u2\s*(?:的\s*)?(?:版本|玩法)名|官方(?:版本|玩法))",
+    re.I,
+)
 
 
 def load_official_names(raw, path, jargon):
@@ -479,6 +488,9 @@ def load_official_names(raw, path, jargon):
         matched = [rule for rule in jargon if rule["_pat"].search(exact)]
         if not matched or any(rule["_pat"].fullmatch(exact) for rule in matched):
             raise ValueError("%s.exact 必須含行話且不得退化成詞條豁免" % label)
+        if OFFICIAL_DENIED_EXACT.search(exact):
+            raise ValueError(
+                "%s.exact 含折字／返現／首儲禮包或固定額度，官方名不得豁免" % label)
         if item["allow_zones"] != ["body"]:
             raise ValueError("%s.allow_zones 必須恰為 ['body']" % label)
         cap = item["max_per_page"]
@@ -488,6 +500,9 @@ def load_official_names(raw, path, jargon):
             raise ValueError("%s 必須且只能綁定 gid 或 slug" % label)
         if item.get("gid") and not re.fullmatch(r"\d{3,5}", str(item["gid"])):
             raise ValueError("%s.gid 格式不合法" % label)
+        if item.get("gid"):
+            raise ValueError(
+                "%s.gid 無法從 rendered page 證明為頁面自身身分；official_names 只接受 slug" % label)
         if item.get("slug") and (not isinstance(item["slug"], str)
                                  or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", item["slug"])):
             raise ValueError("%s.slug 格式不合法" % label)
@@ -917,6 +932,13 @@ def official_spans(text, zone, rel, ctx_gids, rules, page_state):
         if not ((item["gid"] and item["gid"] in ctx_gids) or slug_ok):
             continue
         for match in re.finditer(re.escape(item["exact"]), text):
+            # 引號只證明字串邊界，不證明是引用。必須在同一句、引用之前明寫
+            # u2 官方版本／玩法名，避免「本站主打『…』」把行銷口吻洗成引用。
+            sentence_start = max(
+                text.rfind(mark, 0, match.start()) for mark in "。！？!?；;\n"
+            ) + 1
+            if not OFFICIAL_CITATION_CUE.search(text[sentence_start:match.start()]):
+                continue
             if used.get(item["id"], 0) >= item["max_per_page"]:
                 break
             used[item["id"]] = used.get(item["id"], 0) + 1
@@ -1087,7 +1109,9 @@ def scan_text_doc(text: str, rules: dict) -> tuple:
 
     # (2)~(5) 其餘規則逐行判定。by_name 已在上面用整篇語意判過，這裡關掉，
     # 否則同一行同時命中會開兩張重複的單。
-    per_line = dict(rules, by_name=[])
+    # 純文字／社群沒有 rendered page identity 與 page-level zone，official_names
+    # 一律不適用；即使文案自行帶 gid 或 slug，也不得把它當頁面身分。
+    per_line = dict(rules, by_name=[], official_names=[])
     ctx_gids = set(GID_RE.findall(text))
     page_state = {}
     for i, raw_line in enumerate(text.split("\n"), 1):

@@ -256,6 +256,24 @@ check("official_names 完整引用在綁定頁 body 首次 → gated-pass",
       rc == 0 and summary(out)["error"] == 0 and summary(out)["gated"] >= 1,
       out[-700:])
 
+rc, out = run({official_rel: page(body="<p>另有官方玩法%s，以當期頁面為準。</p>" % official),
+               "a/index.html": page(), "b/index.html": page()})
+check("中性官方玩法引用在綁定頁 → gated-pass",
+      rc == 0 and summary(out)["error"] == 0 and summary(out)["gated"] >= 1,
+      out[-700:])
+
+rc, out = run({official_rel: page(body="<p>本站主打%s，現在就玩。</p>" % official),
+               "a/index.html": page(), "b/index.html": page()})
+check("引號內官方名但屬我方行銷口吻 → jargon error",
+      rc == 1 and "[jargon]" in out, out[-700:])
+
+rc, out = run({"news/unrelated/index.html": page(
+                   body='<p><a href="/2026/08/02/shaonian-xiyouji2-taiwan.html">'
+                        "u2 官方玩法名為%s。</a></p>" % official),
+               "a/index.html": page(), "b/index.html": page()})
+check("連到列名 slug 不等於本頁身分 → jargon error",
+      rc == 1 and "[jargon]" in out, out[-700:])
+
 for label, html_doc in (
         ("未列名 body 行話", page(body="<p>本站提供打金玩法。</p>")),
         ("official name 放 title", page(title=official)),
@@ -289,7 +307,12 @@ check("規則檔 JSON 壞掉 → rc 2", rc == 2 and "JSON" in out, out[-300:])
 for label, mutate in (
         ("official_names 未知鍵", lambda x: x["official_names"][0].update({"bypass": True})),
         ("official_names 放行 chrome", lambda x: x["official_names"][0].update({"allow_zones": ["chrome"]})),
-        ("official_names exact 無引用符號", lambda x: x["official_names"][0].update({"exact": "西遊打金玩法"}))):
+        ("official_names exact 無引用符號", lambda x: x["official_names"][0].update({"exact": "西遊打金玩法"})),
+        ("official_names 含折字", lambda x: x["official_names"][0].update({"exact": "「0.05折買斷免費版」"})),
+        ("official_names 含固定額度", lambda x: x["official_names"][0].update({"exact": "「送自選 1000 連抽」"})),
+        ("official_names gid 無 own-page identity",
+         lambda x: (x["official_names"][0].pop("slug"),
+                    x["official_names"][0].update({"gid": "2346"})))):
     candidate = json.loads(json.dumps(_RULES_OBJ, ensure_ascii=False))
     mutate(candidate)
     tmp_rules = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
@@ -506,6 +529,10 @@ check("命中帶得出規則 id（禁折款＋賭博字樣）",
 
 rc, out = run_text({"clean.txt": CLEAN_POST})
 check("乾淨貼文 → rc 0", rc == 0 and summary(out)["error"] == 0, out[-400:])
+
+rc, out = run_text({"official.txt": "gid=2346，u2 官方玩法名為%s。\n" % official})
+check("--text 純文字模式不吃 official_names → jargon error",
+      rc == 1 and "[jargon]" in out and summary(out)["gated"] == 0, out[-700:])
 
 # 整篇共現：純文字沒有 HTML 區塊結構，遊戲名與折數分行寫是最典型的違規樣態，
 # 沿用建置產物的「同塊」判定會整批漏掉。
