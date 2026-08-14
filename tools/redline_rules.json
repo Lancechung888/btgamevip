@@ -412,26 +412,6 @@
       "message": "該款規則為禁折後 NT$／兌換比／固定額度（單純折數未被該款禁止）"
     }
   ],
-  "jargon": [
-    {
-      "id": "private-server-jargon",
-      "pattern": "高爆|單職業|单职业|打金|免費版|免费版|無限刀|无限刀|超變|超变|送充|本服|爆率全開|爆率全开|買斷|买断|免充|上線送滿\\s*V|上线送满\\s*V|秒升千級|秒升千级|上線就送免費\\s*(?i:vip)|上线就送免费\\s*(?i:vip)|必掉",
-      "severity": "error",
-      "message": "私服／換皮圈行話只准以逐筆列名的官方名稱在 page-level 正文引用一次；chrome、heading 與我方敘述一律禁止",
-      "suggestion": "改用中性台灣用語；若確為官方版本名或玩法名，須由 CoS 核可完整引用字串後逐筆加入 official_names"
-    }
-  ],
-  "official_names": [
-    {
-      "id": "shaonian-xiyouji2-official-gameplay-name",
-      "slug": "shaonian-xiyouji2-taiwan",
-      "exact": "「西遊打金玩法」",
-      "allow_zones": [
-        "body"
-      ],
-      "max_per_page": 1
-    }
-  ],
   "wording": [
     {
       "id": "gambling-mechanic",
@@ -521,5 +501,123 @@
     "message": "折數字樣被索引／樞紐頁聚合（帶連結的標題塊自帶折數，等於把散在各篇的折數收斂成單一高權重頁面）",
     "suggestion": "索引頁的折數來自各篇 front-matter title；要降只能改標，改標影響既有排名，須由 Content 出判定表後才動"
   },
+  "jargon": [
+    {
+      "id": "jargon-gaobao",
+      "pattern": "高爆(?![發发])",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：高爆（爆率行話；「高爆發」屬傷害詞，不在射程內）",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-danzhiye",
+      "pattern": "[單单][職职][業业]",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：單職業",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-dajin",
+      "pattern": "打金",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：打金",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-mianfeiban",
+      "pattern": "免[費费]版",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：免費版",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-wuxiandao",
+      "pattern": "無限刀|无限刀",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：無限刀",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-chaobian",
+      "pattern": "超[變变]",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：超變",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-songchong",
+      "pattern": "送充",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：送充",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-benfu",
+      "pattern": "本服(?![務务])",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：本服（「本服務」屬服務條款用語，不在射程內）",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-baolvquankai",
+      "pattern": "爆率全[開开]",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：爆率全開",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-maiduan",
+      "pattern": "[買买][斷断]",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：買斷（含「買斷制單機」；此詞不開例外）",
+      "suggestion": "改寫成一般讀者看得懂的說法（如「一次付費、無內購的單機作」）"
+    },
+    {
+      "id": "jargon-mianchong",
+      "pattern": "免充",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：免充",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-shangxian-songmanv",
+      "pattern": "上[線线]送[滿满]\\s*[Vv]",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：上線送滿V",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-miaosheng",
+      "pattern": "秒升[^。，,！!\\s]{0,3}[級级]",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：秒升千級（等級速成的絕對承諾）",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-songmianfeivip",
+      "pattern": "上[線线]就?送[^。，,！!\\n]{0,8}VIP",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：上線就送免費 VIP",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    },
+    {
+      "id": "jargon-bidiao",
+      "pattern": "必掉",
+      "severity": "error",
+      "message": "私服／換皮圈行話，不得成為我方的標題賣點或行銷主張：必掉（掉落率的絕對保證語氣）",
+      "suggestion": "改中性描述；平台方官方版本名的完整原字串若要引用，須列名 official_names 白名單，且只限正文每頁一次"
+    }
+  ],
+  "official_names": [
+    {
+      "id": "shaonian-xiyouji2-official-gameplay-name",
+      "slug": "shaonian-xiyouji2-taiwan",
+      "exact": "「西遊打金玩法」",
+      "allow_zones": [
+        "body"
+      ],
+      "max_per_page": 1
+    }
+  ],
   "_generated_by": "tools/export_redline_rules.py —— 本檔為自動產出的公版，請勿手改；改規則請改私版後重跑本腳本。"
 }
