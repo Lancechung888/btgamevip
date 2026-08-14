@@ -54,12 +54,9 @@ SECTIONS = {
         # site_identity 是刻意公開的：它裝的是「我方站名」這個我們自己說了算的常數，
         # 不含任何來源／契約判定，公開它才有辦法在 CI 上比對。
         "public": ["version", "context_gate_policy", "site_identity", "handwritten_chrome", "discount_patterns",
-                   "by_name", "frozen", "by_gid", "wording", "context_gates", "density"],
-        # These draft sections remain private until their own approved exporter change lands.
-        # Listing them explicitly preserves fail-closed handling without mixing that work into
-        # an unrelated public export.
-        "private_only": ["_comment", "_site_identity_comment", "jargon", "official_names",
-                         "_official_names_comment"],
+                   "by_name", "frozen", "by_gid", "wording", "context_gates", "jargon",
+                   "official_names", "density"],
+        "private_only": ["_comment", "_site_identity_comment", "_official_names_comment"],
     },
     "site_identity": {
         "public": ["canonical_site_name", "severity", "public_message", "public_suggestion"],
@@ -95,6 +92,14 @@ SECTIONS = {
         "public": ["id", "pattern", "gate", "cues", "chrome_never_pass", "silent_pass",
                    "severity", "public_message", "public_suggestion"],
         "private_only": ["source", "message", "suggestion", "notes"],
+    },
+    "jargon": {
+        "public": ["id", "pattern", "severity", "public_message", "public_suggestion"],
+        "private_only": ["source", "message", "suggestion", "notes"],
+    },
+    "official_names": {
+        "public": ["id", "gid", "slug", "exact", "allow_zones", "max_per_page"],
+        "private_only": ["source", "provenance_note", "notes"],
     },
     "density": {
         "public": ["pattern", "strict_pattern", "aggregation_threshold",
@@ -146,7 +151,8 @@ DROP_LOG: list = []
 
 def build_public(priv: dict) -> dict:
     out = filter_keys(priv, "__root__", "根層")
-    for section in ("by_name", "frozen", "by_gid", "wording", "context_gates"):
+    for section in ("by_name", "frozen", "by_gid", "wording", "context_gates",
+                    "jargon", "official_names"):
         if section in out:
             out[section] = [
                 filter_keys(item, section, "%s[%d] (%s)" % (section, i, item.get("id", "?")))

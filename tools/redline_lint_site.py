@@ -307,6 +307,11 @@ BUILD_BLOCK_TAGS = {
 }
 BUILD_META_KEYS = {"description", "og:title", "og:description", "og:site_name",
                    "twitter:title", "twitter:description", "keywords"}
+BUILD_VOID_TAGS = {"br", "hr", "img", "meta", "input", "source", "col", "wbr",
+                   "embed", "area", "base", "link", "param", "track"}
+HEADING_TAGS = {"h1", "h2", "h3"}
+HEADING_CLASSES = {"badge", "tag", "chip", "pill", "ribbon",
+                   "card-title", "post-title", "site-title"}
 GID_RE = re.compile(r"gid=?(\d{3,5})")
 SITE_HOSTS = ("btgamevip.com", "www.btgamevip.com")
 SITE_HTML_EXT = {".html", ".htm"}
@@ -322,7 +327,7 @@ class _BuildExtractor(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.blocks = []
-        self._segs = []          # [(text, anchor_key, line)]
+        self._segs = []          # [(text, anchor_key, line, zone)]
         self._astack = []        # [(anchor_key, href)]
         self._akeys = {}
         self._aseq = 0
@@ -331,6 +336,10 @@ class _BuildExtractor(HTMLParser):
         self._title_buf = []
         self._title_line = 1
         self._chrome_regions = []
+        self._zstack = []        # [(tag, zone)]，追蹤 heading 容器
+
+    def _zone(self):
+        return "heading" if any(z == "heading" for _tag, z in self._zstack) else "body"
 
     def _emit(self, segs, where=None):
         text = re.sub(r"\s+", " ", "".join(s[0] for s in segs)).strip()
@@ -340,9 +349,10 @@ class _BuildExtractor(HTMLParser):
         line = next((s[2] for s in segs if s[0].strip()), 1)
         own = {self._akeys.get(s[1], "") for s in segs if s[1] is not None}
         anc = {h for _k, h in self._astack if h}
+        zone = "heading" if any(s[3] == "heading" for s in segs if s[0].strip()) else "body"
         self.blocks.append(dict(line=line, text=text,
                                 links=sorted({h for h in (own | anc) if h}),
-                                where=where, anchored=bool(own | anc)))
+                                where=where, zone=zone, anchored=bool(own | anc)))
 
     def _flush(self):
         segs, self._segs = self._segs, []
@@ -364,10 +374,10 @@ class _BuildExtractor(HTMLParser):
         else:
             self._emit(segs)
 
-    def _standalone(self, text, where, line):
+    def _standalone(self, text, where, line, zone):
         text = re.sub(r"\s+", " ", text).strip()
         if text:
-            self.blocks.append(dict(line=line, text=text, where=where,
+            self.blocks.append(dict(line=line, text=text, where=where, zone=zone,
                                     links=sorted({h for _k, h in self._astack if h}),
                                     anchored=False))
 
@@ -390,17 +400,22 @@ class _BuildExtractor(HTMLParser):
             self._flush()
         if tag in {"header", "footer"}:
             self._chrome_regions.append(tag)
+        if tag not in BUILD_VOID_TAGS:
+            own_zone = ("heading" if tag in HEADING_TAGS
+                        or HEADING_CLASSES.intersection((d.get("class") or "").split())
+                        else self._zone())
+            self._zstack.append((tag, own_zone))
         line = self.getpos()[0]
         if tag == "img":
-            self._standalone(d.get("alt") or "", "img@alt", line)
+            self._standalone(d.get("alt") or "", "img@alt", line, "heading")
         elif tag == "meta":
             key = (d.get("name") or d.get("property") or "").lower()
             if key in BUILD_META_KEYS:
-                self._standalone(d.get("content") or "", "meta[%s]" % key, line)
+                self._standalone(d.get("content") or "", "meta[%s]" % key, line, "chrome")
 
     def handle_endtag(self, tag):
         if tag == "title":
-            self._standalone("".join(self._title_buf), "<title>", self._title_line)
+            self._standalone("".join(self._title_buf), "<title>", self._title_line, "chrome")
             self._in_title, self._title_buf = False, []
             return
         if tag in BUILD_SKIP_TAGS:
@@ -412,6 +427,11 @@ class _BuildExtractor(HTMLParser):
             self._flush()
         if tag in {"header", "footer"} and self._chrome_regions:
             self._chrome_regions.pop()
+        if tag not in BUILD_VOID_TAGS:
+            for i in range(len(self._zstack) - 1, -1, -1):
+                if self._zstack[i][0] == tag:
+                    del self._zstack[i:]
+                    break
 
     def handle_data(self, data):
         if self._in_title:
@@ -420,11 +440,59 @@ class _BuildExtractor(HTMLParser):
         if self._skip:
             return
         key = self._astack[-1][0] if self._astack else None
-        self._segs.append((data, key, self.getpos()[0]))
+        self._segs.append((data, key, self.getpos()[0], self._zone()))
 
     def close(self):
         super().close()
         self._flush()
+
+
+OFFICIAL_REQUIRED = {"id", "exact", "allow_zones", "max_per_page"}
+OFFICIAL_OPTIONAL = {"gid", "slug"}
+
+
+def load_official_names(raw, path, jargon):
+    """Validate narrow, page-scoped official-name exceptions; fail closed."""
+    items = raw.get("official_names", [])
+    if not isinstance(items, list):
+        raise ValueError("official_names 必須是陣列")
+    out, seen = [], set()
+    for i, item in enumerate(items):
+        label = "official_names[%d]" % i
+        if not isinstance(item, dict):
+            raise ValueError("%s 必須是物件" % label)
+        unknown = set(item) - OFFICIAL_REQUIRED - OFFICIAL_OPTIONAL
+        missing = OFFICIAL_REQUIRED - set(item)
+        if unknown:
+            raise ValueError("%s 含未知欄位 %s" % (label, sorted(unknown)))
+        if missing:
+            raise ValueError("%s 缺必填欄位 %s" % (label, sorted(missing)))
+        if not isinstance(item["id"], str) or not item["id"] or item["id"] in seen:
+            raise ValueError("%s.id 為空或重複" % label)
+        seen.add(item["id"])
+        exact = item["exact"]
+        if (not isinstance(exact, str) or not exact.strip() or exact.startswith("re:")
+                or not ((exact.startswith("「") and exact.endswith("」"))
+                        or (exact.startswith("《") and exact.endswith("》"))
+                        or (exact.startswith('"') and exact.endswith('"')))):
+            raise ValueError("%s.exact 必須是以引號或書名號包住的完整原字串" % label)
+        matched = [rule for rule in jargon if rule["_pat"].search(exact)]
+        if not matched or any(rule["_pat"].fullmatch(exact) for rule in matched):
+            raise ValueError("%s.exact 必須含行話且不得退化成詞條豁免" % label)
+        if item["allow_zones"] != ["body"]:
+            raise ValueError("%s.allow_zones 必須恰為 ['body']" % label)
+        cap = item["max_per_page"]
+        if not isinstance(cap, int) or isinstance(cap, bool) or cap != 1:
+            raise ValueError("%s.max_per_page 必須恰為 1" % label)
+        if bool(item.get("gid")) == bool(item.get("slug")):
+            raise ValueError("%s 必須且只能綁定 gid 或 slug" % label)
+        if item.get("gid") and not re.fullmatch(r"\d{3,5}", str(item["gid"])):
+            raise ValueError("%s.gid 格式不合法" % label)
+        if item.get("slug") and (not isinstance(item["slug"], str)
+                                 or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", item["slug"])):
+            raise ValueError("%s.slug 格式不合法" % label)
+        out.append(dict(item, gid=str(item["gid"]) if item.get("gid") else None))
+    return out
 
 
 def load_rules(path: str) -> dict:
@@ -455,9 +523,14 @@ def load_rules(path: str) -> dict:
                         for r in raw.get("wording", [])],
             "gates": [dict(r, _pat=re.compile(r["pattern"]))
                       for r in raw.get("context_gates", [])],
+            "jargon": [dict(r, _pat=re.compile(r["pattern"]))
+                       for r in raw["jargon"]],
             "density": None,
         }
-    except (KeyError, re.error) as exc:
+        rules["official_names"] = load_official_names(raw, path, rules["jargon"])
+        if not rules["jargon"]:
+            raise ValueError("jargon 不得為空")
+    except (KeyError, TypeError, ValueError, re.error) as exc:
         print("ERROR: 規則表 %s 內容不合法：%s" % (path, exc), file=sys.stderr)
         sys.exit(2)
     d = raw.get("density")
@@ -744,7 +817,8 @@ def discover_build_files(root: str):
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in {".git", "node_modules"}]
         for fn in filenames:
-            if os.path.splitext(fn)[1].lower() in SITE_HTML_EXT:
+            if (os.path.splitext(fn)[1].lower() in SITE_HTML_EXT
+                    or fn.lower() in {"feed.xml", "atom.xml"}):
                 out.append(os.path.join(dirpath, fn))
     return sorted(out)
 
@@ -782,8 +856,15 @@ def is_chrome(block, boilerplate) -> bool:
     """
     where = block.get("where", "body")
     return (where == "<title>" or where.startswith("meta[")
+            or block.get("zone") == "chrome"
             or where in {"header", "footer"}
             or block["text"] in boilerplate)
+
+
+def block_zone(block, boilerplate):
+    if is_chrome(block, boilerplate):
+        return "chrome"
+    return block.get("zone", "body")
 
 
 def check_gates(block, rules, chrome, findings, gated):
@@ -824,9 +905,52 @@ def check_gates(block, rules, chrome, findings, gated):
             fix=g.get("suggestion", "")))
 
 
-def scan_build_block(block, rules, ctx_gids, page_text, chrome, findings, gated):
+def official_spans(text, zone, rel, ctx_gids, rules, page_state):
+    if zone != "body":
+        return []
+    used = page_state.setdefault("official", {})
+    spans = []
+    for item in rules["official_names"]:
+        slug_ok = item.get("slug") and any(
+            part == item["slug"] or part.startswith(item["slug"] + ".")
+            for part in rel.split("/"))
+        if not ((item["gid"] and item["gid"] in ctx_gids) or slug_ok):
+            continue
+        for match in re.finditer(re.escape(item["exact"]), text):
+            if used.get(item["id"], 0) >= item["max_per_page"]:
+                break
+            used[item["id"]] = used.get(item["id"], 0) + 1
+            spans.append((match.start(), match.end(), item["id"]))
+    return spans
+
+
+def scan_jargon(block, rules, zone, rel, ctx_gids, page_state, findings, gated):
     text, line = block["text"], block["line"]
     excerpt = text if len(text) <= 60 else text[:57] + "…"
+    allowed = official_spans(text, zone, rel, ctx_gids, rules, page_state)
+    for rule in rules["jargon"]:
+        for match in rule["_pat"].finditer(text):
+            cover = next((span for span in allowed
+                          if span[0] <= match.start() and match.end() <= span[1]), None)
+            if cover:
+                gated.append(("official-name:%s" % cover[2], match.group(0), line,
+                              excerpt, False))
+                continue
+            findings.append(dict(
+                sev=rule.get("severity", "error"), cat="jargon", line=line,
+                match=match.group(0),
+                msg="%s｜位置：%s｜區塊：%s"
+                    % (rule.get("message", rule["id"]), zone, excerpt),
+                fix=rule.get("suggestion", "")))
+            break
+
+
+def scan_build_block(block, rules, ctx_gids, page_text, zone, findings, gated,
+                     rel="", page_state=None):
+    text, line = block["text"], block["line"]
+    excerpt = text if len(text) <= 60 else text[:57] + "…"
+    chrome = zone == "chrome"
+    page_state = page_state if page_state is not None else {}
 
     # (1) 點名遊戲 × 折數字樣，同塊共現
     for r in rules["by_name"]:
@@ -884,6 +1008,9 @@ def scan_build_block(block, rules, ctx_gids, page_text, chrome, findings, gated)
                 match=wm.group(0),
                 msg="%s｜區塊：%s" % (r.get("message", r["id"]), excerpt),
                 fix=r.get("suggestion", "")))
+
+    # (5) 行話只准在逐筆列名、帶可辨識引用形式的正文首次出現。
+    scan_jargon(block, rules, zone, rel, ctx_gids, page_state, findings, gated)
 
     check_gates(block, rules, chrome, findings, gated)
 
@@ -962,13 +1089,15 @@ def scan_text_doc(text: str, rules: dict) -> tuple:
     # 否則同一行同時命中會開兩張重複的單。
     per_line = dict(rules, by_name=[])
     ctx_gids = set(GID_RE.findall(text))
+    page_state = {}
     for i, raw_line in enumerate(text.split("\n"), 1):
         line = raw_line.strip()
         if not line:
             continue
-        block = dict(line=i, text=line, links=[], where="text", anchored=False)
-        # chrome=False：純文字沒有版型 chrome，chrome 專屬的加嚴無從適用。
-        scan_build_block(block, per_line, ctx_gids, text, False, findings, gated)
+        block = dict(line=i, text=line, links=[], where="text", zone="body",
+                     anchored=False)
+        scan_build_block(block, per_line, ctx_gids, text, "body", findings, gated,
+                         page_state=page_state)
     return findings, gated
 
 
@@ -1043,6 +1172,7 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
     for rel, blocks in parsed.items():
         page_text = "\n".join(b["text"] for b in blocks)
         findings = []
+        page_state = {}
         for b in blocks:
             ctx = set(gid_index.get(rel, ()))
             for href in b["links"]:
@@ -1052,7 +1182,8 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
                 ctx |= set(GID_RE.findall(href))
             page_gated = []
             scan_build_block(b, rules, ctx, page_text,
-                             is_chrome(b, boilerplate), findings, page_gated)
+                             block_zone(b, boilerplate), findings, page_gated,
+                             rel=rel, page_state=page_state)
             gated.extend((rel,) + g for g in page_gated)
         findings.extend(scan_density(blocks, rules))
         findings.extend(identity.pop(rel, []))
@@ -1064,6 +1195,8 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
           % (len(files), len(boilerplate), rules_path))
     print("[build] 站台身分不變式：正規站名 %r"
           % rules["site_identity"]["canonical_site_name"])
+    print("[build] 行話位置閘：%d 條詞組、official_names %d 筆"
+          % (len(rules["jargon"]), len(rules["official_names"])))
     return out, gated, len(files)
 
 

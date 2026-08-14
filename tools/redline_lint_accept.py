@@ -247,6 +247,34 @@ rc, out = run({"index.html": page(body="<p>登入就送自選 1000 連抽</p>"),
                "a/index.html": page(), "b/index.html": page()})
 check("固定額度贈送 → error", rc == 1 and summary(out)["error"] >= 1, out[-400:])
 
+# --- 9a. 行話位置閘：引用可留，宣稱不可 ---------------------------------------
+official_rel = "2026/08/02/shaonian-xiyouji2-taiwan.html"
+official = "「西遊打金玩法」"
+rc, out = run({official_rel: page(body="<p>u2 官方玩法名為%s，活動以當期頁面為準。</p>" % official),
+               "a/index.html": page(), "b/index.html": page()})
+check("official_names 完整引用在綁定頁 body 首次 → gated-pass",
+      rc == 0 and summary(out)["error"] == 0 and summary(out)["gated"] >= 1,
+      out[-700:])
+
+for label, html_doc in (
+        ("未列名 body 行話", page(body="<p>本站提供打金玩法。</p>")),
+        ("official name 放 title", page(title=official)),
+        ("official name 放 h2", page(body="<h2>%s</h2>" % official)),
+        ("official name 放 badge", page(body='<span class="badge">%s</span>' % official)),
+        ("official name 放 img@alt", page(body='<img alt="%s">' % official))):
+    rc, out = run({official_rel: html_doc, "a/index.html": page(), "b/index.html": page()})
+    check(label + " → jargon error", rc == 1 and "[jargon]" in out, out[-700:])
+
+rc, out = run({official_rel: page(body="<p>%s</p><p>%s</p>" % (official, official)),
+               "a/index.html": page(), "b/index.html": page()})
+check("同頁第二次 official name → jargon error",
+      rc == 1 and summary(out)["error"] >= 1, out[-700:])
+
+feed = '<?xml version="1.0"?><feed><title>%s</title><entry><title>一般文章</title></entry></feed>' % official
+rc, out = run({"feed.xml": feed, "index.html": page(), "a/index.html": page(),
+               official_rel: page()})
+check("feed title 行話 → jargon error", rc == 1 and "[jargon]" in out, out[-700:])
+
 # --- 10. fail-closed ----------------------------------------------------------
 rc, out = run({"index.html": page()}, rules=os.path.join(HERE, "no_such_rules.json"))
 check("規則檔缺檔 → rc 2", rc == 2 and "fail-closed" in out, out[-300:])
@@ -257,6 +285,19 @@ broken.close()
 rc, out = run({"index.html": page()}, rules=broken.name)
 os.unlink(broken.name)
 check("規則檔 JSON 壞掉 → rc 2", rc == 2 and "JSON" in out, out[-300:])
+
+for label, mutate in (
+        ("official_names 未知鍵", lambda x: x["official_names"][0].update({"bypass": True})),
+        ("official_names 放行 chrome", lambda x: x["official_names"][0].update({"allow_zones": ["chrome"]})),
+        ("official_names exact 無引用符號", lambda x: x["official_names"][0].update({"exact": "西遊打金玩法"}))):
+    candidate = json.loads(json.dumps(_RULES_OBJ, ensure_ascii=False))
+    mutate(candidate)
+    tmp_rules = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
+    json.dump(candidate, tmp_rules, ensure_ascii=False)
+    tmp_rules.close()
+    rc, out = run({"index.html": page()}, rules=tmp_rules.name, populate_named=False)
+    os.unlink(tmp_rules.name)
+    check(label + " → rc 2（fail-closed）", rc == 2, out[-500:])
 
 empty = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8")
 json.dump({"version": "x"}, empty)

@@ -412,6 +412,26 @@
       "message": "該款規則為禁折後 NT$／兌換比／固定額度（單純折數未被該款禁止）"
     }
   ],
+  "jargon": [
+    {
+      "id": "private-server-jargon",
+      "pattern": "高爆|單職業|单职业|打金|免費版|免费版|無限刀|无限刀|超變|超变|送充|本服|爆率全開|爆率全开|買斷|买断|免充|上線送滿\\s*V|上线送满\\s*V|秒升千級|秒升千级|上線就送免費\\s*(?i:vip)|上线就送免费\\s*(?i:vip)|必掉",
+      "severity": "error",
+      "message": "私服／換皮圈行話只准以逐筆列名的官方名稱在 page-level 正文引用一次；chrome、heading 與我方敘述一律禁止",
+      "suggestion": "改用中性台灣用語；若確為官方版本名或玩法名，須由 CoS 核可完整引用字串後逐筆加入 official_names"
+    }
+  ],
+  "official_names": [
+    {
+      "id": "shaonian-xiyouji2-official-gameplay-name",
+      "slug": "shaonian-xiyouji2-taiwan",
+      "exact": "「西遊打金玩法」",
+      "allow_zones": [
+        "body"
+      ],
+      "max_per_page": 1
+    }
+  ],
   "wording": [
     {
       "id": "gambling-mechanic",
