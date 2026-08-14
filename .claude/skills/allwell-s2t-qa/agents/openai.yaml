@@ -1,0 +1,4 @@
+interface:
+  display_name: "AllWell 簡轉繁 QA"
+  short_description: "Scan Simplified Chinese and suggest zh-TW fixes"
+  default_prompt: "Use $allwell-s2t-qa to scan this AllWell draft for residual Simplified Chinese."
