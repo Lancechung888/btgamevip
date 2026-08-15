@@ -295,11 +295,23 @@ rc, out = run({official_rel: page(body="<p>本站主打%s，現在就玩。</p>"
 check("引號內官方名但屬我方行銷口吻 → jargon error",
       rc == 1 and "[jargon]" in out, out[-700:])
 
+rc, out = run({official_rel: page(
+                   body="<p>u2 官方玩法名不是重點，本站主打%s，現在就玩。</p>" % official),
+               "a/index.html": page(), "b/index.html": page()})
+check("官方 cue 後接我方主張不得搭便車 → jargon error",
+      rc == 1 and "[jargon]" in out, out[-700:])
+
 rc, out = run({"news/unrelated/index.html": page(
                    body='<p><a href="/2026/08/02/shaonian-xiyouji2-taiwan.html">'
                         "u2 官方玩法名為%s。</a></p>" % official),
                "a/index.html": page(), "b/index.html": page()})
 check("連到列名 slug 不等於本頁身分 → jargon error",
+      rc == 1 and "[jargon]" in out, out[-700:])
+
+rc, out = run({"news/shaonian-xiyouji2-taiwan/archive.html": page(
+                   body="<p>u2 官方玩法名為%s。</p>" % official),
+               "a/index.html": page(), "b/index.html": page()})
+check("目錄 segment 命中 slug 不等於本頁 leaf 身分 → jargon error",
       rc == 1 and "[jargon]" in out, out[-700:])
 
 for label, html_doc in (
