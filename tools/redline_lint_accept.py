@@ -155,6 +155,34 @@ rc, out = run({'index.html': page(), 'a/index.html': page(),
 check('非 /games/* 的刻意 noindex 頁不受 scoped 閘誤擋',
       rc == 0 and summary(out)['error'] == 0, out[-500:])
 
+# --- 1b. rendered copy quality: placeholders + structured CTA/FAQ facts -------
+broken_rendered_page = page(body="""
+<p>營運狀態：unknown</p>
+<a class="download-link" href="/go/?c=fixture">前往下載</a>
+<section class="faq"><h2>常見問題</h2>
+<dl><dt>目前能下載嗎？</dt><dd>目前無法確認是否提供下載入口。</dd></dl></section>
+<script>const technicalState = {value: undefined, fallback: null};</script>
+<style>.TODO { display:none }</style>
+""")
+rc, out = run({"index.html": broken_rendered_page, "a/index.html": page(),
+               "b/index.html": page()})
+check("現行壞頁 fixture：visible unknown + 下載 CTA／FAQ 矛盾 → 擋部署",
+      rc == 1 and "[visible_placeholder]" in out and "[cta_faq_conflict]" in out,
+      out[-900:])
+
+clean_rendered_page = page(body="""
+<p data-api-state="unknown">下載狀態已由同輪來源確認。</p>
+<a data-cta-kind="download" href="/go/?c=fixture">前往下載</a>
+<section id="faq"><h2>常見問題</h2>
+<dl><dt>目前能下載嗎？</dt><dd>可以，請由本頁下載入口依裝置選擇安裝方式。</dd></dl></section>
+<script type="application/ld+json">{"@type":"WebPage","sameAs":null,"todo":"TBD"}</script>
+<style>.undefined { --fallback: null }</style>
+""")
+rc, out = run({"index.html": clean_rendered_page, "a/index.html": page(),
+               "b/index.html": page()})
+check("pass fixture：script/style/attribute 合法技術值不誤判，CTA／FAQ 一致",
+      rc == 0 and summary(out)["error"] == 0, out[-900:])
+
 # --- 2. 點名遊戲 × 折數，同塊共現 --------------------------------------------
 rc, out = run({"index.html": page(body="<p>上古王冠現在有 0.1 折超值方案</p>"),
                "a/index.html": page(), "b/index.html": page()})

@@ -320,6 +320,156 @@ SITE_HTML_EXT = {".html", ".htm"}
 # 不然整頁只要任何一處出現「退款」就能替全頁的「未成年」解套。
 SENTENCE_SPLIT = re.compile(r"[。！？!?；;\n]")
 
+# Production-copy quality invariants. These are intentionally code constants,
+# not policy-rule exceptions: a placeholder or contradictory download promise
+# is always a broken rendered product. Matching is performed on parsed DOM text
+# nodes only, so JavaScript values, CSS declarations, attributes, and JSON-LD
+# technical nulls cannot trip the visible-copy gate.
+VISIBLE_PLACEHOLDER = re.compile(r"(?<![A-Za-z0-9_])(?:unknown|undefined|null|TODO|TBD)(?![A-Za-z0-9_])", re.I)
+DOWNLOAD_NEGATION = re.compile(
+    r"(?:無法|不能|不可|尚未|未能|不提供|沒有|無).{0,24}(?:下載|安裝|入口)|"
+    r"(?:下載|安裝|入口).{0,24}(?:無法確認|不能確認|未確認|不明|未提供|不存在)",
+    re.I,
+)
+
+
+class _RenderedQualityExtractor(HTMLParser):
+    """Extract visible body text plus structured download/FAQ facts."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self._stack = []
+        self._hidden = 0
+        self._head = 0
+        self._faq_depth = 0
+        self._faq_buffers = []
+        self._json_ld = False
+        self._json_ld_buffer = []
+        self.visible_nodes = []
+        self.download_ctas = []
+        self.faq_answers = []
+
+    @staticmethod
+    def _is_faq(tag, attrs):
+        tokens = set((attrs.get("class") or "").lower().split())
+        marker = (attrs.get("id") or "").lower()
+        return "faq" in tokens or marker == "faq" or attrs.get("data-faq") is not None
+
+    @staticmethod
+    def _is_download_cta(tag, attrs):
+        if tag != "a" or not (attrs.get("href") or "").strip():
+            return False
+        classes = set((attrs.get("class") or "").lower().split())
+        href = (attrs.get("href") or "").strip().lower()
+        explicit = ("download-link" in classes or
+                    (attrs.get("data-cta-kind") or "").lower() == "download" or
+                    attrs.get("data-download-cta") is not None)
+        known_route = (href.startswith("/go/") or "qd.u2game99.com/" in href or
+                       "go.btgamevip.com/" in href)
+        return explicit or known_route
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.lower()
+        data = {str(k).lower(): (v if v is not None else "") for k, v in attrs}
+        starts_hidden = (tag in BUILD_SKIP_TAGS or "hidden" in data or
+                         (data.get("aria-hidden") or "").lower() == "true")
+        starts_faq = self._is_faq(tag, data)
+        self._stack.append((tag, starts_hidden, starts_faq))
+        if tag == "head":
+            self._head += 1
+        if starts_hidden:
+            self._hidden += 1
+        if starts_faq:
+            self._faq_depth += 1
+        if self._is_download_cta(tag, data):
+            self.download_ctas.append({"line": self.getpos()[0], "href": data["href"]})
+        if tag == "script" and (data.get("type") or "").lower() == "application/ld+json":
+            self._json_ld = True
+            self._json_ld_buffer = []
+
+    def handle_endtag(self, tag):
+        tag = tag.lower()
+        if tag == "script" and self._json_ld:
+            self._collect_json_ld("".join(self._json_ld_buffer))
+            self._json_ld = False
+            self._json_ld_buffer = []
+        for i in range(len(self._stack) - 1, -1, -1):
+            if self._stack[i][0] == tag:
+                closing = self._stack[i:]
+                del self._stack[i:]
+                for _closed_tag, was_hidden, was_faq in closing:
+                    if was_hidden:
+                        self._hidden = max(0, self._hidden - 1)
+                    if was_faq:
+                        self._faq_depth = max(0, self._faq_depth - 1)
+                break
+        if tag == "head":
+            self._head = max(0, self._head - 1)
+
+    def handle_data(self, data):
+        if self._json_ld:
+            self._json_ld_buffer.append(data)
+        if self._hidden or self._head:
+            return
+        cleaned = " ".join(data.split())
+        if not cleaned:
+            return
+        row = {"line": self.getpos()[0], "text": cleaned}
+        self.visible_nodes.append(row)
+        if self._faq_depth:
+            self.faq_answers.append(row)
+
+    def _collect_json_ld(self, raw):
+        try:
+            root = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            return  # Existing schema syntax gate owns malformed JSON-LD.
+
+        def walk(value):
+            if isinstance(value, list):
+                for item in value:
+                    walk(item)
+                return
+            if not isinstance(value, dict):
+                return
+            if value.get("@type") == "FAQPage":
+                for entity in value.get("mainEntity", []):
+                    answer = entity.get("acceptedAnswer", {}) if isinstance(entity, dict) else {}
+                    text = answer.get("text") if isinstance(answer, dict) else None
+                    if isinstance(text, str) and text.strip():
+                        self.faq_answers.append({"line": self.getpos()[0], "text": text.strip()})
+            for child in value.values():
+                if isinstance(child, (dict, list)):
+                    walk(child)
+        walk(root)
+
+
+def check_rendered_quality(raw: str) -> list:
+    """Return fail-closed findings for broken visible copy and CTA facts."""
+    parser = _RenderedQualityExtractor()
+    parser.feed(raw)
+    parser.close()
+    findings = []
+    for node in parser.visible_nodes:
+        match = VISIBLE_PLACEHOLDER.search(node["text"])
+        if match:
+            findings.append(dict(
+                sev="error", cat="visible_placeholder", line=node["line"],
+                match=match.group(0),
+                msg="rendered DOM 可見文字含 placeholder｜區塊：%s" % node["text"][:70],
+                fix="移除 placeholder；沒有來源的欄位不要顯示，也不得猜補值"))
+    if parser.download_ctas:
+        for answer in parser.faq_answers:
+            match = DOWNLOAD_NEGATION.search(answer["text"])
+            if match:
+                findings.append(dict(
+                    sev="error", cat="cta_faq_conflict", line=answer["line"],
+                    match=match.group(0),
+                    msg="頁面有 %d 個結構化下載 CTA，但 FAQ／說明否定可下載｜%s"
+                        % (len(parser.download_ctas), answer["text"][:90]),
+                    fix="移除未驗證 CTA，或以同一份已驗證下載事實同步 CTA 與 FAQ"))
+    return findings
+
 
 class _BuildExtractor(HTMLParser):
     """把一份建置好的 HTML 拆成文字區塊 [(行號, 文字, 該塊涵蓋的連結, 位置)]。"""
@@ -1163,7 +1313,7 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         sys.exit(2)
 
     # 第 1 趟：全站解析。共用版型偵測需要全站語料，不能一檔一檔看。
-    parsed, gid_index, identity = {}, {}, {}
+    parsed, gid_index, identity, quality = {}, {}, {}, {}
     named_pages = {path for path, _field_set in rules["handwritten_chrome"]["pages"]}
     for full in files:
         rel = os.path.relpath(full, build_root).replace(os.sep, "/")
@@ -1184,6 +1334,9 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         hits.extend(check_game_robots(raw, rel))
         if hits:
             identity[rel] = hits
+        quality_hits = check_rendered_quality(raw)
+        if quality_hits:
+            quality[rel] = quality_hits
     missing_named = sorted(named_pages - set(parsed))
     if missing_named:
         print("ERROR: named handwritten_chrome pages missing from build: %s"
@@ -1211,9 +1364,12 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
             gated.extend((rel,) + g for g in page_gated)
         findings.extend(scan_density(blocks, rules))
         findings.extend(identity.pop(rel, []))
+        findings.extend(quality.pop(rel, []))
         if findings:
             out[rel] = findings
     for rel, hits in identity.items():          # 解析不出任何區塊的頁也要收
+        out.setdefault(rel, []).extend(hits)
+    for rel, hits in quality.items():           # visible-copy QA is independent of redline blocks
         out.setdefault(rel, []).extend(hits)
     print("[build] 掃 %d 份建置產物、共用版型區塊 %d 塊、規則表 %s"
           % (len(files), len(boilerplate), rules_path))
