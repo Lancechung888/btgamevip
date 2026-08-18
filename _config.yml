@@ -3,7 +3,7 @@
 # feed 標題、頁首站名與頁尾。禁折名單的遊戲頁面也吃得到，所以這兩行必須零折扣宣稱
 # ——折扣宣稱只留在允許款的 page-level。改動前先跑 tools/redline_lint_site.py。
 title: "BT 手遊情報站｜台灣手遊儲值攻略與下載入口"
-description: "台灣手遊情報站：U2game 平台介紹、遊戲版本差異與下載入口，儲值教學、活動與攻略整理一次看。"
+description: "台灣手遊情報站：U2game 介紹、遊戲版本差異與下載入口，儲值教學、活動與攻略整理一次看。"
 
 # 重要：必須填寫你的完整網址，Sitemap 才能生成正確連結
 url: "https://btgamevip.com" 
