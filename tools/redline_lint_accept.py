@@ -635,6 +635,20 @@ rc, out = run_text({"x.txt": CLEAN_POST}, extra=["--build-root", HERE])
 check("--text 與 --build-root 混用 → rc 2", rc == 2, out[-300:])
 
 
+# Regression: a legitimate compound must not match a shorter jargon substring.
+for wording in ["依一般規則，可留在目前劇本服並在 14 日休整期後併入對應永久服",
+                "目前剧本服", "本服務提供帳號說明", "本服务提供帐号说明"]:
+    rc, out = run({"article.html": page(body="<table><tr><td>%s</td></tr></table>" % wording)})
+    check("合法完整詞不誤判（HTML）: " + wording, rc == 0, out[-500:])
+    rc, out = run_text({"caption.txt": wording})
+    check("合法完整詞不誤判（text）: " + wording, rc == 0, out[-500:])
+for wording in ["本服立即開玩", "本服專屬福利", "劇本服說明；本服立即開玩",
+                "本服務說明；本服立即開玩"]:
+    rc, out = run({"article.html": page(body="<p>%s</p>" % wording)})
+    check("獨立行話仍阻擋（HTML）: " + wording, rc == 1 and "[jargon] 本服" in out, out[-500:])
+    rc, out = run_text({"caption.txt": wording})
+    check("獨立行話仍阻擋（text）: " + wording, rc == 1 and "[jargon] 本服" in out, out[-500:])
+
 # --- 收尾 --------------------------------------------------------------------
 failed = [n for n, ok, _ in results if not ok]
 print("\n驗收 %d 項，通過 %d 項。" % (len(results), len(results) - len(failed)))
