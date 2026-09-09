@@ -77,7 +77,15 @@ def load_engine_policy(raw, expected_company):
         if not isinstance(item['label'], str) or not item['label'].strip():
             raise ValueError('chrome pattern label is required')
         chrome_patterns.append((item['label'], pattern(item['pattern'], 'chrome pattern')))
-    citation = exact_keys(policy['official_citation'], {'denied_pattern', 'prefix_pattern'}, 'official_citation')
+    citation = exact_keys(policy['official_citation'], {
+        'denied_pattern', 'prefix_pattern', 'allowed_zones', 'max_per_page',
+    }, 'official_citation')
+    zones = strings(citation['allowed_zones'], 'official_citation.allowed_zones')
+    if not set(zones) <= {'body', 'heading', 'badge', 'alt', 'chrome'}:
+        raise ValueError('official_citation.allowed_zones contains an unknown content zone')
+    cap = citation['max_per_page']
+    if not isinstance(cap, int) or isinstance(cap, bool) or cap < 1:
+        raise ValueError('official_citation.max_per_page must be a positive integer')
     quality = exact_keys(policy['rendered_quality'], {
         'placeholder_pattern', 'download_negation_pattern', 'download_path_prefixes',
         'download_hosts', 'indexable_path_prefixes',
@@ -92,6 +100,8 @@ def load_engine_policy(raw, expected_company):
         'chrome_patterns': tuple(chrome_patterns),
         'official_denied_pattern': pattern(citation['denied_pattern'], 'official denied pattern'),
         'official_prefix_pattern': pattern(citation['prefix_pattern'], 'official citation prefix', re.I),
+        'official_allowed_zones': tuple(zones),
+        'official_max_per_page': cap,
         'placeholder_pattern': pattern(quality['placeholder_pattern'], 'placeholder pattern', re.I),
         'download_negation_pattern': pattern(quality['download_negation_pattern'], 'download negation pattern', re.I),
         'download_path_prefixes': path_prefixes(quality['download_path_prefixes'], 'download_path_prefixes', True),

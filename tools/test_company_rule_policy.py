@@ -36,7 +36,8 @@ def other_company():
         'chrome_scan': {'ignored_literals': ['ALLOWED_COBALT_ONLY'], 'patterns': [
             {'label': 'Bakery claim', 'pattern': 'COBALT_ONLY'},
         ]},
-        'official_citation': {'denied_pattern': 'PRIVILEGED', 'prefix_pattern': r'Bakery says\s*'},
+        'official_citation': {'denied_pattern': 'PRIVILEGED', 'prefix_pattern': r'Bakery says\s*',
+                              'allowed_zones': ['body', 'heading'], 'max_per_page': 2},
         'rendered_quality': {
             'placeholder_pattern': 'UNFINISHED_BAKERY',
             'download_negation_pattern': 'UNAVAILABLE_BAKERY',
@@ -164,6 +165,21 @@ class CompanyPolicyTest(unittest.TestCase):
         self.assertTrue(lint.official_spans('Bakery says 「Blue FLOWER」', 'body', 'sample.html', set(), selected, {}))
         self.assertEqual(lint.official_spans('u2 官方玩法名為「Blue FLOWER」', 'body', 'sample.html', set(), selected, {}), [])
         raw['engine_policy']['official_citation']['denied_pattern'] = 'FLOWER'
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            self.load(raw)
+
+    def test_citation_scope_and_limit_are_tenant_owned(self):
+        raw = other_company()
+        raw['jargon'] = [{'id': 'flower', 'pattern': 'FLOWER', 'severity': 'error'}]
+        raw['official_names'] = [{'id': 'quote', 'slug': 'sample', 'exact': '「Blue FLOWER」',
+                                  'allow_zones': ['heading'], 'max_per_page': 2}]
+        selected = self.load(raw)
+        state = {}
+        for expected in (True, True, False):
+            spans = lint.official_spans('Bakery says 「Blue FLOWER」', 'heading', 'sample.html', set(), selected, state)
+            self.assertEqual(bool(spans), expected)
+        self.assertEqual(lint.official_spans('Bakery says 「Blue FLOWER」', 'body', 'sample.html', set(), selected, {}), [])
+        raw['engine_policy']['official_citation']['max_per_page'] = 1
         with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
             self.load(raw)
 

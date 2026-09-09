@@ -610,15 +610,18 @@ def load_official_names(raw, path, jargon, policy):
         if policy["official_denied_pattern"].search(exact):
             raise ValueError(
                 "%s.exact 命中公司設定的不可豁免模式" % label)
-        if item["allow_zones"] != ["body"]:
-            raise ValueError("%s.allow_zones 必須恰為 ['body']" % label)
+        zones = item["allow_zones"]
+        if (not isinstance(zones, list) or not zones
+                or any(not isinstance(zone, str) for zone in zones)
+                or len(set(zones)) != len(zones)
+                or not set(zones) <= set(policy["official_allowed_zones"])):
+            raise ValueError("%s.allow_zones 超出公司允許的引用位置" % label)
         cap = item["max_per_page"]
-        if not isinstance(cap, int) or isinstance(cap, bool) or cap != 1:
-            raise ValueError("%s.max_per_page 必須恰為 1" % label)
+        if (not isinstance(cap, int) or isinstance(cap, bool)
+                or not 1 <= cap <= policy["official_max_per_page"]):
+            raise ValueError("%s.max_per_page 超出公司允許的引用次數" % label)
         if bool(item.get("gid")) == bool(item.get("slug")):
             raise ValueError("%s 必須且只能綁定 gid 或 slug" % label)
-        if item.get("gid") and not re.fullmatch(r"\d{3,5}", str(item["gid"])):
-            raise ValueError("%s.gid 格式不合法" % label)
         if item.get("gid"):
             raise ValueError(
                 "%s.gid 無法從 rendered page 證明為頁面自身身分；official_names 只接受 slug" % label)
@@ -736,8 +739,8 @@ def load_rules(path: str, company_key: str) -> dict:
         for field, value in expected.items():
             if field not in all_fields or not isinstance(value, str) or not value:
                 raise ValueError("expected_values.%s 未列在欄位集合內或值為空" % field)
-        if handwritten.get("title_site_name") is not True:
-            raise ValueError("handwritten_chrome.title_site_name 必須為 true")
+        if not isinstance(handwritten.get("title_site_name"), bool):
+            raise ValueError("handwritten_chrome.title_site_name 必須明確提供布林值")
         if handwritten.get("severity") != "error":
             raise ValueError("handwritten_chrome.severity 必須為 error")
     except (KeyError, TypeError, ValueError) as exc:
@@ -1045,8 +1048,6 @@ def check_gates(block, rules, chrome, findings, gated):
 
 
 def official_spans(text, zone, rel, ctx_gids, rules, page_state):
-    if zone != "body":
-        return []
     used = page_state.setdefault("official", {})
     spans = []
     rel_parts = [part for part in rel.replace("\\", "/").split("/") if part]
@@ -1056,6 +1057,8 @@ def official_spans(text, zone, rel, ctx_gids, rules, page_state):
     else:
         page_slug = leaf.rsplit(".", 1)[0]
     for item in rules["official_names"]:
+        if zone not in item["allow_zones"]:
+            continue
         # Page identity comes only from the leaf (or the parent of index.html).
         # A matching directory segment such as /named-slug/archive.html must not
         # inherit another page's official-name exception.
