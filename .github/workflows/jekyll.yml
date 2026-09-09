@@ -36,6 +36,7 @@ jobs:
       - name: Test publication guards
         run: |
           python3 tools/redline_lint_accept.py
+          python3 -m unittest discover -s tools -p 'test_company_rule_policy.py'
           python3 -m unittest discover -s tools -p 'test_footer_links.py'
       - name: Setup Ruby
         # https://github.com/ruby/setup-ruby/releases/tag/v1.207.0

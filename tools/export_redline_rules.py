@@ -38,6 +38,8 @@ import json
 import os
 import re
 import sys
+from company_rule_policy import exact_keys, load_engine_policy, marker_patterns
+from redline_lint_site import read_config_scalar
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -53,10 +55,10 @@ SECTIONS = {
         # 不是 provenance。留在私版等於下一個人改規則時看不到它，又會重問一次。
         # site_identity 是刻意公開的：它裝的是「我方站名」這個我們自己說了算的常數，
         # 不含任何來源／契約判定，公開它才有辦法在 CI 上比對。
-        "public": ["version", "context_gate_policy", "site_identity", "handwritten_chrome", "discount_patterns",
+        "public": ["version", "company_key", "engine_policy", "context_gate_policy", "site_identity", "handwritten_chrome", "discount_patterns",
                    "by_name", "frozen", "by_gid", "wording", "context_gates", "jargon",
                    "official_names", "density"],
-        "private_only": ["_comment", "_site_identity_comment", "_official_names_comment"],
+        "private_only": ["_comment", "_site_identity_comment", "_official_names_comment", "export_policy"],
     },
     "site_identity": {
         "public": ["canonical_site_name", "severity", "public_message", "public_suggestion"],
@@ -112,17 +114,6 @@ RENAME = {"public_message": "message", "public_suggestion": "suggestion"}
 
 # --- 閘 2：內部資訊樣態 -------------------------------------------------------
 # 對外只要出現這些，就是內部資訊外流（工單號／後台路徑／分潤數字），一律中止。
-INTERNAL_MARKERS = [
-    (r"ALL-\d+", "內部工單號"),
-    (r"ag=[a-z]{2}\d{4,}", "代理碼"),
-    (r"cps|分成|firstpay|首儲金額|payout|commission|sub[_-]?id|aw_cid", "分潤／歸因內部欄位"),
-    (r"後台|backend|admin\.|dashboard\.", "後台路徑"),
-    (r"公告|嚴控|通知編號|逐字讀", "平台方公告來源說明"),
-    (r"罰款|罰則|停止合作|封禁", "罰則條款"),
-    (r"u2\s*(後台|公告|規則|平台)", "平台方內部規則引述"),
-    (r"§\s*[一二三四五六七八九十]+", "內部政策快照條號"),
-    (r"Board|CoS|老闆|lance", "內部角色"),
-]
 
 
 def die(msg: str, code: int = 1):
@@ -149,7 +140,10 @@ def filter_keys(obj: dict, section: str, where: str) -> dict:
 DROP_LOG: list = []
 
 
-def build_public(priv: dict) -> dict:
+def build_public(priv: dict, company_key: str) -> dict:
+    load_engine_policy(priv, company_key)
+    exact_keys(priv.get("export_policy"), {"internal_markers"}, "export_policy")
+    marker_patterns(priv["export_policy"]["internal_markers"])
     out = filter_keys(priv, "__root__", "根層")
     for section in ("by_name", "frozen", "by_gid", "wording", "context_gates",
                     "jargon", "official_names"):
@@ -174,11 +168,12 @@ def build_public(priv: dict) -> dict:
     return out
 
 
-def scan_output(text: str) -> None:
+def scan_output(text: str, export_policy: dict) -> None:
     """閘 2：對即將寫出的內容做內部資訊掃描。"""
     hits = []
-    for pattern, label in INTERNAL_MARKERS:
-        for m in re.finditer(pattern, text, re.I):
+    exact_keys(export_policy, {"internal_markers"}, "export_policy")
+    for pattern, label in marker_patterns(export_policy["internal_markers"]):
+        for m in pattern.finditer(text):
             line = text.count("\n", 0, m.start()) + 1
             hits.append("  L%d %s：%r" % (line, label, m.group(0)))
     if hits:
@@ -191,6 +186,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="redline 規則表 私版→公版 單向產出")
     ap.add_argument("--private", default=PRIVATE)
     ap.add_argument("--public", default=PUBLIC)
+    ap.add_argument("--company", help="預期公司 key；預設讀網站 _config.yml")
     ap.add_argument("--check", action="store_true",
                     help="只比對現有公版是否與私版一致，不寫檔")
     args = ap.parse_args()
@@ -204,14 +200,15 @@ def main() -> int:
     except json.JSONDecodeError as exc:
         die("私版 JSON 解析失敗：%s" % exc, 2)
 
-    pub = build_public(priv)
+    company_key = args.company or read_config_scalar(os.path.join(ROOT, "_config.yml"), "company_key")
+    pub = build_public(priv, company_key)
     text = json.dumps(pub, ensure_ascii=False, indent=2, sort_keys=False) + "\n"
-    scan_output(text)
+    scan_output(text, priv["export_policy"])
 
     for line in DROP_LOG:
         print("  drop  %s" % line)
     print("閘 1 欄位白名單：通過（明示丟棄 %d 處）" % len(DROP_LOG))
-    print("閘 2 內部資訊掃描：通過（%d 條樣態全數 0 命中）" % len(INTERNAL_MARKERS))
+    print("閘 2 內部資訊掃描：通過（%d 條樣態全數 0 命中）" % len(priv["export_policy"]["internal_markers"]))
 
     if args.check:
         if not os.path.isfile(args.public):

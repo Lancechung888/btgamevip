@@ -1,11 +1,66 @@
 {
   "context_gate_policy": "語境例外閘（context_gates）的開設判準：只開在『判定標準由我方自訂』的詞條上（例：自訂宣稱紀律、消費者保護語境）—— 那裡的判官是我們自己，機器看否定詞就判得準，開一次閘省下反覆改寫。對外契約型紅線 —— by_name／by_gid／frozen —— 一律不開語境閘：這類詞條的判定方在外部、多以關鍵字比對、不判語境，我方語境正確不等於對方判定正確；風險不對稱：開閘的下行不在我方掌握，改寫的下行通常只有一兩個詞。語境閘的新增與放寬一律需合規核可，工程端不得自行增刪。",
-  "version": "1.1",
-  "site_identity": {
-    "canonical_site_name": "BT 手遊情報站｜台灣手遊儲值攻略與下載入口",
-    "severity": "error",
-    "message": "og:site_name 不等於全站正規站名。這一欄就是分享卡片上顯示的「發佈者」，它自成一格，跟本頁標題無關。",
-    "suggestion": "把 og:site_name 改成規則表 site_identity.canonical_site_name 的值。手寫完整 HTML 的頁面不走版型 include，chrome 欄位得自己對齊。"
+  "version": "2.0",
+  "company_key": "allwell-next",
+  "engine_policy": {
+    "site_hosts": [
+      "btgamevip.com",
+      "www.btgamevip.com"
+    ],
+    "context_id_pattern": "gid=?(\\d{3,5})",
+    "chrome_scan": {
+      "ignored_literals": [
+        "轉折",
+        "折騰",
+        "折磨",
+        "曲折",
+        "波折",
+        "挫折",
+        "折返",
+        "折衷",
+        "骨折"
+      ],
+      "patterns": [
+        {
+          "label": "折數樣態",
+          "pattern": "\\d+(?:\\.\\d+)?\\s*折"
+        },
+        {
+          "label": "折起／折扣宣稱",
+          "pattern": "折\\s*起|折扣|打折|折價"
+        },
+        {
+          "label": "折字",
+          "pattern": "折"
+        },
+        {
+          "label": "返現",
+          "pattern": "返現|返现"
+        },
+        {
+          "label": "首儲禮包",
+          "pattern": "首儲禮包|首充禮包"
+        }
+      ]
+    },
+    "official_citation": {
+      "denied_pattern": "折|返[现現]|首[儲储]禮包|(?:送|贈|赠|瓜分).{0,12}(?:\\d+|[百千萬万]+).{0,8}(?:連抽|连抽|代金|元|點|点|鑽|钻)",
+      "prefix_pattern": "^\\s*(?:(?:該遊戲在\\s*)?u2\\s*(?:官方\\s*)?(?:的\\s*)?(?:版本|玩法)名(?:為|是|：|:)?|(?:另有\\s*)?官方(?:版本|玩法)(?:名)?(?:為|是|：|:)?)\\s*$"
+    },
+    "rendered_quality": {
+      "placeholder_pattern": "(?<![A-Za-z0-9_])(?:unknown|undefined|null|TODO|TBD)(?![A-Za-z0-9_])",
+      "download_negation_pattern": "(?:無法|不能|不可|尚未|未能|不提供|沒有).{0,16}(?:下載|安裝|下載入口)|(?:下載|安裝|本頁入口|下載入口).{0,16}(?:無法確認|不能確認|未確認|狀態不明|未提供|不存在)",
+      "download_path_prefixes": [
+        "/go/"
+      ],
+      "download_hosts": [
+        "qd.u2game99.com",
+        "go.btgamevip.com"
+      ],
+      "indexable_path_prefixes": [
+        "games/"
+      ]
+    }
   },
   "handwritten_chrome": {
     "field_sets": {
@@ -155,6 +210,12 @@
     "severity": "error",
     "message": "Named handwritten HTML pages must expose the complete site chrome field set.",
     "suggestion": "Align the named page head fields with the shared head output; missing fields fail closed."
+  },
+  "site_identity": {
+    "canonical_site_name": "BT 手遊情報站｜台灣手遊儲值攻略與下載入口",
+    "severity": "error",
+    "message": "og:site_name 不等於全站正規站名。這一欄就是分享卡片上顯示的「發佈者」，它自成一格，跟本頁標題無關。",
+    "suggestion": "把 og:site_name 改成規則表 site_identity.canonical_site_name 的值。手寫完整 HTML 的頁面不走版型 include，chrome 欄位得自己對齊。"
   },
   "discount_patterns": [
     "0\\.\\d+\\s*折",

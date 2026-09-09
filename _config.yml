@@ -1,4 +1,5 @@
 # 網站基本資訊
+company_key: "allwell-next"
 # title / description 是全站 chrome：會被注入每一頁的 <title> 尾綴、og:site_name、
 # feed 標題、頁首站名與頁尾。禁折名單的遊戲頁面也吃得到，所以這兩行必須零折扣宣稱
 # ——折扣宣稱只留在允許款的 page-level。改動前先跑 tools/redline_lint_site.py。

@@ -76,7 +76,7 @@ def run(files, extra=(), rules=RULES, populate_named=True):
                 fh.write(content)
         env = dict(os.environ, PYTHONIOENCODING="utf-8")
         proc = subprocess.run(
-            [sys.executable, LINT, "--build-root", root, "--rules", rules, *extra],
+            [sys.executable, LINT, "--company", _RULES_OBJ["company_key"], "--build-root", root, "--rules", rules, *extra],
             capture_output=True, text=True, encoding="utf-8", env=env)
         return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
     finally:
@@ -97,7 +97,7 @@ def run_text(docs, extra=(), rules=RULES, stdin=None):
             args += ["--text", "-"]
         env = dict(os.environ, PYTHONIOENCODING="utf-8")
         proc = subprocess.run(
-            [sys.executable, LINT, "--rules", rules, *args, *extra],
+            [sys.executable, LINT, "--company", _RULES_OBJ["company_key"], "--rules", rules, *args, *extra],
             capture_output=True, text=True, encoding="utf-8", env=env,
             input=stdin)
         return proc.returncode, (proc.stdout or "") + (proc.stderr or "")

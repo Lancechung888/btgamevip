@@ -47,14 +47,14 @@ front-matter title 在建置時聚合而成 —— 只審 markdown 一樣掃不�
 上面所有模式掃的都是**建置產物**，而閘只保護它掃得到的路徑。社群貼文
 （FB／X／IG，以及未來的 TG 廣播）不經 Jekyll、不進 repo、不觸發 workflow，
 所以 CI 閘對它們的覆蓋率是 0% —— 同一句「0.1 折首儲」寫進 `.md` 會被擋下，
-寫進 FB 貼文則直接出去。判定我們的是 u2，它不管這段文字是從 Jekyll 出去
+寫進 FB 貼文則直接出去。公司規則不因文字是從 Jekyll 出去
 還是從 Playwright 出去。
 
 `--text` 吃純文字（檔案路徑或 `-` 讀 stdin），跑的是**同一份**公版規則表，
 不另立第二份 —— 兩份規則表一定會走散。與 `--build-root` 的差異只有三處，
 都是因為純文字沒有 HTML 結構：
 
-  * 點名遊戲 × 折數字樣改用**整篇共現**，不是同塊共現。一則貼文對 u2 而言
+  * 點名遊戲 × 折數字樣改用**整篇共現**，不是同塊共現。一則貼文在此模式中
     就是一個不可分割的單位，沒有連結清單要切；遊戲名在第一行、折數在第五行
     正是最典型的違規樣態，用同塊判定會整批漏掉。
   * 沒有 chrome（沒有 `<title>`／`og:*`），所以 chrome 專屬的加嚴一律不適用。
@@ -110,18 +110,8 @@ import re
 import sys
 import traceback
 from html.parser import HTMLParser
-
-# --- 紅線樣態 -----------------------------------------------------------------
-# 中文「折」在合規語境幾乎只有折扣一義；為降低誤報，先把已知的非折扣詞挖掉再判。
-NON_DISCOUNT_ZHE = ("轉折", "折騰", "折磨", "曲折", "波折", "挫折", "折返", "折衷", "骨折")
-
-PATTERNS = [
-    ("折數樣態", re.compile(r"\d+(?:\.\d+)?\s*折")),
-    ("折起／折扣宣稱", re.compile(r"折\s*起|折扣|打折|折價")),
-    ("折字", re.compile(r"折")),
-    ("返現", re.compile(r"返現|返现")),
-    ("首儲禮包", re.compile(r"首儲禮包|首充禮包")),
-]
+from urllib.parse import urlsplit, unquote
+from company_rule_policy import load_engine_policy
 
 # rendered HTML 要查的欄位（欄位名 -> 抽取用 regex，group('v') 是值）
 META_FIELDS = {
@@ -154,17 +144,17 @@ FEED_ENTRY_FIELDS = {
 ENTRY_RE = re.compile(r"<entry\b.*?</entry>", re.I | re.S)
 
 
-def scrub(text: str) -> str:
+def scrub(text: str, policy: dict) -> str:
     """把已知的非折扣「折」詞挖掉，避免誤報。"""
-    for word in NON_DISCOUNT_ZHE:
+    for word in policy["chrome_ignored_literals"]:
         text = text.replace(word, "")
     return text
 
 
-def hits(value: str):
+def hits(value: str, policy: dict):
     """回傳 [(規則名, 命中字串)]；同一段文字只報第一條命中的規則，避免洗版。"""
-    cleaned = scrub(html.unescape(value))
-    for name, pat in PATTERNS:
+    cleaned = scrub(html.unescape(value), policy)
+    for name, pat in policy["chrome_patterns"]:
         m = pat.search(cleaned)
         if m:
             return [(name, m.group(0))]
@@ -190,7 +180,7 @@ def read_config_scalar(config_path: str, key: str):
     return value
 
 
-def check_config(config_path: str, failures: list) -> None:
+def check_config(config_path: str, failures: list, policy: dict) -> None:
     if not os.path.isfile(config_path):
         print("ERROR: 找不到 %s" % config_path, file=sys.stderr)
         sys.exit(2)
@@ -199,7 +189,7 @@ def check_config(config_path: str, failures: list) -> None:
         if value is None:
             failures.append((config_path, "site.%s" % key, "讀不到頂層 %s（格式改了？）" % key, ""))
             continue
-        for rule, found in hits(value):
+        for rule, found in hits(value, policy):
             failures.append((config_path, "site.%s" % key, rule, found))
     print("[1/2] site-level %s：title / description 檢查完成" % config_path)
 
@@ -244,10 +234,10 @@ def involved_games(path: str, text: str, meta_values, games, strict_body: bool):
     haystack = path.replace(os.sep, "/") + "\n" + "\n".join(v for _, v in meta_values)
     if strict_body:
         haystack += "\n" + text
-    return [canon for canon, names in games if any(n in haystack for n in names)]
+    return [canon for canon, names in games if any(n.search(haystack) for n in names)]
 
 
-def check_site(site_root: str, games, strict_body: bool, failures: list) -> int:
+def check_site(site_root: str, games, strict_body: bool, failures: list, policy: dict) -> int:
     if not os.path.isdir(site_root):
         print("ERROR: 找不到 build 產物目錄 %s（先跑 jekyll build，或加 --config-only）" % site_root,
               file=sys.stderr)
@@ -270,14 +260,14 @@ def check_site(site_root: str, games, strict_body: bool, failures: list) -> int:
                 cut = text.lower().find("<entry")
                 head = text[:cut] if cut != -1 else text
                 for label, value in extract_fields(head, FEED_HEAD_FIELDS):
-                    for rule, found in hits(value):
+                    for rule, found in hits(value, policy):
                         failures.append((rel, label, rule, "%s ← %s" % (found, value[:70])))
                 # entry 層＝page-level，逐則各自判涉及哪款。
                 for entry in ENTRY_RE.findall(text):
                     values = extract_fields(entry, FEED_ENTRY_FIELDS)
                     for game in involved_games(rel, entry, values, games, strict_body):
                         for label, value in values:
-                            for rule, found in hits(value):
+                            for rule, found in hits(value, policy):
                                 failures.append(
                                     (rel, "%s（涉及《%s》）" % (label, game), rule,
                                      "%s ← %s" % (found, value[:70])))
@@ -286,7 +276,7 @@ def check_site(site_root: str, games, strict_body: bool, failures: list) -> int:
             values = extract_fields(text, META_FIELDS)
             for game in involved_games(rel, text, values, games, strict_body):
                 for label, value in values:
-                    for rule, found in hits(value):
+                    for rule, found in hits(value, policy):
                         failures.append(
                             (rel, "%s（涉及《%s》）" % (label, game), rule,
                              "%s ← %s" % (found, value[:70])))
@@ -312,32 +302,18 @@ BUILD_VOID_TAGS = {"br", "hr", "img", "meta", "input", "source", "col", "wbr",
 HEADING_TAGS = {"h1", "h2", "h3"}
 HEADING_CLASSES = {"badge", "tag", "chip", "pill", "ribbon",
                    "card-title", "post-title", "site-title"}
-GID_RE = re.compile(r"gid=?(\d{3,5})")
-SITE_HOSTS = ("btgamevip.com", "www.btgamevip.com")
 SITE_HTML_EXT = {".html", ".htm"}
 
 # 句子邊界。語境閘一律「同句」判定 —— 跨句的否定語／退費語境不算數，
 # 不然整頁只要任何一處出現「退款」就能替全頁的「未成年」解套。
 SENTENCE_SPLIT = re.compile(r"[。！？!?；;\n]")
 
-# Production-copy quality invariants. These are intentionally code constants,
-# not policy-rule exceptions: a placeholder or contradictory download promise
-# is always a broken rendered product. Matching is performed on parsed DOM text
-# nodes only, so JavaScript values, CSS declarations, attributes, and JSON-LD
-# technical nulls cannot trip the visible-copy gate.
-VISIBLE_PLACEHOLDER = re.compile(r"(?<![A-Za-z0-9_])(?:unknown|undefined|null|TODO|TBD)(?![A-Za-z0-9_])", re.I)
-DOWNLOAD_NEGATION = re.compile(
-    r"(?:無法|不能|不可|尚未|未能|不提供|沒有).{0,16}(?:下載|安裝|下載入口)|"
-    r"(?:下載|安裝|本頁入口|下載入口).{0,16}(?:無法確認|不能確認|未確認|狀態不明|未提供|不存在)",
-    re.I,
-)
-
-
 class _RenderedQualityExtractor(HTMLParser):
     """Extract visible body text plus structured download/FAQ facts."""
 
-    def __init__(self):
+    def __init__(self, policy):
         super().__init__(convert_charrefs=True)
+        self.policy = policy
         self._stack = []
         self._hidden = 0
         self._head = 0
@@ -355,8 +331,7 @@ class _RenderedQualityExtractor(HTMLParser):
         marker = (attrs.get("id") or "").lower()
         return "faq" in tokens or marker == "faq" or attrs.get("data-faq") is not None
 
-    @staticmethod
-    def _is_download_cta(tag, attrs):
+    def _is_download_cta(self, tag, attrs):
         if tag != "a" or not (attrs.get("href") or "").strip():
             return False
         classes = set((attrs.get("class") or "").lower().split())
@@ -364,8 +339,13 @@ class _RenderedQualityExtractor(HTMLParser):
         explicit = ("download-link" in classes or
                     (attrs.get("data-cta-kind") or "").lower() == "download" or
                     attrs.get("data-download-cta") is not None)
-        known_route = (href.startswith("/go/") or "qd.u2game99.com/" in href or
-                       "go.btgamevip.com/" in href)
+        parsed = urlsplit(href)
+        known_route = (
+            not parsed.netloc and not parsed.scheme
+            and parsed.path.startswith(self.policy["download_path_prefixes"])
+        ) or (parsed.scheme in ("", "http", "https")
+              and parsed.hostname in self.policy["download_hosts"]
+              and not parsed.username and not parsed.password)
         return explicit or known_route
 
     def handle_starttag(self, tag, attrs):
@@ -444,14 +424,14 @@ class _RenderedQualityExtractor(HTMLParser):
         walk(root)
 
 
-def check_rendered_quality(raw: str) -> list:
+def check_rendered_quality(raw: str, policy: dict) -> list:
     """Return fail-closed findings for broken visible copy and CTA facts."""
-    parser = _RenderedQualityExtractor()
+    parser = _RenderedQualityExtractor(policy)
     parser.feed(raw)
     parser.close()
     findings = []
     for node in parser.visible_nodes:
-        match = VISIBLE_PLACEHOLDER.search(node["text"])
+        match = policy["placeholder_pattern"].search(node["text"])
         if match:
             findings.append(dict(
                 sev="error", cat="visible_placeholder", line=node["line"],
@@ -460,7 +440,7 @@ def check_rendered_quality(raw: str) -> list:
                 fix="移除 placeholder；沒有來源的欄位不要顯示，也不得猜補值"))
     if parser.download_ctas:
         for answer in parser.faq_answers:
-            match = DOWNLOAD_NEGATION.search(answer["text"])
+            match = policy["download_negation_pattern"].search(answer["text"])
             if match:
                 findings.append(dict(
                     sev="error", cat="cta_faq_conflict", line=answer["line"],
@@ -599,19 +579,7 @@ class _BuildExtractor(HTMLParser):
 
 OFFICIAL_REQUIRED = {"id", "exact", "allow_zones", "max_per_page"}
 OFFICIAL_OPTIONAL = {"gid", "slug"}
-OFFICIAL_DENIED_EXACT = re.compile(
-    r"折|返[现現]|首[儲储]禮包|"
-    r"(?:送|贈|赠|瓜分).{0,12}(?:\d+|[百千萬万]+).{0,8}(?:連抽|连抽|代金|元|點|点|鑽|钻)"
-)
-OFFICIAL_CITATION_PREFIX = re.compile(
-    r"^\s*(?:(?:該遊戲在\s*)?u2\s*(?:官方\s*)?(?:的\s*)?"
-    r"(?:版本|玩法)名(?:為|是|：|:)?|"
-    r"(?:另有\s*)?官方(?:版本|玩法)(?:名)?(?:為|是|：|:)?)\s*$",
-    re.I,
-)
-
-
-def load_official_names(raw, path, jargon):
+def load_official_names(raw, path, jargon, policy):
     """Validate narrow, page-scoped official-name exceptions; fail closed."""
     items = raw.get("official_names", [])
     if not isinstance(items, list):
@@ -639,9 +607,9 @@ def load_official_names(raw, path, jargon):
         matched = [rule for rule in jargon if rule["_pat"].search(exact)]
         if not matched or any(rule["_pat"].fullmatch(exact) for rule in matched):
             raise ValueError("%s.exact 必須含行話且不得退化成詞條豁免" % label)
-        if OFFICIAL_DENIED_EXACT.search(exact):
+        if policy["official_denied_pattern"].search(exact):
             raise ValueError(
-                "%s.exact 含折字／返現／首儲禮包或固定額度，官方名不得豁免" % label)
+                "%s.exact 命中公司設定的不可豁免模式" % label)
         if item["allow_zones"] != ["body"]:
             raise ValueError("%s.allow_zones 必須恰為 ['body']" % label)
         cap = item["max_per_page"]
@@ -661,7 +629,7 @@ def load_official_names(raw, path, jargon):
     return out
 
 
-def load_rules(path: str) -> dict:
+def load_rules(path: str, company_key: str) -> dict:
     """讀公版規則表並預編譯。fail-closed：缺檔／JSON 壞掉一律 exit 2。"""
     if not os.path.isfile(path):
         print("ERROR: 找不到規則表 %s —— 規則表是閘的前提，缺檔一律當失敗（fail-closed）"
@@ -679,7 +647,10 @@ def load_rules(path: str) -> dict:
                 for n in items]
 
     try:
+        policy = load_engine_policy(raw, company_key)
         rules = {
+            "company_key": company_key,
+            "policy": policy,
             "discount": [re.compile(x) for x in raw.get("discount_patterns", [])],
             "by_name": [dict(r, _names=names(r["names"])) for r in raw.get("by_name", [])],
             "frozen": [dict(r, _names=names(r["names"])) for r in raw.get("frozen", [])],
@@ -693,9 +664,7 @@ def load_rules(path: str) -> dict:
                        for r in raw["jargon"]],
             "density": None,
         }
-        rules["official_names"] = load_official_names(raw, path, rules["jargon"])
-        if not rules["jargon"]:
-            raise ValueError("jargon 不得為空")
+        rules["official_names"] = load_official_names(raw, path, rules["jargon"], policy)
     except (KeyError, TypeError, ValueError, re.error) as exc:
         print("ERROR: 規則表 %s 內容不合法：%s" % (path, exc), file=sys.stderr)
         sys.exit(2)
@@ -733,8 +702,8 @@ def load_rules(path: str) -> dict:
         expected = handwritten["expected_values"]
         if not isinstance(field_sets, dict) or not field_sets:
             raise ValueError("handwritten_chrome.field_sets 必須是非空物件")
-        if not isinstance(pages, list) or not pages:
-            raise ValueError("handwritten_chrome.pages 必須是非空清單")
+        if not isinstance(pages, list):
+            raise ValueError("handwritten_chrome.pages 必須明確提供清單")
         if not isinstance(expected, dict):
             raise ValueError("handwritten_chrome.expected_values 必須是物件")
         clean_sets = {}
@@ -779,28 +748,32 @@ def load_rules(path: str) -> dict:
         handwritten, field_sets=clean_sets, pages=clean_pages,
         expected_values=dict(expected))
 
-    if not (rules["by_name"] or rules["by_gid"] or rules["gates"]):
+    if not any(rules[k] for k in ("by_name", "by_gid", "gates", "jargon", "wording", "frozen")):
         print("ERROR: 規則表 %s 是空的（沒有任何可執行規則）" % path, file=sys.stderr)
         sys.exit(2)
     return rules
 
 
-def url_to_relpath(href: str, base_relpath: str = ""):
+def url_to_relpath(href: str, base_relpath: str, policy: dict):
     """把站內連結正規化成建置產物的相對檔案路徑；站外／錨點回 None。"""
     href = href.strip()
     if not href or href.startswith(("#", "mailto:", "tel:", "javascript:")):
         return None
-    m = re.match(r"https?://([^/]+)(/.*)?$", href, re.I)
-    if m:
-        if m.group(1).lower() not in SITE_HOSTS:
+    parsed = urlsplit(href)
+    if parsed.scheme or parsed.netloc:
+        if (parsed.scheme not in ("", "http", "https")
+                or parsed.hostname not in policy["site_hosts"]
+                or parsed.username or parsed.password):
             return None
-        path = m.group(2) or "/"
+        path = parsed.path or "/"
     elif href.startswith("/"):
         path = href
     else:
         base_dir = os.path.dirname(base_relpath.replace(os.sep, "/"))
         path = "/" + os.path.normpath(os.path.join(base_dir, href)).replace(os.sep, "/").lstrip("/")
-    path = path.split("#")[0].split("?")[0]
+    path = unquote(path.split("#")[0].split("?")[0])
+    if "\\" in path or ".." in path.split("/"):
+        return None
     if path.endswith("/") or "." not in os.path.basename(path):
         path = path.rstrip("/") + "/index.html"
     return path.lstrip("/")
@@ -953,10 +926,10 @@ def check_site_identity(raw: str, ident: dict) -> list:
     return findings
 
 
-def check_game_robots(raw: str, rel: str) -> list:
-    '''Rendered /games/* HTML must not request noindex; live audit covers headers.'''
+def check_game_robots(raw: str, rel: str, policy: dict) -> list:
+    '''Check only explicitly configured indexable path scopes.'''
     rel = rel.replace('\\', '/').lstrip('./')
-    if not rel.startswith('games/'):
+    if not rel.startswith(policy['indexable_path_prefixes']):
         return []
     findings = []
     for m in SITE_NAME_META_RE.finditer(raw):
@@ -972,7 +945,7 @@ def check_game_robots(raw: str, rel: str) -> list:
             findings.append(dict(
                 sev='error', cat='game_robots', line=raw.count('\n', 0, m.start()) + 1,
                 match='robots=%r' % value,
-                msg='/games/* rendered HTML must not contain noindex (%s).'
+                msg='Configured indexable page must not contain noindex (%s).'
                     % '/'.join(blocked),
                 fix='Remove noindex/none; verify meta and X-Robots-Tag after deploy.'))
     return findings
@@ -1095,7 +1068,7 @@ def official_spans(text, zone, rel, ctx_gids, rules, page_state):
             sentence_start = max(
                 text.rfind(mark, 0, match.start()) for mark in "。！？!?；;\n"
             ) + 1
-            if not OFFICIAL_CITATION_PREFIX.fullmatch(
+            if not rules["policy"]["official_prefix_pattern"].fullmatch(
                     text[sentence_start:match.start()]):
                 continue
             if used.get(item["id"], 0) >= item["max_per_page"]:
@@ -1271,7 +1244,7 @@ def scan_text_doc(text: str, rules: dict) -> tuple:
     # 純文字／社群沒有 rendered page identity 與 page-level zone，official_names
     # 一律不適用；即使文案自行帶 gid 或 slug，也不得把它當頁面身分。
     per_line = dict(rules, by_name=[], official_names=[])
-    ctx_gids = set(GID_RE.findall(text))
+    ctx_gids = set(rules["policy"]["context_id_pattern"].findall(text))
     page_state = {}
     for i, raw_line in enumerate(text.split("\n"), 1):
         line = raw_line.strip()
@@ -1284,9 +1257,9 @@ def scan_text_doc(text: str, rules: dict) -> tuple:
     return findings, gated
 
 
-def run_text_scan(specs: list, rules_path: str) -> tuple:
+def run_text_scan(specs: list, rules_path: str, company_key: str) -> tuple:
     """回傳 (findings_by_doc, gated, docs)。"""
-    rules = load_rules(rules_path)
+    rules = load_rules(rules_path, company_key)
     by_doc, gated, nonempty = {}, [], 0
     for spec in specs:
         name = "<stdin>" if spec == "-" else spec
@@ -1308,13 +1281,13 @@ def run_text_scan(specs: list, rules_path: str) -> tuple:
     return by_doc, gated, len(specs)
 
 
-def run_build_scan(build_root: str, rules_path: str) -> tuple:
+def run_build_scan(build_root: str, rules_path: str, company_key: str) -> tuple:
     """回傳 (findings_by_page, gated, pages)。"""
     if not os.path.isdir(build_root):
         print("ERROR: 找不到建置產物目錄 %s（CI 上必須先 jekyll build）" % build_root,
               file=sys.stderr)
         sys.exit(2)
-    rules = load_rules(rules_path)
+    rules = load_rules(rules_path, company_key)
     files = discover_build_files(build_root)
     if not files:
         print("ERROR: %s 底下沒有任何 HTML —— 建置八成失敗了，不能當成「全綠」" % build_root,
@@ -1332,7 +1305,7 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         ex.feed(raw)
         ex.close()
         parsed[rel] = ex.blocks
-        gid_index[rel] = set(GID_RE.findall(raw))
+        gid_index[rel] = set(rules["policy"]["context_id_pattern"].findall(raw))
         # 身分不變式看的是原始 HTML 的 meta 標籤，不走區塊化 ——
         # 區塊化會把 chrome meta 併進共用版型偵測，而繞過 include 的頁正好
         # 不共用版型，靠共用版型偵測是抓不到它們的。
@@ -1340,10 +1313,10 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         hits.extend(check_handwritten_chrome(
             raw, rel, rules["handwritten_chrome"],
             rules["site_identity"]["canonical_site_name"]))
-        hits.extend(check_game_robots(raw, rel))
+        hits.extend(check_game_robots(raw, rel, rules["policy"]))
         if hits:
             identity[rel] = hits
-        quality_hits = check_rendered_quality(raw)
+        quality_hits = check_rendered_quality(raw, rules["policy"])
         if quality_hits:
             quality[rel] = quality_hits
     missing_named = sorted(named_pages - set(parsed))
@@ -1362,10 +1335,10 @@ def run_build_scan(build_root: str, rules_path: str) -> tuple:
         for b in blocks:
             ctx = set(gid_index.get(rel, ()))
             for href in b["links"]:
-                tgt = url_to_relpath(href, rel)
+                tgt = url_to_relpath(href, rel, rules["policy"])
                 if tgt and tgt in gid_index:
                     ctx |= gid_index[tgt]
-                ctx |= set(GID_RE.findall(href))
+                ctx |= set(rules["policy"]["context_id_pattern"].findall(href))
             page_gated = []
             scan_build_block(b, rules, ctx, page_text,
                              block_zone(b, boilerplate), findings, page_gated,
@@ -1444,7 +1417,7 @@ def main() -> int:
     ap.add_argument("--config", default="_config.yml")
     ap.add_argument("--site-root", default=None,
                     help="chrome 快篩模式：_config.yml + 建置產物的 meta/feed 欄位")
-    ap.add_argument("--games", default=os.path.join("tools", "redline_games.txt"))
+    ap.add_argument("--games", help=argparse.SUPPRESS)
     ap.add_argument("--config-only", action="store_true",
                     help="沒有 build 產物時只跑檢查 1")
     ap.add_argument("--strict-body", action="store_true",
@@ -1454,7 +1427,8 @@ def main() -> int:
     ap.add_argument("--text", action="append", metavar="FILE",
                     help="純文字模式：掃社群文案草稿（可重複；`-` 讀 stdin）")
     ap.add_argument("--rules", default=os.path.join("tools", "redline_rules.json"),
-                    help="--build-root 用的公版規則表")
+                    help="所有檢查模式共用的公司公版規則表")
+    ap.add_argument("--company", help="預期公司 key；未指定時讀取 --config 的 company_key")
     ap.add_argument("--show-gated", action="store_true",
                     help="連 silent_pass 的語境閘放行也逐筆列出（除錯用）")
     ap.add_argument("--baseline", default=None,
@@ -1462,6 +1436,9 @@ def main() -> int:
     ap.add_argument("--write-baseline", default=None, metavar="FILE",
                     help="把目前所有 error 級命中寫成 baseline 檔（只在建立存量時用一次）")
     args = ap.parse_args()
+    if args.games is not None:
+        ap.error("--games 已停用；所有公司規則必須來自 --rules")
+    company_key = args.company or read_config_scalar(args.config, "company_key")
 
     errors = warns = gated_pass = pages = 0
 
@@ -1477,9 +1454,9 @@ def main() -> int:
 
     if args.text or args.build_root:
         if args.text:
-            by_page, gated, pages = run_text_scan(args.text, args.rules)
+            by_page, gated, pages = run_text_scan(args.text, args.rules, company_key)
         else:
-            by_page, gated, pages = run_build_scan(args.build_root, args.rules)
+            by_page, gated, pages = run_build_scan(args.build_root, args.rules, company_key)
         baseline = load_baseline(args.baseline)
         today = datetime.date.today().isoformat()
         baselined, blocking, seen_keys, expired = [], 0, set(), []
@@ -1552,12 +1529,14 @@ def main() -> int:
             print("  ↑ 這些不擋部署，但它們是真命中。%s" % BASELINE_RULES)
     else:
         failures = []
-        check_config(args.config, failures)
+        rules = load_rules(args.rules, company_key)
+        check_config(args.config, failures, rules["policy"])
         if args.config_only:
             print("（--config-only：略過 rendered HTML 檢查）")
         else:
-            pages = check_site(args.site_root or "_site", load_games(args.games),
-                               args.strict_body, failures)
+            games = [(r["id"], r["_names"]) for r in rules["by_name"]]
+            pages = check_site(args.site_root or "_site", games,
+                               args.strict_body, failures, rules["policy"])
         if failures:
             print("\n紅線命中 %d 處：" % len(failures))
             for path, field, rule, found in failures:
